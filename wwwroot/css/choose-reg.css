@@ -23,10 +23,10 @@ div[class*=box] {
 .btn {
   line-height: 50px;
   height: 160px;
+  width:100%;
   text-align: center;
-  width: 250px;
   cursor: pointer;
-  font-size: x-large;
+  font-size: xx-large;
 }
 
 /* 

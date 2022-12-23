@@ -28,36 +28,36 @@
                         <h2 class="form-title">Sign up</h2>
                         <form method="POST" class="register-form" id="register-form">
                             <div class="form-group">
-                                <label for="name"><i class="zmdi zmdi-account material-icons-name"></i></label>
-                                <input type="text" name="name" id="name" placeholder="Your Name" />
+                                <label asp-for="registeringFan.Name"><i class="zmdi zmdi-account material-icons-name"></i></label>
+                                <input asp-for="registeringFan.Name" id="name" placeholder="Your Name" />
                             </div>
                             <div class="form-group">
-                                <label for="email"><i class="zmdi zmdi-email"></i></label>
-                                <input type="email" name="email" id="email" placeholder="Your Username" />
+                                <label asp-for="registeringFan.Username"><i class="zmdi zmdi-email"></i></label>
+                                <input asp-for="registeringFan.Username" id="email" placeholder="Your Username" />
                             </div>
                             <div class="form-group">
-                                <label for="National_ID"><i class="zmdi zmdi-card-membership"></i></label>
-                                <input type="number" name="National_ID" id="National_ID" placeholder="Your National ID" />
+                                <label asp-for="registeringFan.NationalId"><i class="zmdi zmdi-card-membership"></i></label>
+                                <input asp-for="registeringFan.NationalId" id="National_ID" placeholder="Your National ID" />
                             </div>
                             <div class="form-group">
-                                <label for="Phone_Number"><i class="zmdi zmdi-phone"></i></label>
-                                <input type="number" name="Phone_Number" id="Phone_Number" placeholder="Your Phone Number" />
+                                <label asp-for="registeringFan.Phone"><i class="zmdi zmdi-phone"></i></label>
+                                <input asp-for="registeringFan.Phone" id="Phone_Number" placeholder="Your Phone Number" />
                             </div>
                             <div class="form-group">
-                                <label for="BOD"><i class="zmdi zmdi-calendar"></i></label>
-                                <input type="date" name="BOD" id="BOD" placeholder="Your Birth Date" />
+                                <label asp-for="registeringFan.Birthdate"><i class="zmdi zmdi-calendar"></i></label>
+                                <input asp-for="registeringFan.Birthdate" id="BOD" placeholder="Your Birth Date" />
                             </div>
                             <div class="form-group">
-                                <label for="Address"><i class="zmdi zmdi-home"></i></label>
-                                <input type="text" name="Address" id="Address" placeholder="Your Address" />
+                                <label asp-for="registeringFan.Address"><i class="zmdi zmdi-home"></i></label>
+                                <input asp-for="registeringFan.Address" id="Address" placeholder="Your Address" />
                             </div>
                             <div class="form-group">
-                                <label for="pass"><i class="zmdi zmdi-lock"></i></label>
-                                <input type="password" name="pass" id="pass" placeholder="Password" />
+                                <label asp-for="registeringFan.Password"><i class="zmdi zmdi-lock"></i></label>
+                                <input asp-for="registeringFan.Password" type="password" id="pass" placeholder="Password" />
                             </div>
                             <div class="form-group">
-                                <label for="re-pass"><i class="zmdi zmdi-lock-outline"></i></label>
-                                <input type="password" name="re_pass" id="re_pass" placeholder="Repeat your password" />
+                                <label asp-for="registeringFan.ConfirmPassword"><i class="zmdi zmdi-lock-outline"></i></label>
+                                <input asp-for="registeringFan.ConfirmPassword" type="password" id="re_pass" placeholder="Repeat your password" />
                             </div>
                             <div class="form-group">
                                 <input type="checkbox" name="agree-term" id="agree-term" class="agree-term" />
@@ -69,7 +69,7 @@
                         </form>
                     </div>
                     <div class="signup-image">
-                        <figure><img height="500px" width="500px" src="~/lib/images/bg-01.jpg " alt="sing up image"></figure>
+
                         <a href="#" class="signup-image-link">I am already member</a>
                     </div>
                 </div>

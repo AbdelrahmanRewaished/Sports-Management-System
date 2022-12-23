@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="fonts/material-icon/css/material-design-iconic-font.min.css">
 
     <!-- Main css -->
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="~/css/CrReg.css">
 </head>
 <body>
 
@@ -29,24 +29,24 @@
                         <h2 class="form-title">Sign up</h2>
                         <form method="POST" class="register-form" id="register-form">
                             <div class="form-group">
-                                <label for="name"><i class="zmdi zmdi-account material-icons-name"></i></label>
-                                <input type="text" name="name" id="name" placeholder="Your Name" />
+                                <label asp-for="registeringClubRepresentative.Name"><i class="zmdi zmdi-account material-icons-name"></i></label>
+                                <input asp-for="registeringClubRepresentative.Name"  id="name" placeholder="Your Name" />
                             </div>
                             <div class="form-group">
-                                <label for="email"><i class="zmdi zmdi-email"></i></label>
-                                <input type="email" name="email" id="email" placeholder="Your Username" />
+                                <label asp-for="registeringClubRepresentative.Username"><i class="zmdi zmdi-email"></i></label>
+                                <input asp-for="registeringClubRepresentative.Username"  id="email" placeholder="Your Username" />
                             </div>
                             <div class="form-group">
-                                <label for="Club"><i class="zmdi zmdi-gamepad"></i></label>
-                                <input type="Club" name="Club" id="Club" placeholder="Your Club" />
+                                <label asp-for="registeringClubRepresentative.Entity"><i class="zmdi zmdi-gamepad"></i></label>
+                                <input asp-for="registeringClubRepresentative.Entity" id="Club" placeholder="Your Club" />
                             </div>
                             <div class="form-group">
-                                <label for="pass"><i class="zmdi zmdi-lock"></i></label>
-                                <input type="password" name="pass" id="pass" placeholder="Password" />
+                                <label asp-for="registeringClubRepresentative.Password"><i class="zmdi zmdi-lock"></i></label>
+                                <input asp-for="registeringClubRepresentative.Password" type="password" id="pass" placeholder="Password" />
                             </div>
                             <div class="form-group">
-                                <label for="re-pass"><i class="zmdi zmdi-lock-outline"></i></label>
-                                <input type="password" name="re_pass" id="re_pass" placeholder="Repeat your password" />
+                                <label asp-for="registeringClubRepresentative.ConfirmPassword"><i class="zmdi zmdi-lock-outline"></i></label>
+                                <input asp-for="registeringClubRepresentative.ConfirmPassword" type="password" id="re_pass" placeholder="Repeat your password" />
                             </div>
                             <div class="form-group">
                                 <input type="checkbox" name="agree-term" id="agree-term" class="agree-term" />
@@ -58,7 +58,6 @@
                         </form>
                     </div>
                     <div class="signup-image">
-                        <figure><img src="~/lib/images/bg-01.jpg" alt="sing up image"></figure>
                         <a href="#" class="signup-image-link">I am already member</a>
                     </div>
                 </div>

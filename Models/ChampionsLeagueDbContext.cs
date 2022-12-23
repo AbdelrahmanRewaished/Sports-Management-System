@@ -582,4 +582,10 @@ public partial class ChampionsLeagueDbContext : DbContext
     }
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
+
+    public int getStadiumManagerId(string stadium_name)
+        => throw new NotSupportedException();
+
+    public int getStadiumID(string stadium_name)
+        => throw new NotSupportedException();
 }

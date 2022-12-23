@@ -7,6 +7,12 @@ namespace Sports_Management_System.Pages.authentication
     {
         public void OnGet()
         {
+
+        }
+
+        public async Task OnPost()
+        {
+
         }
     }
 }
