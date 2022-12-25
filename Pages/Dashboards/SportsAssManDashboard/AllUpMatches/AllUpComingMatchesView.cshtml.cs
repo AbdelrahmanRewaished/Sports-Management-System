@@ -18,12 +18,6 @@ namespace Sports_Management_System.Pages.Dashboards.SportsAssManDashboard.AllUpM
         public  async void OnGet()
         {
 
-          
-            for (int i = 0; i < _db.Matches.Count; i++)
-            {
-               await Matches.Add(_db.Database.ExecuteSqlAsync($"exec dbo.upcomingMatchesOfClub {(_db.Matches.ElementAt(i).HostClub)} "));
-            }
-
         }
     }
 }
