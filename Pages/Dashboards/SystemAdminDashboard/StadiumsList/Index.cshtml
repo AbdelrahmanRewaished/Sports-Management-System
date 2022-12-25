@@ -1,0 +1,62 @@
+﻿@page
+@model Sports_Management_System.Pages.Dashboards.SystemAdminDashboard.StadiumsList.IndexModel
+@{
+}
+
+<br />
+
+<div class="container row p-0 m-0">
+    <div class="col-9">
+        <h2 class="text-info">Stadiums List</h2>
+    </div>
+    <div class="col-3">
+        <a asp-page="Create" class="btn btn-info form-check-control text-white">Create New Stadium</a>
+    </div>
+
+    <div class="col-12 border p-3 mt-3">
+        <form method="post">
+            @if (Model.Stadiums.Count() > 0)
+            {
+                <table class="table table-striped border">
+                    <tr class="table table-secondary">
+                        <th>
+                            <label asp-for="Stadiums.FirstOrDefault().Name"></label>
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(m => m.Stadiums.FirstOrDefault().Location)
+                        </th>
+                        <th>
+                            <label asp-for="Stadiums.FirstOrDefault().Capacity"></label>
+                        </th>
+                    </tr>
+                    @foreach (var item in Model.Stadiums)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(m => item.Name)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(m => item.Location)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(m => item.Capacity)
+                            </td>
+                            <td>
+                                <button asp-page-handler="Delete" asp-route-Id="@item.Id" onclick="return confirm('Are you Sure you want to delete ?')" class="btn btn-danger btn-secondary">Delete</button>
+                                <a asp-page="Edit" asp-route-Id="@item.Id" class="btn btn-success btn-secondary">Edit</a>
+                            </td>
+                        </tr>
+                    }
+                </table>
+            }
+            else
+            {
+                <p>No Stadiums Available.</p>
+            }
+        </form>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="~/js/bookList.js"></script>
+}

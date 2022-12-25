@@ -1,0 +1,71 @@
+﻿@page
+@model Sports_Management_System.Pages.Dashboards.SystemAdminDashboard.FansList.IndexModel
+@{
+}
+
+<br />
+
+<div class="container row p-0 m-0">
+    <div class="col-9">
+        <h2 class="text-info">Fans List</h2>
+    </div>
+
+    <div class="col-12 border p-3 mt-3">
+        <form method="post">
+            @if (Model.Fans.Count() > 0)
+            {
+                <table class="table table-striped border">
+                    <tr class="table table-secondary">
+                        <th>
+                            <label asp-for="Fans.FirstOrDefault().Name"></label>
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(m => m.Fans.FirstOrDefault().Username)
+                        </th>
+                        <th>
+                            <label asp-for="Fans.FirstOrDefault().PhoneNo"></label>
+                        </th>
+                    </tr>
+                    @foreach (var item in Model.Fans)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(m => item.Name)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(m => item.Username)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(m => item.PhoneNo)
+                            </td>
+                            <td>
+                                @if ((bool)Model.Fans.FirstOrDefault().Status)
+                                {
+                                    <button asp-route-Id="@item.NationalId" asp-route-Status="@item.Status" onclick="return confirm('Are you Sure you want to Block ?')" class="btn btn-danger btn-secondary">
+                                        Block
+                                    </button>
+                                    
+                                }
+                                else
+                                {
+                                    <button asp-route-Id="@item.NationalId" asp-route-Status="@item.Status" onclick="return confirm('Are you Sure you want to UnBlock ?')" class="btn btn-success btn-secondary">
+                                        UnBlock
+                                    </button>
+                                }
+                                
+                            </td>
+                        </tr>
+                    }
+                </table>
+            }
+            else
+            {
+                <p>No Fans Available.</p>
+            }
+        </form>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="~/js/bookList.js"></script>
+}
