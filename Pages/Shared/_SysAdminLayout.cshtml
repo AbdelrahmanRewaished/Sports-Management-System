@@ -1,0 +1,29 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <link rel="stylesheet" href="~/css/sysAdmin.css" />
+</head>
+
+<body>
+    <div class="navbar">
+        <a href="Dashboards/SystemAdminDashboard">Home</a>
+        <div class="dropdown">
+            <button class="dropbtn">
+                View
+                <i class="fa fa-caret-down"></i>
+            </button>
+            <div class="dropdown-content">
+                <a href="Dashboards/SystemAdminDashboard/ClubsList">Clubs</a>
+                <a href="Dashboards/SystemAdminDashboard/StadiumsList">Stadiums</a>
+                <a href="Dashboards/SystemAdminDashboard/FansList">Fans</a>
+            </div>
+        </div>
+    </div>
+    <br />
+    <br />
+    <div>
+        @RenderBody()
+    </div>
+</body>
+</html>
