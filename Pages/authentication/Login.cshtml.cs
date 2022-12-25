@@ -39,6 +39,7 @@ namespace Sports_Management_System.Pages.authentication
             }
 
             string dashboardFolder = "~/Dashboards/";
+            string indexFolder = "/Index";
 
             // check if user is a Fan 
             var fanList = _db.Fans.FromSql($"SELECT * FROM Fan")
@@ -46,7 +47,7 @@ namespace Sports_Management_System.Pages.authentication
                  .ToList();
             if (fanList.Count > 0)
             {
-                return RedirectToPage(dashboardFolder + "FanDashboard");
+                return Redirect(dashboardFolder + "FanDashboard" + indexFolder);
             }
             // check if user is a stadium manager 
             var stadiumManagerList = _db.StadiumManagers
@@ -55,7 +56,7 @@ namespace Sports_Management_System.Pages.authentication
                  .ToList();
             if (stadiumManagerList.Count > 0)
             {
-                return RedirectToPage(dashboardFolder + "StadiumManagerDashboard");
+                return Redirect(dashboardFolder + "StadiumManagerDashboard" + indexFolder);
             }
             // check if user is a association manager 
             var assocManagerList = _db.SportsAssociationManagers
@@ -64,7 +65,7 @@ namespace Sports_Management_System.Pages.authentication
                  .ToList();
             if (assocManagerList.Count > 0)
             {
-                return RedirectToPage(dashboardFolder + "AssociationManagerDashboard");
+                return Redirect(dashboardFolder + "AssociationManagerDashboard" + indexFolder);
             }
             // check if user is a club representative 
             var clubRepresentativeList = _db.ClubRepresentatives
@@ -73,10 +74,10 @@ namespace Sports_Management_System.Pages.authentication
                  .ToList();
             if (clubRepresentativeList.Count > 0)
             {
-                return Redirect(dashboardFolder + "ClubRepresentativeDashboard");
+                return Redirect(dashboardFolder + "ClubRepresentativeDashboard" + indexFolder);
             }
 
-            return Page();
+            return Redirect(dashboardFolder + "SystemAdminDashboard" + indexFolder);
         }
 
     }
