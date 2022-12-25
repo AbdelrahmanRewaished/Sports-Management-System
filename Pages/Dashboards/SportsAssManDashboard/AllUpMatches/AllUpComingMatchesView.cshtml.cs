@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.EntityFrameworkCore.Storage;
 using Sports_Management_System.Models;
+using System.Data;
 
 namespace Sports_Management_System.Pages.Dashboards.SportsAssManDashboard.AllUpMatches
 {
@@ -17,12 +19,17 @@ namespace Sports_Management_System.Pages.Dashboards.SportsAssManDashboard.AllUpM
         
         public  async void OnGet()
         {
-
-          
-            for (int i = 0; i < _db.Matches.Count; i++)
-            {
-               await Matches.Add(_db.Database.ExecuteSqlAsync($"exec dbo.upcomingMatchesOfClub {(_db.Matches.ElementAt(i).HostClub)} "));
-            }
+            DataTable data = new DataTable();
+            data = await  _db.Database.ExecuteSqlAsync($"exec dbo.upcomingMatchesOfClub()"));
+            
+            Matches = (from data  in data.Rows
+                      select new Match()
+                      {
+                          HostClub = data["HostClub"].ToString(),
+                          GuestClub = data["GuestCLub"].ToString(),
+                          StartTime = data["StartTime"].ToString(),
+                          EndTime = data["EndTime"].ToString()
+                      }).ToList();
 
         }
     }

@@ -593,7 +593,18 @@ return
 end;
 go
 
+create function [AllUpComingMatches] ()
+returns @T table(HostClub varchar(20),GuestClub varchar(20),StartTime datetime , EndTime datetime)
+as 
+begin
 
+insert into @T
+Select c.name ,c1.name,m.start_time,m.end_time
+from Match m ,Club c ,Club c1 
+where m.host_club_Id = c.club_id and m.guest_club_id = c1.club_id and m.start_time>Current_TimeStamp
+return
+end;
+go
 create proc dropAllProceduresFunctionsViews
 as 
 drop procedure createAllTables 
