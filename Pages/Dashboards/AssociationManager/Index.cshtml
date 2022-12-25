@@ -1,0 +1,33 @@
+﻿@page
+@model Sports_Management_System.Pages.Dashboards.AssociationManager.IndexModel
+@{
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="~/css/StyleSheet.css" />
+<html>
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="~/css/sysAdmin.css" />
+</head>
+
+<body>
+    <div>
+        <h1>Welcome Manager</h1>
+    </div>
+    <div>
+        <button class="btn">View</button>
+        <div class="dropdown">
+            <button class="btn" style="border-left:1px solid navy">
+                <i class="fa fa-caret-down"></i>
+            </button>
+            <div class="dropdown-content">
+                <a href="MatchList">Matches</a>
+                <a href="UpComingMatches">All Upcoming Matches</a>
+                <a href="PlayedMatches">Already Played Matches</a>
+                <a href="ClubsNevPlayed">Clubs never scheduled to play each other </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

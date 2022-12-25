@@ -1,0 +1,61 @@
+﻿@page
+@model Sports_Management_System.Pages.Dashboards.AssociationManager.AllUpMatches.AllUpComingMatchesViewModel
+@{
+}
+<br />
+
+<div class="container row p-0 m-0">
+    <div class="col-9">
+        <h2 class="text-info">Upcoming Matches</h2>
+    </div>
+
+    <div class="col-12 border p-3 mt-3">
+        <form method="post">
+            @if (Model.Matches.Count() > 0)
+            {
+                <table class="table table-striped border">
+                    <tr class="table table-secondary">
+                        <th>
+                            <label asp-for="Matches.FirstOrDefault().HostClub"></label>
+                        </th>
+                        <th>
+                            <label asp-for="Matches.FirstOrDefault().GuestClub"></label>
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(m => m.Matches.FirstOrDefault().StartTime)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(m => m.Matches.FirstOrDefault().EndTime)
+                        </th>
+
+                    </tr>
+                    @foreach (var item in Model.Matches)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(m => item.HostClub)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(m => item.GuestClub)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(m => item.StartTime)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(m => item.EndTime)
+                            </td>
+                        </tr>
+                    }
+                </table>
+            }
+            else
+            {
+                <p>No Upcoming Matches Available.</p>
+            }
+        </form>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="~/js/bookList.js"></script>
+}

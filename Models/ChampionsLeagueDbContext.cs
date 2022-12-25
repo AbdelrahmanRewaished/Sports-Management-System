@@ -33,6 +33,8 @@ public partial class ChampionsLeagueDbContext : DbContext
 
     public virtual DbSet<AllTicket> AllTickets { get; set; }
 
+    public virtual DbSet<AllUpComingMatch> AllUpComingMatches { get; set; }
+
     public virtual DbSet<Club> Clubs { get; set; }
 
     public virtual DbSet<ClubRepresentative> ClubRepresentatives { get; set; }
@@ -62,8 +64,10 @@ public partial class ChampionsLeagueDbContext : DbContext
     public virtual DbSet<Ticket> Tickets { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+#pragma warning disable CS1030 // #warning: 'To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.'
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
         => optionsBuilder.UseSqlServer("Server=DESKTOP-LCOEQBE\\SQLEXPRESS;Database=Champions_league_Db;Trusted_Connection=True;Encrypt=False");
+#pragma warning restore CS1030 // #warning: 'To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.'
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -254,6 +258,22 @@ public partial class ChampionsLeagueDbContext : DbContext
             entity.Property(e => e.StartTime)
                 .HasColumnType("datetime")
                 .HasColumnName("start_time");
+        });
+
+        modelBuilder.Entity<AllUpComingMatch>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("AllUpComingMatches");
+
+            entity.Property(e => e.EndTime).HasColumnType("datetime");
+            entity.Property(e => e.GuestClub)
+                .HasMaxLength(20)
+                .IsUnicode(false);
+            entity.Property(e => e.HostClub)
+                .HasMaxLength(20)
+                .IsUnicode(false);
+            entity.Property(e => e.StartTime).HasColumnType("datetime");
         });
 
         modelBuilder.Entity<Club>(entity =>
@@ -582,10 +602,4 @@ public partial class ChampionsLeagueDbContext : DbContext
     }
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
-
-    public int getStadiumManagerId(string stadium_name)
-        => throw new NotSupportedException();
-
-    public int getStadiumID(string stadium_name)
-        => throw new NotSupportedException();
 }

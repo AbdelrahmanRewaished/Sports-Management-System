@@ -167,8 +167,10 @@ declare @idg int
 select @idg = club_ID from Club where name =@guest_club_name
 --exec @idg = dbo.getClubId @guest_club_name
 
-insert into match values (@start_time,@end_time,@idh,@idg, null)
+insert into match values (@start_time, @end_time, @idh, @idg, null)
 go
+
+exec addNewMatch 'Ahly', 'Zamalek', '2002-10-10 01:01:01', '2002-10-10 03:01:01'
 
 create function [getClubId](@name varchar(20))
 returns int 
@@ -593,6 +595,42 @@ return
 end;
 go
 
+create function [AllUpComingMatchesFunc] ()
+returns @T table(HostClub varchar(20),GuestClub varchar(20),StartTime datetime , EndTime datetime)
+as 
+begin
+
+insert into @T
+Select c.name ,c1.name,m.start_time,m.end_time
+from Match m ,Club c ,Club c1 
+where m.host_club_Id = c.club_id and m.guest_club_id = c1.club_id and m.start_time>Current_TimeStamp
+return
+end;
+go
+
+create view AllUpComingMatches as
+select * from dbo.AllUpComingMatchesFunc()
+
+go
+
+create proc updateMatch @Id int, @HostClub varchar(20), @GuestClub varchar(20), @StartTime DateTime, @EndTime DateTime
+as
+declare @hostId int, @guestId int
+exec @hostId = dbo.getClubId @HostClub
+exec @guestId = dbo.getClubId @GuestClub
+update Match set host_club_ID = @hostId, guest_club_ID = @guestId,
+start_time = @StartTime, end_time = @EndTime 
+where match_ID = @Id;
+go
+
+create view alreadyPlayedMatches
+as select host.name as HostClub, guest.name as GuestClub, m.start_time, m.end_time from Club host, Club guest, Match m
+where m.host_club_ID = host.club_ID and
+m.guest_club_ID = guest.club_ID and
+m.end_time <= CURRENT_TIMESTAMP and
+m.stadium_ID is not null
+go
+
 
 create proc dropAllProceduresFunctionsViews
 as 
@@ -645,3 +683,4 @@ drop function [getTicketsSoldPerMatch]
 drop function [matchWithHighestAttendance]
 drop function[matchesRankedByAttendance]
 drop function [requestsFromClub];
+

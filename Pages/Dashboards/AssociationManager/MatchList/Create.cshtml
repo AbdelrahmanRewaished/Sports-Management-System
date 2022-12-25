@@ -1,0 +1,59 @@
+﻿@page
+@model Sports_Management_System.Pages.Dashboards.AssociationManager.MatchList.CreateModel
+@{
+}
+<br />
+
+<h2 class="text-info">Create New Match</h2>
+<br />
+
+<div class="border container" style="padding:30px;">
+    <form method="post">
+        <div class="text-danger" asp-validation-summary="ModelOnly"> </div>
+        <div class="form-group row">
+            <div class="col-3">
+                <label asp-for="Match.HostClub"></label>
+            </div>
+            <div class="col-6">
+                <input asp-for="Match.HostClub" class="form-control" required />
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <div class="col-3">
+                <label asp-for="Match.GuestClub"></label>
+            </div>
+            <div class="col-6">
+                <input asp-for="Match.GuestClub" class="form-control" required />
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-3">
+                <label asp-for="Match.StartTime"></label>
+            </div>
+            <div class="col-6">
+                <input asp-for="Match.StartTime" class="form-control" required />
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-3">
+                <label asp-for="Match.EndTime"></label>
+            </div>
+            <div class="col-6">
+                <input asp-for="Match.EndTime" class="form-control" required />
+            </div>
+        </div>
+
+
+        <br />
+        <br />
+        <div class="form-group row">
+            <div class="col-3 offset-2">
+                <input type="submit" value="Create" class="btn btn-primary form-control" />
+            </div>
+            <div class="col-3">
+                <a asp-page="Index" class="btn btn-success form-control">Back To List</a>
+            </div>
+        </div>
+    </form>
+</div>
