@@ -21,7 +21,7 @@ namespace Sports_Management_System.Pages.Dashboards.SportsAssManDashboard.AllUpM
           
             for (int i = 0; i < _db.Matches.Count; i++)
             {
-               await Matches.Add(_db.Database.ExecuteSqlAsync($"exec dbo.upcomingMatchesOfClub (_db.Matches.ElementAt(i).HostClub) "));
+               await Matches.Add(_db.Database.ExecuteSqlAsync($"exec dbo.upcomingMatchesOfClub {(_db.Matches.ElementAt(i).HostClub)} "));
             }
 
         }
