@@ -12,7 +12,7 @@ namespace Sports_Management_System.Pages.Dashboards.SportsAssManDashboard.MatchL
         {
             _db = db;
         }
-        public List<Match> Matches { get; set; };
+        public List<Match> Matches { get; set; }
 
         public async Task OnGet()
         {
