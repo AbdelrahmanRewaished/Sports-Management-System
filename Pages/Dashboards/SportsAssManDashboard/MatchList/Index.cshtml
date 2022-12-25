@@ -1,0 +1,70 @@
+﻿@page
+@model Sports_Management_System.Pages.Dashboards.SportsAssManDashboard.MatchList.IndexModel
+@{
+}
+
+
+<br />
+
+<div class="container row p-0 m-0">
+    <div class="col-9">
+        <h2 class="text-info">Matches List</h2>
+    </div>
+    <div class="col-3">
+        <a asp-page="Create" class="btn btn-info form-check-control text-white">Create New Match</a>
+    </div>
+
+    <div class="col-12 border p-3 mt-3">
+        <form method="post">
+            @if (Model.Matches.Count() > 0)
+            {
+                <table class="table table-striped border">
+                    <tr class="table table-secondary">
+                        <th>
+                            <label asp-for="Matches.FirstOrDefault().HostClub"></label>
+                        </th>
+                         <th>
+                            <label asp-for="Matches.FirstOrDefault().GuestClub"></label>
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(m => m.Matches.FirstOrDefault().StartTime)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(m => m.Matches.FirstOrDefault().EndTime)
+                        </th>
+
+                    </tr>
+                    @foreach (var item in Model.Matches)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(m => item.HostClub)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(m => item.GuestClub)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(m => item.StartTime)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(m => item.EndTime)
+                            </td>
+                            <td>
+                                <button asp-page-handler="Delete" asp-route-Id="@item.MatchId" onclick="return confirm('Are you Sure you want to delete ?')" class="btn btn-danger btn-secondary">Delete</button>
+                                <a asp-page="Edit" asp-route-Id="@item.MatchId" class="btn btn-success btn-secondary">Edit</a>
+                            </td>
+                        </tr>
+                    }
+                </table>
+            }
+            else
+            {
+                <p>No Clubs Available.</p>
+            }
+        </form>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="~/js/bookList.js"></script>
+}
