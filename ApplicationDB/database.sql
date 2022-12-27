@@ -672,8 +672,6 @@ return
 end
 go
 
-exec addTicket 'Ahly', 'Real', '2023-01-01 13:01:00'
-exec purchaseTicket 22133, 'Ahly', 'Real', '2023-01-01 13:01:00'
 
 create function purchasedTicketsPerMatchFor(@nationalId int)
 returns @T table(HostClub varchar(20), GuestClub varchar(20), StartTime DateTime,
