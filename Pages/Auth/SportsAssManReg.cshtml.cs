@@ -3,13 +3,14 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Sports_Management_System.Models;
 using System.ComponentModel.DataAnnotations;
+using System.Globalization;
 
 namespace Sports_Management_System.Pages.Auth
 {
     public class SportsAssManRegModel : PageModel
     {
         private readonly ChampionsLeagueDbContext _db;
-
+        public string errorMessage = "";
         public SportsAssManRegModel(ChampionsLeagueDbContext db)
         {
             _db = db;
@@ -39,15 +40,18 @@ namespace Sports_Management_System.Pages.Auth
         {
             if(! ModelState.IsValid)
             {
+                errorMessage = "State is not valid";
                 return Page();
             }
             SystemUser user = await _db.SystemUsers.FindAsync(registeringAssocManager.Username);
             if(user != null)
             {
+                errorMessage = "Already registered";
                 return Page();
             }
             if(!registeringAssocManager.Password.Equals(registeringAssocManager.ConfirmPassword))
             {
+                errorMessage = "Passwords must match";
                 return Page();
             }
             await _db.Database.ExecuteSqlAsync($"exec addAssociationManager {registeringAssocManager.Name}, {registeringAssocManager.Username}, {registeringAssocManager.Password}");

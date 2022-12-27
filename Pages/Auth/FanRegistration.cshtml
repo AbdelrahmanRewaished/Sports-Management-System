@@ -58,6 +58,11 @@
                             <div class="form-group">
                                 <label asp-for="registeringFan.ConfirmPassword"><i class="zmdi zmdi-lock-outline"></i></label>
                                 <input asp-for="registeringFan.ConfirmPassword" type="password" id="re_pass" placeholder="Repeat your password" />
+                                @if (Model.errorMessage.Equals("Passwords must match"))
+                                {
+                                    <br />
+                                    <h6 style="color:red"> @Model.errorMessage</h6>
+                                }
                             </div>
                             <div class="form-group">
                                 <input type="checkbox" name="agree-term" id="agree-term" class="agree-term" />
@@ -65,11 +70,16 @@
                             </div>
                             <div class="form-group form-button">
                                 <input type="submit" name="signup" id="signup" class="form-submit" value="Register" />
+                                @if (Model.errorMessage.Equals("Already registered"))
+                                {
+                                    <br />
+                                    <h6 style="color:red"> @Model.errorMessage</h6>
+                                }
                             </div>
                         </form>
                     </div>
                     <div class="signup-image">
-
+                        <img src="~/lib/images/bg-01.jpg" />
                         <a href="#" class="signup-image-link">I am already member</a>
                     </div>
                 </div>

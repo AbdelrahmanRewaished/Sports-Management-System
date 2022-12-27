@@ -8,6 +8,7 @@ namespace Sports_Management_System.Pages.Auth
     public class ClubRepRegModel : PageModel
     {
         private readonly ChampionsLeagueDbContext _db;
+        public string errorMessage = "";
 
         public ClubRepRegModel(ChampionsLeagueDbContext db)
         {
@@ -24,11 +25,13 @@ namespace Sports_Management_System.Pages.Auth
         {
             if (! ModelState.IsValid || !registeringClubRepresentative.Password.Equals(registeringClubRepresentative.ConfirmPassword))
             {
+                errorMessage = "Passwords must match";
                 return Page();
             }
             SystemUser user = await _db.SystemUsers.FindAsync(registeringClubRepresentative.Username);
             if (user != null)
             {
+                errorMessage = "Already registered";
                 return Page();
             }
             var clubs = _db.Clubs
@@ -38,6 +41,7 @@ namespace Sports_Management_System.Pages.Auth
 
             if (clubs.Count == 0)
             {
+                errorMessage = "Club doesn't exist";
                 return Page();
             }
             var clubRepresentatives = _db.Database
@@ -46,6 +50,7 @@ namespace Sports_Management_System.Pages.Auth
 
             if (clubRepresentatives.Count != 0)
             {
+                errorMessage = "A Club Representative  already exists ";
                 return Page();
             }
             await _db.Database.ExecuteSqlAsync($"exec addRepresentative {registeringClubRepresentative.Name}, {registeringClubRepresentative.Entity}, {registeringClubRepresentative.Username}, {registeringClubRepresentative.Password}");

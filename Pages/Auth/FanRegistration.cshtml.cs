@@ -10,6 +10,7 @@ namespace Sports_Management_System.Pages.Auth
     public class FanRegistrationModel : PageModel
     {
         private readonly ChampionsLeagueDbContext _db;
+        public string errorMessage = "";
         public FanRegistrationModel(ChampionsLeagueDbContext db)
         {
             _db = db;
@@ -46,11 +47,13 @@ namespace Sports_Management_System.Pages.Auth
         {
             if (!ModelState.IsValid || !registeringFan.Password.Equals(registeringFan.ConfirmPassword))
             {
+                errorMessage = "Passwords must match";
                 return Page();
             }
             SystemUser user = await _db.SystemUsers.FindAsync(registeringFan.Username);
             if (user != null)
             {
+                errorMessage = "Already registered";
                 return Page();
             }
             await _db.Database.ExecuteSqlAsync($"exec addFan {registeringFan.Name}, {registeringFan.Username} ,{registeringFan.Password}, {registeringFan.NationalId}, {registeringFan.Birthdate}, {registeringFan.Address}, {registeringFan.Phone}");
