@@ -1,0 +1,49 @@
+﻿@page
+@model Sports_Management_System.Pages.Dashboards.AssociationManager.MatchList.ClubsNeverMatchedModel
+@{
+}
+<br />
+
+<div class="container row p-0 m-0">
+    <div class="col-9">
+        <h2 class="text-info">Clubs Never Matched</h2>
+    </div>
+
+
+    <div class="col-12 border p-3 mt-3">
+        <form method="post">
+            @if (Model.ClubsNeverMatched.Count() > 0)
+            {
+                <table class="table table-striped border">
+                    <tr class="table table-secondary">
+                        <th>
+                            <label asp-for="ClubsNeverMatched.FirstOrDefault().Club1Name">Club1 Name</label>
+                        </th>
+                        <th>
+                            <label asp-for="ClubsNeverMatched.FirstOrDefault().Club2Name">Club2 Name</label>
+                        </th>
+                    </tr>
+                    @foreach (var match in Model.ClubsNeverMatched)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(m => match.Club1Name)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(m => match.Club2Name)
+                            </td>
+                        </tr>
+                    }
+                </table>
+            }
+            else
+            {
+                <p>All Clubs are Matched</p>
+            }
+        </form>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="~/js/bookList.js"></script>
+}
