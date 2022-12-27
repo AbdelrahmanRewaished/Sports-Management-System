@@ -1,0 +1,101 @@
+﻿@page
+@model Sports_Management_System.Pages.Dashboards.ClubRepresentative.ClubInfo.IndexModel
+@{
+}
+<br />
+
+<div class="container row p-0 m-0">
+    <div class="col-9">
+        <h2 class="text-info">Club Info</h2>
+    </div>
+
+    <div class="col-12 border p-3 mt-3">
+        <form method="post">
+            <table class="table table-striped border">
+                <tr class="table table-secondary">
+                    <th>
+                        <label asp-for="Club.Name">Club Name</label>
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(m => m.Club.Location)
+                    </th>
+
+                </tr>
+               
+                <tr>
+                    <td>
+                        @Html.DisplayFor(m => Model.Club.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(m => Model.Club.Location)
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
+</div>
+
+<br />
+
+<div class="container row p-0 m-0">
+    <div class="col-9">
+        <h2 class="text-info">Upcoming Matches</h2>
+    </div>
+
+    <div class="col-12 border p-3 mt-3">
+        <form method="post">
+            @if (Model.HostClubs.Count() > 0)
+            {
+                <table class="table table-striped border">
+                    <tr class="table table-secondary">
+                        <th>
+                            <label value="HostClub">Host Club</label>
+                        </th>
+                        <th>
+                            <label value="GuestClub">Guest Club</label>
+                        </th>
+                        <th>
+                            <label value="StartTime">Start Time</label>
+                        </th>
+                        <th>
+                            <label value="End Time">End Time</label>
+                        </th>
+
+                    </tr>
+                    @for (int i = 0; i < Model.HostClubs.Count; i++)
+                    {
+                        var HostClub = Model.HostClubs.ElementAt(i);
+                        var GuestClub = Model.GuestClubs.ElementAt(i);
+                        var StartTime = Model.StartTimes.ElementAt(i);
+                        var EndTime = Model.EndTimes.ElementAt(i);
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(m => HostClub)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(m => GuestClub)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(m => StartTime)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(m => EndTime)
+                            </td>
+                            <td>
+                                <a href="StadiumsList?HostClub=@HostClub&GuestClub=@GuestClub&StartTime=@StartTime" onclick="return confirm('Are you Sure you want to Host this Match ?')" class="btn btn-danger btn-secondary">Request Hosting</a>
+                            </td>
+                        </tr>  
+                    }
+                </table>
+            }
+            else
+            {
+                <p>No UpComing Matches.</p>
+            }
+        </form>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="~/js/bookList.js"></script>
+}

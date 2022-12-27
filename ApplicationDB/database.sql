@@ -1,5 +1,6 @@
 ﻿CREATE DATABASE Champions_league_Db;
 
+
 go
 create procedure createAllTables 
 AS
@@ -43,6 +44,7 @@ create table Ticket_Buying_Transactions (fan_national_ID int, ticket_ID int , pr
 ,foreign key (fan_national_ID )references Fan(national_ID) on update cascade on delete cascade, foreign key (ticket_ID) references ticket (ID) on update cascade on delete cascade)
 
 go
+
 
 create procedure dropAllTables
 as
@@ -170,7 +172,6 @@ select @idg = club_ID from Club where name =@guest_club_name
 insert into match values (@start_time, @end_time, @idh, @idg, null)
 go
 
-exec addNewMatch 'Ahly', 'Zamalek', '2002-10-10 01:01:01', '2002-10-10 03:01:01'
 
 create function [getClubId](@name varchar(20))
 returns int 
@@ -242,8 +243,9 @@ go
 
 create proc  addStadium @name varchar(20) , @location varchar(20) , @capacity int 
 as 
-insert into Stadium values (@name, @location ,@capacity , null);
+insert into Stadium values (@name, @location ,@capacity , 1);
 go
+
 
 create proc deleteStadium @name varchar(20)
 as 
@@ -269,18 +271,33 @@ insert into System_User2 values (@username,@password)
 insert into Club_Representative values (@name, @id, @username);
 go
 
-create function[viewAvailableStadiumsOn]( @date datetime )
-returns @T table (name varchar(20) , location varchar(20) , capacity int)
+
+create function viewAvailableStadiumsOn
+(@HostClub varchar(20), @GuestClub varchar(20),@StartTime datetime)
+returns @T table (Name varchar(20) , Location varchar(20) , Capacity int)
 as
 begin
---declare @name varchar(20),@location varchar(20),@capacity int
+declare @matchId int, @EndTime datetime
+exec @matchId = dbo.getMatchId @HostClub, @GuestClub, @StartTime
+select @EndTime = m.end_time from Match m where m.match_ID = @matchId
 insert into @T
 select s.name, s.location, s.capacity
-from Stadium s ,Match m
-where s.status = 1 and m.stadium_ID = s.ID and m.stadium_ID not in (select m.stadium_ID where @date between m.start_time and m.end_time)
+from Stadium s
+where s.status = 1 
+except
+(select s1.name, s1.location, s1.capacity from Stadium s1, Match m
+where s1.ID = m.stadium_ID
+and
+(@StartTime between m.start_time and m.end_time
+or 
+@EndTime between m.start_time and m.end_time)
+and m.match_ID <> @matchId
+)
 return
 end;
 go
+
+
 CREATE FUNCTION [getStadiumID] (@stadium_name VARCHAR(20))
 RETURNS INT 
 BEGIN 
@@ -311,18 +328,17 @@ return @id
 end;
 
 go
+
 create proc addHostRequest @club_name varchar(20) ,@stadium_name varchar(20) , @start_time datetime
 as
 declare @representative_id int , @manager_id int ,@match_id int, @club_id int
 exec @representative_id = dbo.getRepresentativeId @club_name 
 exec @club_id = dbo.getClubId @club_name
 exec @manager_id= dbo.getStadiumManagerId @stadium_name 
-select @match_id = m.match_ID from Match m where  m.start_time = @start_time and m.host_club_ID = @club_id
+select @match_id = m.match_ID from Match m where  m.start_time = @start_time and 
+(m.host_club_ID = @club_id or m.guest_club_ID = @club_id)
 insert into Host_Request values(@representative_id, @manager_id, @match_id, 'unhandled');
 go
-
-
-
 
 
 create function [allUnassignedMatches](@club_name varchar(20))
@@ -343,21 +359,24 @@ end;
 go
 
 
+
 create function [allPendingRequests] (@username varchar(20))
 returns @T table(
-club_rep_name varchar(20) , guest_club varchar(20) ,start_time datetime)
+club_rep_name varchar(20), HostClub varchar(20),GuestClub varchar(20) ,StartTime datetime, EndTime datetime, Status varchar(20))
 as 
 begin 
 declare @stadium_manager_id int
 select @stadium_manager_id = id from Stadium_Manager where username = @username
 insert into @T 
-select cr.name as representative_name, c.name as guest_club , m.start_time as match_start_time
-from Club_Representative cr , Club c , Match m , Host_Request hr
+select cr.name as representative_name,c1.name as host_club, c2.name as guest_club ,
+m.start_time as startTime, m.end_time as endTime, hr.status
+from Club_Representative cr , Club c1, Club c2 , Match m , Host_Request hr
 where
 hr.manager_ID = @stadium_manager_id and 
 hr.representative_ID = cr.ID and
 hr.match_ID = m.match_ID and
-c.club_ID = m.guest_club_ID and 
+c1.club_ID = m.host_club_ID and
+c2.club_ID = m.guest_club_ID and 
 hr.status ='unhandled'
 return 
 end 
@@ -384,8 +403,8 @@ as
 declare @matchId int, @managerId int
 exec @matchId = dbo.getMatchId @hosting_club_name, @guest_club_name, @match_start_time
 declare @stadiumId int
-select @stadiumId = s.ID from Stadium s, Stadium_Manager sm where s.ID = sm.stadium_ID;
 select @managerId = sm.ID from Stadium_Manager sm where sm.username = @username
+select @stadiumId = s.ID from Stadium s, Stadium_Manager sm where s.ID = sm.stadium_ID and sm.ID = @managerId;
 update Host_Request set status = 'accepted' where Host_Request.match_ID = @matchId and Host_Request.manager_ID = @managerId
 update Match set stadium_ID = @stadiumId where match_ID = @matchId
 declare @capacity int
@@ -445,13 +464,13 @@ return
 end
 go
 
-create function [availableMatchesToAttend]
-(@start_date datetime)
-returns @T table(hosting_club varchar(20), guest_club varchar(20), match_start_time datetime, stadium varchar(20))
+
+create function [availableMatchesToAttend]()
+returns @T table(HostClub varchar(20), GuestClub varchar(20), StartTime datetime, Stadium varchar(20), Location varchar(20))
 as 
 begin
 insert into @T
-select distinct c.name, c2.name, m.start_time, s.name
+select distinct c.name as host, c2.name as guest, m.start_time, s.name, s.location
 from Club c, Club c2, Match m, Stadium s, Ticket t
 where
 s.ID = m.stadium_ID
@@ -502,13 +521,21 @@ create view clubsNeverMatched
 AS
 select c1.name as club1_name, c2.name as club2_name from Club c1 cross join Club c2 where c1.name <> c2.name 
 except
+(
 select c1.name, c2.name from Club c1
 inner join Match m
 on c1.club_ID = m.host_club_ID
 inner join club c2
 on c2.club_ID = m.guest_club_ID
+where m.stadium_ID is not NULL
+union
+select c1.name, c2.name from Club c1
+inner join Match m
+on c1.club_ID = m.guest_club_ID
+inner join club c2
+on c2.club_ID = m.host_club_ID
+where m.stadium_ID is not NULL)
 go
-
 
 create function [clubsNeverPlayed]
 (@club_name varchar(20))
@@ -610,8 +637,8 @@ go
 
 create view AllUpComingMatches as
 select * from dbo.AllUpComingMatchesFunc()
-
 go
+
 
 create proc updateMatch @Id int, @HostClub varchar(20), @GuestClub varchar(20), @StartTime DateTime, @EndTime DateTime
 as
@@ -623,12 +650,48 @@ start_time = @StartTime, end_time = @EndTime
 where match_ID = @Id;
 go
 
-create view alreadyPlayedMatches
-as select host.name as HostClub, guest.name as GuestClub, m.start_time, m.end_time from Club host, Club guest, Match m
+create view AlreadyPlayedMatches
+as select host.name as HostClub, guest.name as GuestClub, m.start_time as StartTime, m.end_time as EndTime from Club host, Club guest, Match m
 where m.host_club_ID = host.club_ID and
 m.guest_club_ID = guest.club_ID and
 m.end_time <= CURRENT_TIMESTAMP and
 m.stadium_ID is not null
+go
+
+create function getAllUpComingMatchesOfClub
+(@ClubId int)
+returns @T table(HostClub varchar(20), GuestClub varchar(20), StartTime datetime, EndTime datetime)
+as
+begin
+insert into @T
+select al.HostClub, al.GuestClub, al.StartTime, al.EndTime from AllUpComingMatches al
+inner join Club c
+on c.name = al.HostClub or c.name = al.GuestClub
+where c.club_ID = @ClubId
+return
+end
+go
+
+exec addTicket 'Ahly', 'Real', '2023-01-01 13:01:00'
+exec purchaseTicket 22133, 'Ahly', 'Real', '2023-01-01 13:01:00'
+
+create function purchasedTicketsPerMatchFor(@nationalId int)
+returns @T table(HostClub varchar(20), GuestClub varchar(20), StartTime DateTime,
+Stadium varchar(20), Location varchar(20), Tickets int)
+as
+begin 
+insert into @T
+select  c1.name, c2.name, m.start_time, s.name, s.location, count(t.ID)
+from Club c1, Club c2, Match m, Stadium s,
+Ticket_Buying_Transactions tbt, Ticket t, Fan f
+where c1.club_ID = m.host_club_ID and c2.club_ID = m.guest_club_ID
+and tbt.ticket_ID = t.ID and t.match_ID = m.match_ID
+and s.ID = m.stadium_ID
+and f.national_ID = tbt.fan_national_ID
+and f.national_ID = @nationalId
+group by c1.name, c2.name, m.start_time, s.name, s.location
+return
+end
 go
 
 

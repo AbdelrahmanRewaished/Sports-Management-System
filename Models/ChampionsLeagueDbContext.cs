@@ -601,5 +601,10 @@ public partial class ChampionsLeagueDbContext : DbContext
         OnModelCreatingPartial(modelBuilder);
     }
 
+    internal Stadium? Find(int? stadiumId)
+    {
+        throw new NotImplementedException();
+    }
+
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 }

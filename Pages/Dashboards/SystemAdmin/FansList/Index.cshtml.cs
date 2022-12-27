@@ -13,7 +13,7 @@ namespace Sports_Management_System.Pages.Dashboards.SystemAdmin.FansList
         {
             _db = db;
         }
-        public List<Fan> Fans { get; set; }
+        public List<Models.Fan> Fans { get; set; }
         public async Task OnGet()
         {
             Fans = await _db.Fans.ToListAsync();

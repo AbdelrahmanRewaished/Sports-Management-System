@@ -1,0 +1,126 @@
+﻿@page
+@model Sports_Management_System.Pages.Dashboards.StadiumManager.StadiumInfo.IndexModel
+@{
+}
+<br />
+
+<div class="container row p-0 m-0">
+    <div class="col-9">
+        <h2 class="text-info">Stadium Info</h2>
+    </div>
+
+    <div class="col-12 border p-3 mt-3">
+        <form method="post">
+            <table class="table table-striped border">
+                <tr class="table table-secondary">
+                    <th>
+                        <label asp-for="Stadium.Name">Stadium Name</label>
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(m => m.Stadium.Location)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(m => m.Stadium.Capacity)
+                    </th>
+                </tr>
+
+                <tr>
+                    <td>
+                        @Html.DisplayFor(m => Model.Stadium.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(m => Model.Stadium.Location)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(m => Model.Stadium.Capacity)
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
+</div>
+
+<br />
+
+<div class="container row p-0 m-0">
+    <div class="col-9">
+        <h2 class="text-info">Pending Requests</h2>
+    </div>
+
+    <div class="col-12 border p-3 mt-3">
+        <form method="post">
+            @if (Model.RepresentativeNames.Count() > 0)
+            {
+                <table class="table table-striped border">
+                    <tr class="table table-secondary">
+                        <th>
+                            <label value="RepresentativeName">Representative Name</label>
+                        </th>
+                        <th>
+                            <label value="HostClub">Host Club</label>
+                        </th>
+                        <th>
+                            <label value="GuestClub">Guest Club</label>
+                        </th>
+                        <th>
+                            <label value="StartTime">Start Time</label>
+                        </th>
+                        <th>
+                            <label value="End Time">End Time</label>
+                        </th>
+                        <th>
+                            <label value="Status">Status</label>
+                        </th>
+                    </tr>
+                    @for (int i = 0; i < Model.HostNames.Count; i++)
+                    {
+                        var RepName = Model.RepresentativeNames.ElementAt(i);
+                        var HostClub = Model.HostNames.ElementAt(i);
+                        var GuestClub = Model.GuestNames.ElementAt(i);
+                        var StartTime = Model.StartTimes.ElementAt(i);
+                        var EndTime = Model.EndTimes.ElementAt(i);
+                        var Status = Model.Statuses.ElementAt(i);
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(m => RepName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(m => HostClub)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(m => GuestClub)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(m => StartTime)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(m => EndTime)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(m => Status)
+                            </td>
+                            <td>
+                                <button asp-page-handler="Accept" asp-route-HostClub=@HostClub 
+                                asp-route-GuestClub=@GuestClub asp-route-StartTime=@StartTime
+                                onclick="return confirm('Are you Sure you want to Accept this Request ?')" class="btn btn-success btn-secondary">Accept</button>
+                            </td>
+                            <td>
+                                <button asp-page-handler="Reject" asp-route-HostClub=@HostClub
+                                asp-route-GuestClub=@GuestClub asp-route-StartTime=@StartTime
+                                onclick="return confirm('Are you Sure you want to Reject this Request ?')" class="btn btn-danger btn-secondary">Reject</button>
+                            </td>
+                        </tr>
+                    }
+                </table>
+            }
+            else
+            {
+                <p>No Pending Requests.</p>
+            }
+        </form>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="~/js/bookList.js"></script>
+}

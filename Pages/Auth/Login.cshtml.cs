@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using Sports_Management_System.Models;
 
@@ -39,15 +40,18 @@ namespace Sports_Management_System.Pages.Auth
             }
 
             string dashboardFolder = "~/Dashboards/";
-            string indexFolder = "/Index";
-
+            string destination;
+            var url = "";
+            
             // check if user is a Fan 
             var fanList = _db.Fans.FromSql($"SELECT * FROM Fan")
                  .Where(n => n.Username == username)
                  .ToList();
             if (fanList.Count > 0)
             {
-                return Redirect(dashboardFolder + "FanDashboard" + indexFolder);
+                destination = dashboardFolder + "Fan";
+                url = QueryHelpers.AddQueryString(destination, "username", username);
+                return Redirect(url);
             }
             // check if user is a stadium manager 
             var stadiumManagerList = _db.StadiumManagers
@@ -56,7 +60,9 @@ namespace Sports_Management_System.Pages.Auth
                  .ToList();
             if (stadiumManagerList.Count > 0)
             {
-                return Redirect(dashboardFolder + "StadiumManagerDashboard" + indexFolder);
+                destination = dashboardFolder + "StadiumManager";
+                url = QueryHelpers.AddQueryString(destination, "username", username);
+                return Redirect(url);
             }
             // check if user is a association manager 
             var assocManagerList = _db.SportsAssociationManagers
@@ -65,7 +71,9 @@ namespace Sports_Management_System.Pages.Auth
                  .ToList();
             if (assocManagerList.Count > 0)
             {
-                return Redirect(dashboardFolder + "AssociationManagerDashboard" + indexFolder);
+                destination = dashboardFolder + "AssociationManager";
+                url = QueryHelpers.AddQueryString(destination, "username", username);
+                return Redirect(url);
             }
             // check if user is a club representative 
             var clubRepresentativeList = _db.ClubRepresentatives
@@ -74,10 +82,13 @@ namespace Sports_Management_System.Pages.Auth
                  .ToList();
             if (clubRepresentativeList.Count > 0)
             {
-                return Redirect(dashboardFolder + "ClubRepresentativeDashboard" + indexFolder);
+                destination = dashboardFolder + "ClubRepresentative";
+                url = QueryHelpers.AddQueryString(destination, "username", username);
+                return Redirect(url);
             }
-
-            return Redirect(dashboardFolder + "SystemAdminDashboard" + indexFolder);
+            destination = dashboardFolder + "SystemAdmin";
+            url = QueryHelpers.AddQueryString(destination, "username", username);
+            return Redirect(url);
         }
 
     }

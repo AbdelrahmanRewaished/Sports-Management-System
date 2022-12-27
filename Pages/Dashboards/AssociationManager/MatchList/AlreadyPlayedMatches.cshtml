@@ -1,0 +1,65 @@
+﻿@page
+@model Sports_Management_System.Pages.Dashboards.AssociationManager.MatchList.AlreadyPlayedMatchesModel
+@{
+}
+<br />
+
+<div class="container row p-0 m-0">
+    <div class="col-9">
+        <h2 class="text-info">Already Played Matches</h2>
+    </div>
+
+    <div class="col-12 border p-3 mt-3">
+        <form method="post">
+            @if (Model.HostClubs.Count() > 0)
+            {
+                <table class="table table-striped border">
+                    <tr class="table table-secondary">
+                        <th>
+                            <label value="HostClub">Host Club</label>
+                        </th>
+                        <th>
+                            <label value="GuestClub">Guest Club</label>
+                        </th>
+                        <th>
+                            <label value="StartTime">Start Time</label>
+                        </th>
+                        <th>
+                            <label value="End Time">End Time</label>
+                        </th>
+
+                    </tr>
+                    @for (int i = 0; i < Model.HostClubs.Count; i++)
+                    {
+                        var HostClub = Model.HostClubs.ElementAt(i);
+                        var GuestClub = Model.GuestClubs.ElementAt(i);
+                        var StartTime = Model.StartTimes.ElementAt(i);
+                        var EndTime = Model.EndTimes.ElementAt(i);
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(m => HostClub)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(m => GuestClub)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(m => StartTime)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(m => EndTime)
+                            </td>
+                        </tr>
+                    }
+                </table>
+            }
+            else
+            {
+                <p>No Matches Played Available.</p>
+            }
+        </form>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="~/js/bookList.js"></script>
+}
