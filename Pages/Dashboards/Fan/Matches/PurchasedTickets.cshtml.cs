@@ -14,7 +14,6 @@ namespace Sports_Management_System.Pages.Dashboards.Fan.Matches
         public List<string> Stadiums { get; set; }
         public List<string> Locations { get; set; }
         public List<int> TicketsList { get; set; }
-        private int NationalId { get; set; } 
         public PurchasedTicketsModel(ChampionsLeagueDbContext db)
         {
             _db = db;

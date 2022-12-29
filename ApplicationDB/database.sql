@@ -745,3 +745,8 @@ drop function [matchWithHighestAttendance]
 drop function[matchesRankedByAttendance]
 drop function [requestsFromClub];
 
+insert into System_User2 values('Admin', 'admin');
+insert into System_User2 values('Abdo', 'password');
+
+insert into System_Admin values('Admin', 'Admin');
+insert into System_Admin values('Abdo', 'Abdo');

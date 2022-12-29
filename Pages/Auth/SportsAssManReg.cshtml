@@ -36,11 +36,7 @@
                             <div class="form-group">
                                 <label asp-for="registeringAssocManager.Username"><i class="zmdi zmdi-email"></i></label>
                                 <input asp-for="registeringAssocManager.Username" placeholder="Your Username" />
-                                @if (Model.errorMessage.Equals("Already registered"))
-                                {
-                                    <br />
-                                    <p style="color:red"> @Model.errorMessage</p>
-                                }
+                                
                             </div>
                             <div class="form-group">
                                 <label asp-for="registeringAssocManager.Password"><i class="zmdi zmdi-lock"></i></label>
@@ -49,12 +45,10 @@
                             <div class="form-group">
                                 <label asp-for="registeringAssocManager.ConfirmPassword"><i class="zmdi zmdi-lock-outline"></i></label>
                                 <input asp-for="registeringAssocManager.ConfirmPassword" type="password" placeholder="Repeat your password" />
-                                @if (Model.errorMessage.Equals("Passwords must match"))
-                                {
-                                    <br />
-                                    <p style="color:red"> @Model.errorMessage</p>
-                                }
+                                
                             </div>
+                            <br />
+                            <p style="color:red"> @Model.errorMessage</p>
                             <div class="form-group">
                                 <input type="checkbox" name="agree-term" id="agree-term" class="agree-term" />
                                 <label for="agree-term" class="label-agree-term"><span><span></span></span>I agree all statements in  <a href="#" class="term-service">Terms of service</a></label>

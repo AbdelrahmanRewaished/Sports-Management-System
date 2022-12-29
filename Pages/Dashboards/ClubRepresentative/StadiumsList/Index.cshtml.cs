@@ -12,9 +12,9 @@ namespace Sports_Management_System.Pages.Dashboards.ClubRepresentative.StadiumsL
         public List<string> Names, Locations;
         public List<int> Capacities;
         public string Club { get; set; }
-        public static DateTime StartTime { get; set; }
         public string hostClub {get; set;}
         public string guestClub { get; set; }
+        public DateTime StartTime { get; set; }
         public string Username { get; set; }
 
         public IndexModel(ChampionsLeagueDbContext db)
@@ -36,11 +36,12 @@ namespace Sports_Management_System.Pages.Dashboards.ClubRepresentative.StadiumsL
             }
             hostClub = HostClub;
             guestClub = GuestClub;
+            StartTime = startTime;
             Club = _db.Clubs.Find(_db.getCurrentClubRepresentative(Username).ClubId)!.Name!;
             Names = _db.Database.SqlQuery<string>($"SELECT Name FROM dbo.viewAvailableStadiumsOn({HostClub},{GuestClub},{startTime})").ToList();
             Locations = _db.Database.SqlQuery<string>($"SELECT Location FROM dbo.viewAvailableStadiumsOn({HostClub},{GuestClub},{startTime})").ToList();
-            Capacities = _db.Database.SqlQuery<int>($"SELECT Capacity FROM dbo.viewAvailableStadiumsOn({HostClub},{GuestClub},{startTime})").ToList();            
-            StartTime = startTime;
+            Capacities = _db.Database.SqlQuery<int>($"SELECT Capacity FROM dbo.viewAvailableStadiumsOn({HostClub},{GuestClub},{startTime})").ToList();
+            HttpContext.Session.SetString("Match_StartTime", startTime.ToString());
             return null;
         }
        
@@ -48,7 +49,9 @@ namespace Sports_Management_System.Pages.Dashboards.ClubRepresentative.StadiumsL
         {
             Username = HttpContext.Session.GetString("Username")!;
             Club = _db.Clubs.Find(_db.getCurrentClubRepresentative(Username).ClubId)!.Name!;
+            string StartTime = HttpContext.Session.GetString("Match_StartTime")!;
             await _db.Database.ExecuteSqlAsync($"exec AddHostRequest {Club}, {Stadium}, {StartTime}");
+            HttpContext.Session.Remove("Match_StartTime");
             return Redirect("ClubInfo");
         }
 

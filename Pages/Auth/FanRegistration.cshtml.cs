@@ -45,12 +45,28 @@ namespace Sports_Management_System.Pages.Auth
 
         public async Task<IActionResult> OnPost()
         {
-            if (!ModelState.IsValid || !registeringFan.Password.Equals(registeringFan.ConfirmPassword))
+            if (!ModelState.IsValid) 
             {
-                errorMessage = "Passwords must match";
+                errorMessage = "Fill All Fields Correctly";
                 return Page();
             }
-            SystemUser user = await _db.SystemUsers.FindAsync(registeringFan.Username);
+			if (registeringFan.Password.Length < 6)
+			{
+				errorMessage = "Password must be longer than 5 characters";
+				return Page();
+			}
+			if (registeringFan.Password.Length > 20)
+			{
+				errorMessage = "Password must be shorter than 20 characters";
+				return Page();
+			}
+			if (!registeringFan.Password.Equals(registeringFan.ConfirmPassword))
+            {
+				errorMessage = "Passwords must match";
+				return Page();
+			}
+			
+			SystemUser user = await _db.SystemUsers.FindAsync(registeringFan.Username);
             if (user != null)
             {
                 errorMessage = "Already registered";

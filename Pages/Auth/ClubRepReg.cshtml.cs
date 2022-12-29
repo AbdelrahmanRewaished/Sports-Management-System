@@ -25,10 +25,20 @@ namespace Sports_Management_System.Pages.Auth
         {
             if (! ModelState.IsValid) 
             {
-                errorMessage = "Fill All Fields";
+                errorMessage = "Fill All Fields Correctly";
                 return Page();
             }
-            if (! registeringClubRepresentative.Password.Equals(registeringClubRepresentative.ConfirmPassword))
+            if(registeringClubRepresentative.Password.Length < 6)
+            {
+				errorMessage = "Password must be longer than 5 characters";
+				return Page();
+			}
+			if (registeringClubRepresentative.Password.Length > 20)
+			{
+				errorMessage = "Password must be shorter than 20 characters";
+				return Page();
+			}
+			if (! registeringClubRepresentative.Password.Equals(registeringClubRepresentative.ConfirmPassword))
             {
                 errorMessage = "Passwords must match";
                 return Page();

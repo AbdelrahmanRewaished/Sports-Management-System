@@ -12,10 +12,11 @@
     <div class="col-9">
         <h2 class="text-info">Matches List</h2>
     </div>
+    <br />
     <div class="col-3">
-        <a asp-page="Create" class="btn btn-info form-check-control text-white">Create New Match</a>
+        <a asp-page="Create" class="btn btn-info form-check-control text-white btn-lg">Create New Match</a>
     </div>
-
+    <br />
     <div class="col-12 border p-3 mt-3">
         <form method="post">
             @if (Model.Matches.Count() > 0)
@@ -63,7 +64,8 @@
             }
             else
             {
-                <p>No Clubs Available.</p>
+                <br />
+                <h4>No Matches Available.</h4>
             }
         </form>
     </div>

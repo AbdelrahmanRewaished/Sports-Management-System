@@ -40,18 +40,28 @@ namespace Sports_Management_System.Pages.Auth
         {
             if(! ModelState.IsValid)
             {
-                errorMessage = "State is not valid";
+                errorMessage = "Fill All Fields Correctly";
                 return Page();
             }
-            SystemUser user = await _db.SystemUsers.FindAsync(registeringAssocManager.Username);
+			if (registeringAssocManager.Password.Length < 6)
+			{
+				errorMessage = "Password must be longer than 5 characters";
+				return Page();
+			}
+			if (registeringAssocManager.Password.Length > 20)
+			{
+				errorMessage = "Password must be shorter than 20 characters";
+				return Page();
+			}
+			if (!registeringAssocManager.Password.Equals(registeringAssocManager.ConfirmPassword))
+			{
+				errorMessage = "Passwords must match";
+				return Page();
+			}
+			SystemUser user = await _db.SystemUsers.FindAsync(registeringAssocManager.Username);
             if(user != null)
             {
                 errorMessage = "Already registered";
-                return Page();
-            }
-            if(!registeringAssocManager.Password.Equals(registeringAssocManager.ConfirmPassword))
-            {
-                errorMessage = "Passwords must match";
                 return Page();
             }
             await _db.Database.ExecuteSqlAsync($"exec addAssociationManager {registeringAssocManager.Name}, {registeringAssocManager.Username}, {registeringAssocManager.Password}");
