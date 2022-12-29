@@ -11,12 +11,11 @@ namespace Sports_Management_System.Pages.Dashboards.ClubRepresentative.StadiumsL
 
         public List<string> Names, Locations;
         public List<int> Capacities;
-        public static string Club { get; set; }
+        public string Club { get; set; }
         public static DateTime StartTime { get; set; }
-        public static int MatchId { get; set; }
-        public static string hostClub {get; set;}
-        public static string guestClub { get; set; }
-        public static string Username { get; set; }
+        public string hostClub {get; set;}
+        public string guestClub { get; set; }
+        public string Username { get; set; }
 
         public IndexModel(ChampionsLeagueDbContext db)
         {
@@ -47,6 +46,8 @@ namespace Sports_Management_System.Pages.Dashboards.ClubRepresentative.StadiumsL
        
         public async Task<IActionResult> OnPost(string Stadium)
         {
+            Username = HttpContext.Session.GetString("Username")!;
+            Club = _db.Clubs.Find(_db.getCurrentClubRepresentative(Username).ClubId)!.Name!;
             await _db.Database.ExecuteSqlAsync($"exec AddHostRequest {Club}, {Stadium}, {StartTime}");
             return Redirect("ClubInfo");
         }

@@ -16,12 +16,12 @@ namespace Sports_Management_System.Pages.Dashboards.StadiumManager.StadiumInfo
         public List<DateTime> EndTimes;
         public List<string> Statuses;
         private Models.StadiumManager StadiumManager;
-        private static string Username;
+        private string Username;
         public int MatchId;
 
         public IndexModel(ChampionsLeagueDbContext db)
         {
-            _db = db;            
+            _db = db; 
         }
         public async Task<IActionResult> OnGet()
         {
@@ -75,6 +75,7 @@ namespace Sports_Management_System.Pages.Dashboards.StadiumManager.StadiumInfo
 
         public async Task<IActionResult> OnPostAccept(string HostClub, string GuestClub, DateTime startTime)
         {
+            Username = HttpContext.Session.GetString("Username")!;
             string time = getRequiredSQLDateFormat(startTime);
             _db.Database.ExecuteSql($"exec acceptRequest {Username},{HostClub},{GuestClub},{time}");
             return RedirectToPage("Index");
@@ -82,6 +83,7 @@ namespace Sports_Management_System.Pages.Dashboards.StadiumManager.StadiumInfo
 
         public async Task<IActionResult> OnPostReject(string HostClub, string GuestClub, DateTime startTime)
         {
+            Username = HttpContext.Session.GetString("Username")!;
             string time = getRequiredSQLDateFormat(startTime);
             _db.Database.ExecuteSql($"exec rejectRequest {Username},{HostClub},{GuestClub},{time}");
             return RedirectToPage("Index");

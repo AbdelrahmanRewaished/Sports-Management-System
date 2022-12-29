@@ -47,15 +47,15 @@
                                 }
                                 else if(Model.getHostRequestStatus(Name) == "unhandled")
                                 {
-                                    <button asp-route-Stadium=@Name class="btn btn-info btn-secondary" disabled>Pending..</button>
+                                    <button class="btn btn-info btn-secondary" disabled>Pending..</button>
                                 }
                                 else if(Model.getHostRequestStatus(Name) == "rejected")
                                 {
-                                    <button asp-route-Stadium=@Name class="btn btn-danger btn-secondary" disabled>Rejected</button>
+                                    <button class="btn btn-danger btn-secondary" disabled>Rejected</button>
                                 }
                                 else
                                 {
-                                    <button asp-route-Stadium=@Name class="btn btn-success btn-secondary" disabled>Accepted</button>
+                                    <button class="btn btn-success btn-secondary" disabled>Accepted</button>
                                 }
                             </td>
                         </tr>

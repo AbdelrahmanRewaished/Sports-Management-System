@@ -50,6 +50,8 @@ namespace Sports_Management_System.Pages.Dashboards.Fan.Matches
 
         public async Task<IActionResult> OnPost(string hostClub, string guestClub, DateTime startTime) 
         {
+            string Username = HttpContext.Session.GetString("Username");
+            fan = _db.getCurrentFan(Username);
             _db.Database.ExecuteSql($"exec purchaseTicket {fan.NationalId}, {hostClub}, {guestClub}, {startTime}");
             return RedirectToPage("Index");
         }

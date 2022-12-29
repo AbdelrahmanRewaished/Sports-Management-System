@@ -14,12 +14,10 @@ namespace Sports_Management_System.Pages.Dashboards.Fan.Matches
         public List<string> Stadiums { get; set; }
         public List<string> Locations { get; set; }
         public List<int> TicketsList { get; set; }
-        private Models.Fan fan;
+        private int NationalId { get; set; } 
         public PurchasedTicketsModel(ChampionsLeagueDbContext db)
         {
             _db = db;
-            string username = HttpContext.Session.GetString("Username");
-            fan = _db.getCurrentFan(username);
         }
 
 
@@ -31,11 +29,11 @@ namespace Sports_Management_System.Pages.Dashboards.Fan.Matches
                 return Redirect("../../../../Auth/Login");
             }
             string Role = HttpContext.Session.GetString("Role");
-            if (Role != "ClubRepresentative")
+            if (Role != "Fan")
             {
                 return Redirect("../../../../Auth/UnAuthorized");
             }
-            
+            Models.Fan fan = _db.getCurrentFan(Username);
             HostClubs = _db.Database.SqlQuery<string>
                 ($"SELECT HostClub FROM dbo.purchasedTicketsPerMatchFor({fan.NationalId})").ToList();
             GuestClubs = _db.Database.SqlQuery<string>
