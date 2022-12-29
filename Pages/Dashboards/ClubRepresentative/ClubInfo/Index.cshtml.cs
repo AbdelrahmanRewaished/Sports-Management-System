@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Sports_Management_System.Models;
+using Microsoft.AspNetCore.Http;
 
 namespace Sports_Management_System.Pages.Dashboards.ClubRepresentative.ClubInfo
 {
@@ -18,11 +19,23 @@ namespace Sports_Management_System.Pages.Dashboards.ClubRepresentative.ClubInfo
         public IndexModel(ChampionsLeagueDbContext db)
         {
             _db = db;
-
+           
         }
-        public void OnGet()
+        public IActionResult OnGet()
         {
-            Club = _db.Clubs.Find(ClubRepresentative.IndexModel.clubRepresentative.ClubId);
+            string Username = HttpContext.Session.GetString("Username");
+            if (Username == null)
+            {
+                return Redirect("../../../Auth/Login");
+            }
+            string Role = HttpContext.Session.GetString("Role");
+            if (Role != "ClubRepresentative")
+            {
+                return Redirect("../../../Auth/UnAuthorized");
+            }
+
+            Club = _db.Clubs.Find(_db.getCurrentClubRepresentative(Username).ClubId);
+
             HostClubs = _db.Database.SqlQuery<string>
                 ($"SELECT HostClub FROM dbo.getAllUpComingMatchesOfClub({Club.ClubId})")
                 .ToList();
@@ -38,6 +51,8 @@ namespace Sports_Management_System.Pages.Dashboards.ClubRepresentative.ClubInfo
             EndTimes = _db.Database.SqlQuery<DateTime>
                 ($"SELECT EndTime FROM dbo.getAllUpComingMatchesOfClub({Club.ClubId})")
                 .ToList();
+
+            return null;
         }
     }
 }

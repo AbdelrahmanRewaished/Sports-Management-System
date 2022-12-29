@@ -15,10 +15,22 @@ namespace Sports_Management_System.Pages.Dashboards.AssociationManager.MatchList
         }
         public List<Match> Matches { get; set; }
         public List<AllMatch> AllMatches { get; set; }
-        public async Task OnGet()
+       
+        public async Task<IActionResult> OnGet()
         {
+            string Username = HttpContext.Session.GetString("Username");
+            if (Username == null)
+            {
+                return Redirect("../../../Auth/Login");
+            }
+            string Role = HttpContext.Session.GetString("Role");
+            if (Role != "AssociationManager")
+            {
+                return Redirect("../../../Auth/UnAuthorized");
+            }
             AllMatches = await _db.AllMatches.ToListAsync();
             Matches = await _db.Matches.ToListAsync();
+            return null;
         }
 
         public async Task<IActionResult> OnPostDelete(int id)

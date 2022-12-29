@@ -15,41 +15,54 @@ namespace Sports_Management_System.Pages.Dashboards.StadiumManager.StadiumInfo
         public List<DateTime> StartTimes;
         public List<DateTime> EndTimes;
         public List<string> Statuses;
-
+        private Models.StadiumManager StadiumManager;
+        private static string Username;
         public int MatchId;
 
         public IndexModel(ChampionsLeagueDbContext db)
         {
-            _db = db;
-            Stadium = _db.Stadia.Find(StadiumManager.IndexModel.StadiumManager.StadiumId);
+            _db = db;            
+        }
+        public async Task<IActionResult> OnGet()
+        {
+            Username = HttpContext.Session.GetString("Username")!;
+            if (Username == null)
+            {
+                return Redirect("../../../Auth/Login");
+            }
+            string Role = HttpContext.Session.GetString("Role")!;
+            if (Role != "StadiumManager")
+            {
+                return Redirect("../../../Auth/UnAuthorized");
+            }
+
+            StadiumManager = _db.getCurrentStadiumManager(Username);
+            Stadium = _db.Stadia.Find(StadiumManager.StadiumId)!;
             RepresentativeNames = _db.Database.SqlQuery<string>
-                ($"SELECT club_rep_name FROM dbo.allPendingRequests({StadiumManager.IndexModel.StadiumManager.Username})")
+                ($"SELECT club_rep_name FROM dbo.allPendingRequests({Username})")
                 .ToList();
 
             HostNames = _db.Database.SqlQuery<string>
-                ($"SELECT HostClub FROM dbo.allPendingRequests({StadiumManager.IndexModel.StadiumManager.Username})")
+                ($"SELECT HostClub FROM dbo.allPendingRequests({Username})")
                 .ToList();
 
             GuestNames = _db.Database.SqlQuery<string>
-                ($"SELECT GuestClub FROM dbo.allPendingRequests({StadiumManager.IndexModel.StadiumManager.Username})")
+                ($"SELECT GuestClub FROM dbo.allPendingRequests({Username})")
                 .ToList();
 
 
             StartTimes = _db.Database.SqlQuery<DateTime>
-                ($"SELECT StartTime FROM dbo.allPendingRequests({StadiumManager.IndexModel.StadiumManager.Username})")
+                ($"SELECT StartTime FROM dbo.allPendingRequests({Username})")
                 .ToList();
 
             EndTimes = _db.Database.SqlQuery<DateTime>
-                ($"SELECT EndTime FROM dbo.allPendingRequests({StadiumManager.IndexModel.StadiumManager.Username})")
+                ($"SELECT EndTime FROM dbo.allPendingRequests({Username})")
                 .ToList();
 
             Statuses = _db.Database.SqlQuery<string>
-                ($"SELECT Status FROM dbo.allPendingRequests({StadiumManager.IndexModel.StadiumManager.Username})")
+                ($"SELECT Status FROM dbo.allPendingRequests({Username})")
                 .ToList();
-        }
-        public void OnGet()
-        {
-            
+            return null;
         }
 
         private static string getRequiredSQLDateFormat(DateTime dateTime)
@@ -63,14 +76,14 @@ namespace Sports_Management_System.Pages.Dashboards.StadiumManager.StadiumInfo
         public async Task<IActionResult> OnPostAccept(string HostClub, string GuestClub, DateTime startTime)
         {
             string time = getRequiredSQLDateFormat(startTime);
-            _db.Database.ExecuteSql($"exec acceptRequest {StadiumManager.IndexModel.StadiumManager.Username},{HostClub},{GuestClub},{time}");
+            _db.Database.ExecuteSql($"exec acceptRequest {Username},{HostClub},{GuestClub},{time}");
             return RedirectToPage("Index");
         }
 
         public async Task<IActionResult> OnPostReject(string HostClub, string GuestClub, DateTime startTime)
         {
             string time = getRequiredSQLDateFormat(startTime);
-            _db.Database.ExecuteSql($"exec rejectRequest {StadiumManager.IndexModel.StadiumManager.Username},{HostClub},{GuestClub},{time}");
+            _db.Database.ExecuteSql($"exec rejectRequest {Username},{HostClub},{GuestClub},{time}");
             return RedirectToPage("Index");
         }
     }

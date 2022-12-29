@@ -1,0 +1,10 @@
+﻿body, html {
+    width: 680px;
+    background: #fff;
+    border-radius: 10px;
+    position: relative;
+    background-image: url(../lib/images/mainImage.jpg);
+    color: white;
+    font-weight: bolder;
+    font-weight: 900;
+}

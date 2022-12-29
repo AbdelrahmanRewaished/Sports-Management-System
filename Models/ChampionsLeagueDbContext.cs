@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
-
+using Microsoft.AspNetCore.Http;
 namespace Sports_Management_System.Models;
 
 public partial class ChampionsLeagueDbContext : DbContext
@@ -607,4 +607,56 @@ public partial class ChampionsLeagueDbContext : DbContext
     }
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
+
+    public ClubRepresentative getCurrentClubRepresentative(string username)
+    {
+        return ClubRepresentatives
+                                    .Where(n => n.Username == username)
+                                    .OrderBy(n => n.Username)
+                                    .Last();
+    }
+
+    public StadiumManager getCurrentStadiumManager(string username)
+    {
+        return StadiumManagers
+                            .Where(n => n.Username == username)
+                            .OrderBy(n => n.Username)
+                            .Last();
+    }
+
+    public Fan getCurrentFan(string username)
+    {
+        return Fans
+                .Where(n => n.Username == username)
+                .OrderBy(n => n.Username)
+                .Last();
+    }
+
+    public string getHostRequestStatus(string username, string hostClub, string guestClub, DateTime startTime, string stadium)
+    {
+        ClubRepresentative clubRepresentative = getCurrentClubRepresentative(username);
+
+        int HostClubId = Clubs.Where(e => e.Name == hostClub).OrderBy(e => e.ClubId).LastOrDefault().ClubId;
+        int GuestClubId = Clubs.Where(e => e.Name == guestClub).OrderBy(e => e.ClubId).LastOrDefault().ClubId;
+        Match match = Matches
+            .Where(n => n.HostClubId == HostClubId)
+            .Where(n => n.GuestClubId == GuestClubId)
+            .Where(n => n.StartTime == startTime).OrderBy(n => n.MatchId).LastOrDefault();
+
+        Stadium Stadium = Stadia.Where(n => n.Name == stadium).OrderBy(n => n.Id).FirstOrDefault();
+
+        StadiumManager stadiumManager = StadiumManagers.Where(n => n.StadiumId == Stadium.Id)
+            .OrderBy(n => n.Id).LastOrDefault();
+
+        HostRequest hostRequest = HostRequests.Where(n => n.ManagerId == stadiumManager.Id)
+                                               .Where(n => n.MatchId == match.MatchId)
+                                               .Where(n => n.RepresentativeId == clubRepresentative.Id)
+                                               .OrderBy(n => n.Id)
+                                               .FirstOrDefault();
+        if (hostRequest == null)
+        {
+            return null;
+        }
+        return hostRequest.Status;
+    }
 }

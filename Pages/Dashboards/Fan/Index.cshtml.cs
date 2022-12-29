@@ -14,14 +14,19 @@ namespace Sports_Management_System.Pages.Dashboards.Fan
         }
     
         public string Username { get; set; }
-        public static Models.Fan fan { get; set; }
-        public void OnGet(string username)
+        public async Task<IActionResult> OnGet()
         {
-            Username = username;
-            fan = _db.Fans
-                    .Where(n => n.Username == username)
-                    .OrderBy(n => n.Username)
-                    .Last();
+            string Username = HttpContext.Session.GetString("Username")!;
+            if (Username == null)
+            {
+                return Redirect("../../Auth/Login");
+            }
+            string Role = HttpContext.Session.GetString("Role")!;
+            if (Role != "Fan")
+            {
+                return Redirect("../../Auth/UnAuthorized");
+            }
+            return null;
         }
     }
 }

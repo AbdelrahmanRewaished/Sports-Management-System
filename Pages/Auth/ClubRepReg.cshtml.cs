@@ -23,7 +23,12 @@ namespace Sports_Management_System.Pages.Auth
         }
         public async Task<IActionResult> OnPost()
         {
-            if (! ModelState.IsValid || !registeringClubRepresentative.Password.Equals(registeringClubRepresentative.ConfirmPassword))
+            if (! ModelState.IsValid) 
+            {
+                errorMessage = "Fill All Fields";
+                return Page();
+            }
+            if (! registeringClubRepresentative.Password.Equals(registeringClubRepresentative.ConfirmPassword))
             {
                 errorMessage = "Passwords must match";
                 return Page();

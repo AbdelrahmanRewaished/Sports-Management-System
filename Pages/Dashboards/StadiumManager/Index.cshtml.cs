@@ -8,21 +8,25 @@ namespace Sports_Management_System.Pages.Dashboards.StadiumManager
     public class IndexModel : PageModel
     {
         private readonly ChampionsLeagueDbContext _db;
-        public static Models.StadiumManager StadiumManager { get; set; }
         public string Username { get; set; }
         public IndexModel(ChampionsLeagueDbContext db)
         {
             _db = db;
         }
-        
-        public void OnGet(string username)
+
+        public async Task<IActionResult> OnGet()
         {
-            Username = username;
-            StadiumManager = _db.StadiumManagers
-                                    .FromSql($"SELECT * FROM Stadium_Manager")
-                                    .Where(n => n.Username == username)
-                                    .OrderBy(n => n.Username)
-                                    .Last();
+            string Username = HttpContext.Session.GetString("Username")!;
+            if (Username == null)
+            {
+                return Redirect("../../Auth/Login");
+            }
+            string Role = HttpContext.Session.GetString("Role")!;
+            if (Role != "StadiumManager")
+            {
+                return Redirect("../../Auth/UnAuthorized");
+            }
+            return null;
         }
     }
 }

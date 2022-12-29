@@ -13,14 +13,27 @@ namespace Sports_Management_System.Pages.Dashboards.Fan.Matches
         public List<DateTime> StartTimes { get; set; }
         public List<string> Stadiums { get; set; }
         public List<string> Locations { get; set; }
+        private Models.Fan fan { get; set; }
         public IndexModel(ChampionsLeagueDbContext db)
         {
             _db = db;
         }
         
 
-        public void OnGet()
+        public IActionResult OnGet()
         {
+            
+            string Username = HttpContext.Session.GetString("Username");
+            if (Username == null)
+            {
+                return Redirect("../../../Auth/Login");
+            }
+            string Role = HttpContext.Session.GetString("Role");
+            if (Role != "Fan")
+            {
+                return Redirect("../../../Auth/UnAuthorized");
+            }
+            fan = _db.getCurrentFan(Username);
             HostClubs = _db.Database.SqlQuery<string>
                 ($"SELECT HostClub FROM dbo.availableMatchesToAttend()").ToList();
             GuestClubs = _db.Database.SqlQuery<string>
@@ -31,11 +44,13 @@ namespace Sports_Management_System.Pages.Dashboards.Fan.Matches
                 ($"SELECT Stadium FROM dbo.availableMatchesToAttend()").ToList();
             Locations = _db.Database.SqlQuery<string>
                 ($"SELECT Location FROM dbo.availableMatchesToAttend()").ToList();
-        }   
+            return null;
+
+        }
 
         public async Task<IActionResult> OnPost(string hostClub, string guestClub, DateTime startTime) 
         {
-            _db.Database.ExecuteSql($"exec purchaseTicket {Fan.IndexModel.fan.NationalId}, {hostClub}, {guestClub}, {startTime}");
+            _db.Database.ExecuteSql($"exec purchaseTicket {fan.NationalId}, {hostClub}, {guestClub}, {startTime}");
             return RedirectToPage("Index");
         }
     }

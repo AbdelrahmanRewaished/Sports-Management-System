@@ -1,6 +1,8 @@
 ﻿@page
 @model Sports_Management_System.Pages.Dashboards.ClubRepresentative.StadiumsList.IndexModel
 @{
+    Layout = "~/Pages/Shared/_ClubRepLayout.cshtml";
+
 }
 <div class="container row p-0 m-0">
     <div class="col-9">
@@ -39,7 +41,22 @@
                                 @Html.DisplayFor(m => Capacity)
                             </td>
                             <td>
-                                <button asp-route-Stadium=@Name onclick="return confirm('Are you Sure you want to send this Request ?')" class="btn btn-danger btn-secondary">Send Request</button>
+                                @if(Model.getHostRequestStatus(Name) == null)
+                                {
+                                    <button asp-route-Stadium=@Name onclick="return confirm('Are you Sure you want to send this Request ?')" class="btn btn-danger btn-secondary">Send Request</button>
+                                }
+                                else if(Model.getHostRequestStatus(Name) == "unhandled")
+                                {
+                                    <button asp-route-Stadium=@Name class="btn btn-info btn-secondary" disabled>Pending..</button>
+                                }
+                                else if(Model.getHostRequestStatus(Name) == "rejected")
+                                {
+                                    <button asp-route-Stadium=@Name class="btn btn-danger btn-secondary" disabled>Rejected</button>
+                                }
+                                else
+                                {
+                                    <button asp-route-Stadium=@Name class="btn btn-success btn-secondary" disabled>Accepted</button>
+                                }
                             </td>
                         </tr>
                     }

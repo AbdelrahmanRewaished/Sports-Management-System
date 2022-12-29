@@ -36,6 +36,11 @@
                             <div class="form-group">
                                 <label asp-for="registeringAssocManager.Username"><i class="zmdi zmdi-email"></i></label>
                                 <input asp-for="registeringAssocManager.Username" placeholder="Your Username" />
+                                @if (Model.errorMessage.Equals("Already registered"))
+                                {
+                                    <br />
+                                    <p style="color:red"> @Model.errorMessage</p>
+                                }
                             </div>
                             <div class="form-group">
                                 <label asp-for="registeringAssocManager.Password"><i class="zmdi zmdi-lock"></i></label>
@@ -47,7 +52,7 @@
                                 @if (Model.errorMessage.Equals("Passwords must match"))
                                 {
                                     <br />
-                                    <h6 style="color:red"> @Model.errorMessage</h6>
+                                    <p style="color:red"> @Model.errorMessage</p>
                                 }
                             </div>
                             <div class="form-group">
@@ -56,18 +61,12 @@
                             </div>
                             <div class="form-group form-button">
                                 <input type="submit" name="signup" id="signup" class="form-submit" value="Register" />
-                                @if (Model.errorMessage.Equals("Already registered"))
-                                {
-                                    <br />
-                                    <h6 style="color:red"> @Model.errorMessage</h6>
-                                }
-                              
                             </div>
                         </form>
                     </div>
                     <div class="signup-image">
                         <img src="~/lib/images/bg-01.jpg"/>
-                        <a href="#" class="signup-image-link">I am already member</a>
+                        <a href="Login" class="signup-image-link">I am already member</a>
                     </div>
                 </div>
             </div>
