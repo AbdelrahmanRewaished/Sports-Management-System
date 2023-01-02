@@ -10,6 +10,7 @@ namespace Sports_Management_System.Pages.Dashboards.StadiumManager.StadiumInfo
         private readonly ChampionsLeagueDbContext _db;
         public Stadium Stadium;
         public List<string> RepresentativeNames;
+        public List<string> RepresentedClubs;
         public List<string> HostNames;
         public List<string> GuestNames;
         public List<DateTime> StartTimes;
@@ -40,6 +41,10 @@ namespace Sports_Management_System.Pages.Dashboards.StadiumManager.StadiumInfo
             Stadium = _db.Stadia.Find(StadiumManager.StadiumId)!;
             RepresentativeNames = _db.Database.SqlQuery<string>
                 ($"SELECT club_rep_name FROM dbo.allPendingRequests({Username})")
+                .ToList();
+
+            RepresentedClubs = _db.Database.SqlQuery<string>
+                ($"SELECT RepresentedClub FROM dbo.allPendingRequests({Username})")
                 .ToList();
 
             HostNames = _db.Database.SqlQuery<string>

@@ -21,3 +21,4 @@ public partial class HostRequest
 
     public virtual ClubRepresentative? Representative { get; set; }
 }
+

@@ -613,7 +613,7 @@ public partial class ChampionsLeagueDbContext : DbContext
         return ClubRepresentatives
                                     .Where(n => n.Username == username)
                                     .OrderBy(n => n.Username)
-                                    .Last();
+                                    .LastOrDefault();
     }
 
     public StadiumManager getCurrentStadiumManager(string username)
@@ -632,24 +632,44 @@ public partial class ChampionsLeagueDbContext : DbContext
                 .Last();
     }
 
+    private int getClubId(string name)
+    {
+        return Clubs.Where(n => n.Name == name).OrderBy(n => n.ClubId)
+            .LastOrDefault().ClubId;
+    }
+
+    private int getMatchId(string hostClub, string guestClub, DateTime startTime)
+    {
+        int hostId = getClubId(hostClub);
+        int guestId = getClubId(guestClub);
+        return Matches.Where(n => n.HostClubId == hostId)
+            .Where(n => n.GuestClubId == guestId)
+            .Where(n => n.StartTime == startTime)
+            .OrderBy(n => n.MatchId)
+            .LastOrDefault().MatchId;
+    }
+    private int getStadiumId(string name)
+    {
+        return Stadia.Where(n => n.Name == name).OrderBy(n => n.Id).LastOrDefault().Id;
+    }
+
+    private int getStadiumManagerId(string stadiumName)
+    {
+        int stadiumId = getStadiumId(stadiumName);
+        return StadiumManagers.Where(n => n.StadiumId == stadiumId)
+            .OrderBy(n => n.Id).LastOrDefault().Id;
+    }
+
     public string getHostRequestStatus(string username, string hostClub, string guestClub, DateTime startTime, string stadium)
     {
         ClubRepresentative clubRepresentative = getCurrentClubRepresentative(username);
 
-        int HostClubId = Clubs.Where(e => e.Name == hostClub).OrderBy(e => e.ClubId).LastOrDefault().ClubId;
-        int GuestClubId = Clubs.Where(e => e.Name == guestClub).OrderBy(e => e.ClubId).LastOrDefault().ClubId;
-        Match match = Matches
-            .Where(n => n.HostClubId == HostClubId)
-            .Where(n => n.GuestClubId == GuestClubId)
-            .Where(n => n.StartTime == startTime).OrderBy(n => n.MatchId).LastOrDefault();
+        int matchId = getMatchId(hostClub, guestClub, startTime);
 
-        Stadium Stadium = Stadia.Where(n => n.Name == stadium).OrderBy(n => n.Id).FirstOrDefault();
+        int stadiumManagerId = getStadiumManagerId(stadium);
 
-        StadiumManager stadiumManager = StadiumManagers.Where(n => n.StadiumId == Stadium.Id)
-            .OrderBy(n => n.Id).LastOrDefault();
-
-        HostRequest hostRequest = HostRequests.Where(n => n.ManagerId == stadiumManager.Id)
-                                               .Where(n => n.MatchId == match.MatchId)
+        HostRequest hostRequest = HostRequests.Where(n => n.ManagerId == stadiumManagerId)
+                                               .Where(n => n.MatchId == matchId)
                                                .Where(n => n.RepresentativeId == clubRepresentative.Id)
                                                .OrderBy(n => n.Id)
                                                .FirstOrDefault();
@@ -658,5 +678,18 @@ public partial class ChampionsLeagueDbContext : DbContext
             return null;
         }
         return hostRequest.Status;
+    }
+
+    public bool isMatchHostable(string repUsername, string hostClub,
+        string guestClub, DateTime startTime)
+    {
+        int matchId = getMatchId(hostClub, guestClub, startTime);
+        ClubRepresentative clubRepresentative = getCurrentClubRepresentative(repUsername);
+
+        HostRequest hostRequest = HostRequests.Where(n => n.MatchId == matchId)
+            .Where(n => n.RepresentativeId == clubRepresentative.Id)
+            .OrderBy(n => n.Id)
+            .LastOrDefault();
+        return hostRequest == null || hostRequest.Status == "rejected";
     }
 }

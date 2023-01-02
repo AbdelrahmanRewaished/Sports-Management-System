@@ -271,9 +271,8 @@ insert into System_User2 values (@username,@password)
 insert into Club_Representative values (@name, @id, @username);
 go
 
-
 create function viewAvailableStadiumsOn
-(@HostClub varchar(20), @GuestClub varchar(20),@StartTime datetime)
+(@Representative varchar(20), @HostClub varchar(20), @GuestClub varchar(20),@StartTime datetime)
 returns @T table (Name varchar(20) , Location varchar(20) , Capacity int)
 as
 begin
@@ -282,22 +281,41 @@ exec @matchId = dbo.getMatchId @HostClub, @GuestClub, @StartTime
 select @EndTime = m.end_time from Match m where m.match_ID = @matchId
 insert into @T
 select s.name, s.location, s.capacity
-from Stadium s
-where s.status = 1 
+from Stadium s, Stadium_Manager sm
+where sm.stadium_ID = s.ID and s.status = 1 
 except
 (select s1.name, s1.location, s1.capacity from Stadium s1, Match m
-where s1.ID = m.stadium_ID
-and
+where 
+(s1.ID = m.stadium_ID and
 (@StartTime between m.start_time and m.end_time
 or 
 @EndTime between m.start_time and m.end_time)
-and m.match_ID <> @matchId
+and 
+m.match_ID <> @matchId)
 )
-return
+return 
 end;
 go
 
+create function getAllHostRequestsSentBy
+(@repId int)
+returns @T table(HostClub varchar(20), GuestClub varchar(20),
+StartTime datetime, Stadium varchar(20), Status varchar(20))
+as
+begin
+insert into @T
+select c1.name, c2.name, m.start_time, s.name, hr.status
+from Host_Request hr, Match m, Club c1, Club c2, Stadium s, Stadium_Manager sm
+where hr.representative_ID = @repId 
+and hr.match_ID = m.match_ID
+and m.host_club_ID = c1.club_ID
+and m.guest_club_ID = c2.club_ID
+and hr.manager_ID = sm.ID
+and sm.stadium_ID = s.ID
+return 
+end
 
+go
 CREATE FUNCTION [getStadiumID] (@stadium_name VARCHAR(20))
 RETURNS INT 
 BEGIN 
@@ -359,21 +377,21 @@ end;
 go
 
 
-
 create function [allPendingRequests] (@username varchar(20))
 returns @T table(
-club_rep_name varchar(20), HostClub varchar(20),GuestClub varchar(20) ,StartTime datetime, EndTime datetime, Status varchar(20))
+club_rep_name varchar(20), RepresentedClub varchar(20), HostClub varchar(20),GuestClub varchar(20) ,StartTime datetime, EndTime datetime, Status varchar(20))
 as 
 begin 
 declare @stadium_manager_id int
 select @stadium_manager_id = id from Stadium_Manager where username = @username
 insert into @T 
-select cr.name as representative_name,c1.name as host_club, c2.name as guest_club ,
+select cr.name as representative_name, c.representedClub, c1.name as host_club, c2.name as guest_club ,
 m.start_time as startTime, m.end_time as endTime, hr.status
-from Club_Representative cr , Club c1, Club c2 , Match m , Host_Request hr
+from Club_Representative cr , Club c, Club c1, Club c2 , Match m , Host_Request hr
 where
 hr.manager_ID = @stadium_manager_id and 
 hr.representative_ID = cr.ID and
+cr.club_ID = c.club_ID and 
 hr.match_ID = m.match_ID and
 c1.club_ID = m.host_club_ID and
 c2.club_ID = m.guest_club_ID and 
@@ -400,12 +418,19 @@ create proc acceptRequest
 @guest_club_name varchar(20),
 @match_start_time varchar(20)
 as
-declare @matchId int, @managerId int
+declare @matchId int, @managerId int, @hostRequestId int, @representedClub varchar(20)
 exec @matchId = dbo.getMatchId @hosting_club_name, @guest_club_name, @match_start_time
 declare @stadiumId int
 select @managerId = sm.ID from Stadium_Manager sm where sm.username = @username
 select @stadiumId = s.ID from Stadium s, Stadium_Manager sm where s.ID = sm.stadium_ID and sm.ID = @managerId;
-update Host_Request set status = 'accepted' where Host_Request.match_ID = @matchId and Host_Request.manager_ID = @managerId
+select @hostRequestId = hr.ID from Host_Request hr where hr.manager_ID = @managerId and hr.match_ID = @matchId
+select @representedClub = c.Name from Club c, Club_Representative cr, Host_Request hr where cr.club_ID = c.club_ID 
+and hr.representative_ID = cr.ID and hr.ID = @hostRequestId
+if @hosting_club_name <> @representedClub
+begin
+exec updateMatchHost @hosting_club_name, @guest_club_name, @match_start_time
+end
+update Host_Request set status = 'accepted' where Host_Request.ID = @hostRequestId
 update Match set stadium_ID = @stadiumId where match_ID = @matchId
 declare @capacity int
 select  @capacity = s.capacity from Stadium s, Stadium_Manager sm where s.ID = sm.stadium_ID 
@@ -667,7 +692,7 @@ insert into @T
 select al.HostClub, al.GuestClub, al.StartTime, al.EndTime from AllUpComingMatches al
 inner join Club c
 on c.name = al.HostClub or c.name = al.GuestClub
-where c.club_ID = @ClubId
+where c.club_ID = @ClubId  
 return
 end
 go

@@ -40,7 +40,7 @@
                                 @Html.DisplayFor(m => item.PhoneNo)
                             </td>
                             <td>
-                                @if ((bool)Model.Fans.FirstOrDefault().Status)
+                                @if ((bool)item.Status!)
                                 {
                                     <button asp-route-Id="@item.NationalId" asp-route-Status="@item.Status" onclick="return confirm('Are you Sure you want to Block ?')" class="btn btn-danger btn-secondary">
                                         Block

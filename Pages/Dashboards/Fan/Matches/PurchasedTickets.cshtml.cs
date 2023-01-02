@@ -33,6 +33,11 @@ namespace Sports_Management_System.Pages.Dashboards.Fan.Matches
                 return Redirect("../../../../Auth/UnAuthorized");
             }
             Models.Fan fan = _db.getCurrentFan(Username);
+            if (!(bool)fan.Status!)
+            {
+                return Redirect("../../../Auth/Blocked");
+            }
+
             HostClubs = _db.Database.SqlQuery<string>
                 ($"SELECT HostClub FROM dbo.purchasedTicketsPerMatchFor({fan.NationalId})").ToList();
             GuestClubs = _db.Database.SqlQuery<string>

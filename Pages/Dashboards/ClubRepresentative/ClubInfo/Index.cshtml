@@ -43,7 +43,7 @@
     <div class="col-9">
         <h2 class="text-info">Upcoming Matches</h2>
     </div>
-
+    <br />
     <div class="col-12 border p-3 mt-3">
         <form method="post">
             @if (Model.HostClubs.Count() > 0)
@@ -84,7 +84,10 @@
                                 @Html.DisplayFor(m => EndTime)
                             </td>
                             <td>
-                                <a href="StadiumsList?HostClub=@HostClub&GuestClub=@GuestClub&StartTime=@StartTime" onclick="return confirm('Are you Sure you want to Host this Match ?')" class="btn btn-danger btn-secondary">Request Hosting</a>
+                                @if(Model.isMatchHostable(HostClub, GuestClub, StartTime))
+                                {
+                                    <a href="StadiumsList?HostClub=@HostClub&GuestClub=@GuestClub&StartTime=@StartTime" class="btn btn-danger btn-secondary">Request Hosting</a>
+                                }
                             </td>
                         </tr>  
                     }
@@ -92,7 +95,7 @@
             }
             else
             {
-                <h4>No UpComing Matches.</h4>
+                <h4>No Upcoming Matches.</h4>
             }
         </form>
     </div>

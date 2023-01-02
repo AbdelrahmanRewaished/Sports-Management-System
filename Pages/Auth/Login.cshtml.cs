@@ -56,9 +56,14 @@ namespace Sports_Management_System.Pages.Auth
                  .ToList();
             if (fanList.Count > 0)
             {
+                Fan fan = fanList.ElementAt(0);
+                if (!(bool)fan.Status!)
+                {
+                    return Redirect("../../../Auth/Blocked");
+                }
                 return LogUserIn(dashboardFolder, "Fan", username!, "Fan");
             }
-
+           
             // check if user is a stadium manager 
             var stadiumManagerList = _db.StadiumManagers
                  .Where(n => n.Username == username)

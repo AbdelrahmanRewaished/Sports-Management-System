@@ -9,7 +9,7 @@
     <div class="col-9">
         <h2 class="text-info">Stadium Info</h2>
     </div>
-
+    <br />
     <div class="col-12 border p-3 mt-3">
         <form method="post">
             <table class="table table-striped border">
@@ -58,24 +58,28 @@
                             <label value="RepresentativeName">Representative Name</label>
                         </th>
                         <th>
-                            <label value="HostClub">Host Club</label>
+                            <label value="RepresentedClub">Represented Club</label>
                         </th>
                         <th>
-                            <label value="GuestClub">Guest Club</label>
+                            <label value="HostClub">Match Host Club</label>
                         </th>
                         <th>
-                            <label value="StartTime">Start Time</label>
+                            <label value="GuestClub">Match Guest Club</label>
                         </th>
                         <th>
-                            <label value="End Time">End Time</label>
+                            <label value="StartTime">Match Start Time</label>
                         </th>
                         <th>
-                            <label value="Status">Status</label>
+                            <label value="End Time">Match End Time</label>
+                        </th>
+                        <th>
+                            <label value="Status">Request Status</label>
                         </th>
                     </tr>
                     @for (int i = 0; i < Model.HostNames.Count; i++)
                     {
                         var RepName = Model.RepresentativeNames.ElementAt(i);
+                        var RepresentedClub = Model.RepresentedClubs.ElementAt(i);
                         var HostClub = Model.HostNames.ElementAt(i);
                         var GuestClub = Model.GuestNames.ElementAt(i);
                         var StartTime = Model.StartTimes.ElementAt(i);
@@ -84,6 +88,9 @@
                         <tr>
                             <td>
                                 @Html.DisplayFor(m => RepName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(m => RepresentedClub)
                             </td>
                             <td>
                                 @Html.DisplayFor(m => HostClub)

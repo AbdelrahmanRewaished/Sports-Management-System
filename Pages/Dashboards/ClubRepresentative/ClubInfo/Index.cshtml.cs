@@ -14,6 +14,7 @@ namespace Sports_Management_System.Pages.Dashboards.ClubRepresentative.ClubInfo
         public List<string> GuestClubs;
         public List<DateTime> StartTimes;
         public List<DateTime> EndTimes;
+        public string Username;
         public int MatchId;
 
         public IndexModel(ChampionsLeagueDbContext db)
@@ -23,7 +24,7 @@ namespace Sports_Management_System.Pages.Dashboards.ClubRepresentative.ClubInfo
         }
         public IActionResult OnGet()
         {
-            string Username = HttpContext.Session.GetString("Username");
+            Username = HttpContext.Session.GetString("Username");
             if (Username == null)
             {
                 return Redirect("../../../Auth/Login");
@@ -53,6 +54,11 @@ namespace Sports_Management_System.Pages.Dashboards.ClubRepresentative.ClubInfo
                 .ToList();
 
             return null;
+        }
+
+        public bool isMatchHostable(string hostClub, string guestClub, DateTime startTime)
+        {
+            return _db.isMatchHostable(Username, hostClub, guestClub, startTime);
         }
     }
 }
