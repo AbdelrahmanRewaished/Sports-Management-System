@@ -1,4 +1,4 @@
-﻿CREATE DATABASE Champions_league_Db;
+﻿--CREATE DATABASE Champions_league_Db;
 
 
 go
@@ -44,7 +44,6 @@ create table Ticket_Buying_Transactions (fan_national_ID int, ticket_ID int , pr
 ,foreign key (fan_national_ID )references Fan(national_ID) on update cascade on delete cascade, foreign key (ticket_ID) references ticket (ID) on update cascade on delete cascade)
 
 go
-
 
 create procedure dropAllTables
 as
@@ -272,7 +271,7 @@ insert into Club_Representative values (@name, @id, @username);
 go
 
 create function viewAvailableStadiumsOn
-(@Representative varchar(20), @HostClub varchar(20), @GuestClub varchar(20),@StartTime datetime)
+(@HostClub varchar(20), @GuestClub varchar(20),@StartTime datetime)
 returns @T table (Name varchar(20) , Location varchar(20) , Capacity int)
 as
 begin
@@ -385,7 +384,7 @@ begin
 declare @stadium_manager_id int
 select @stadium_manager_id = id from Stadium_Manager where username = @username
 insert into @T 
-select cr.name as representative_name, c.representedClub, c1.name as host_club, c2.name as guest_club ,
+select cr.name as representative_name, c.name as RepresentedClub, c1.name as host_club, c2.name as guest_club ,
 m.start_time as startTime, m.end_time as endTime, hr.status
 from Club_Representative cr , Club c, Club c1, Club c2 , Match m , Host_Request hr
 where
@@ -424,12 +423,6 @@ declare @stadiumId int
 select @managerId = sm.ID from Stadium_Manager sm where sm.username = @username
 select @stadiumId = s.ID from Stadium s, Stadium_Manager sm where s.ID = sm.stadium_ID and sm.ID = @managerId;
 select @hostRequestId = hr.ID from Host_Request hr where hr.manager_ID = @managerId and hr.match_ID = @matchId
-select @representedClub = c.Name from Club c, Club_Representative cr, Host_Request hr where cr.club_ID = c.club_ID 
-and hr.representative_ID = cr.ID and hr.ID = @hostRequestId
-if @hosting_club_name <> @representedClub
-begin
-exec updateMatchHost @hosting_club_name, @guest_club_name, @match_start_time
-end
 update Host_Request set status = 'accepted' where Host_Request.ID = @hostRequestId
 update Match set stadium_ID = @stadiumId where match_ID = @matchId
 declare @capacity int
@@ -439,7 +432,7 @@ SET @Counter=1
 WHILE ( @Counter <= @capacity)
 BEGIN
     exec addTicket @hosting_club_name, @guest_club_name, @match_start_time 
-    SET @Counter  = @Counter  + 1
+    SET @Counter  = @Counter + 1
 END
 go
 
@@ -775,3 +768,4 @@ insert into System_User2 values('Abdo', 'password');
 
 insert into System_Admin values('Admin', 'Admin');
 insert into System_Admin values('Abdo', 'Abdo');
+

@@ -38,9 +38,9 @@ namespace Sports_Management_System.Pages.Dashboards.ClubRepresentative.StadiumsL
             guestClub = GuestClub;
             StartTime = startTime;
             Club = _db.Clubs.Find(_db.getCurrentClubRepresentative(Username).ClubId)!.Name!;
-            Names = _db.Database.SqlQuery<string>($"SELECT Name FROM dbo.viewAvailableStadiumsOn({Username},{HostClub},{GuestClub},{startTime})").ToList();
-            Locations = _db.Database.SqlQuery<string>($"SELECT Location FROM dbo.viewAvailableStadiumsOn({Username},{HostClub},{GuestClub},{startTime})").ToList();
-            Capacities = _db.Database.SqlQuery<int>($"SELECT Capacity FROM dbo.viewAvailableStadiumsOn({Username},{HostClub},{GuestClub},{startTime})").ToList();
+            Names = _db.Database.SqlQuery<string>($"SELECT Name FROM dbo.viewAvailableStadiumsOn({HostClub},{GuestClub},{startTime})").ToList();
+            Locations = _db.Database.SqlQuery<string>($"SELECT Location FROM dbo.viewAvailableStadiumsOn({HostClub},{GuestClub},{startTime})").ToList();
+            Capacities = _db.Database.SqlQuery<int>($"SELECT Capacity FROM dbo.viewAvailableStadiumsOn({HostClub},{GuestClub},{startTime})").ToList();
             HttpContext.Session.SetString("Match_StartTime", startTime.ToString());
             return null;
         }

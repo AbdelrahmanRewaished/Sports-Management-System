@@ -59,7 +59,7 @@ namespace Sports_Management_System.Pages.Auth
                 Fan fan = fanList.ElementAt(0);
                 if (!(bool)fan.Status!)
                 {
-                    return Redirect("../../../Auth/Blocked");
+                    return Redirect("Blocked");
                 }
                 return LogUserIn(dashboardFolder, "Fan", username!, "Fan");
             }
