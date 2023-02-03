@@ -17,17 +17,12 @@ namespace Sports_Management_System.Pages.Dashboards.SystemAdmin.StadiumsList
         [BindProperty]
         public Stadium Stadium { get; set; }
 
-        public async Task<IActionResult> OnGet()
+        public async Task<IActionResult?> OnGet()
         {
-            string Username = HttpContext.Session.GetString("Username");
-            if (Username == null)
+            string path = SystemAdmin.IndexModel.getRedirectionPath(HttpContext);
+            if (path != null)
             {
-                return Redirect("../../../../Auth/Login");
-            }
-            string Role = HttpContext.Session.GetString("Role");
-            if (Role != "SystemAdmin")
-            {
-                return Redirect("../../Auth/UnAuthorized");
+                return Redirect(path);
             }
             return null;
         }

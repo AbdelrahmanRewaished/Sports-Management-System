@@ -15,46 +15,22 @@
         <a asp-page="Create" class="btn btn-info form-check-control text-white btn-lg">Create New Club</a>
     </div>
     <br />
-    <div class="col-12 border p-3 mt-3">
-        <form method="post">
-            @if (Model.Clubs.Count() > 0)
-            {
-                <table class="table table-striped border">
-                    <tr class="table table-secondary">
-                        <th>
-                            <label asp-for="Clubs.FirstOrDefault().Name"></label>
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(m => m.Clubs.FirstOrDefault().Location)
-                        </th>
+    <br />
+    <br />
+    <div class="col-12 border p-3">
 
-                    </tr>
-                    @foreach (var item in Model.Clubs)
-                    {
-                        <tr>
-                            <td>
-                                @Html.DisplayFor(m => item.Name)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(m => item.Location)
-                            </td>
-                            <td>
-                                <button asp-page-handler="Delete" asp-route-Id="@item.ClubId" onclick="return confirm('Are you Sure you want to delete ?')" class="btn btn-danger btn-secondary">Delete</button>
-                                <a asp-page="Edit" asp-route-Id="@item.ClubId" class="btn btn-success btn-secondary">Edit</a>
-                            </td>
-                        </tr>
-                    }
-                </table>
-            }
-            else
-            {
-                <br />
-                <h4>No Clubs Available.</h4>
-            }
-        </form>
+        <table id="ClubsTable" class="table table-striped table-bordered" style="width:100%">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Location</th>
+                    <th></th>
+                </tr>
+            </thead>
+        </table>
     </div>
 </div>
 
 @section Scripts{
-    <script src="~/js/bookList.js"></script>
+    <script src="~/js/systemAdmin/clubs.js"></script>
 }

@@ -4,10 +4,7 @@
     Layout = "~/Pages/Shared/_AssocManagerLayout.cshtml";
 
 }
-
-
 <br />
-
 <div class="container row p-0 m-0">
     <div class="col-9">
         <h2 class="text-info">Matches List</h2>
@@ -17,60 +14,23 @@
         <a asp-page="Create" class="btn btn-info form-check-control text-white btn-lg">Create New Match</a>
     </div>
     <br />
-    <div class="col-12 border p-3 mt-3">
-        <form method="post">
-            @if (Model.Matches.Count() > 0)
-            {
-                <table class="table table-striped border">
-                    <tr class="table table-secondary">
-                        <th>
-                            <label asp-for="Matches.FirstOrDefault().HostClub"></label>
-                        </th>
-                         <th>
-                            <label asp-for="Matches.FirstOrDefault().GuestClub"></label>
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(m => m.Matches.FirstOrDefault().StartTime)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(m => m.Matches.FirstOrDefault().EndTime)
-                        </th>
-
-                    </tr>
-                    @for (int i = 0; i < Model.Matches.Count; i++)
-                    {
-                        var item = Model.Matches.ElementAt(i);
-                        var match = Model.AllMatches.ElementAt(i);
-                        <tr>
-                            <td>
-                                @Html.DisplayFor(m => match.HostClub)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(m => match.GuestClub)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(m => item.StartTime)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(m => item.EndTime)
-                            </td>
-                            <td>
-                                <button asp-page-handler="Delete" asp-route-Id="@item.MatchId" onclick="return confirm('Are you Sure you want to delete ?')" class="btn btn-danger btn-secondary">Delete</button>
-                                <a asp-page="Edit" asp-route-Id="@item.MatchId" asp-route-HostClub="@match.HostClub" asp-route-GuestClub="@match.GuestClub" class="btn btn-success btn-secondary">Edit</a>
-                            </td>
-                        </tr>
-                    }
-                </table>
-            }
-            else
-            {
-                <br />
-                <h4>No Matches Available.</h4>
-            }
-        </form>
+    <br />
+    <br />
+    <div class="col-12 border p-3">
+        <table id="MatchesTable" class="table table-striped table-bordered" style="width:100%">
+            <thead>
+                <tr>
+                    <th>Host Club</th>
+                    <th>Guest Club</th>
+                    <th>Start Time</th>
+                    <th>End Time</th>
+                    <th></th>
+                </tr>
+            </thead>
+        </table>
     </div>
 </div>
 
 @section Scripts{
-    <script src="~/js/bookList.js"></script>
+    <script src="~/js/associationManager/matches.js"></script>
 }

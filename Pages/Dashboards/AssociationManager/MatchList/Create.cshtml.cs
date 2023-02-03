@@ -14,20 +14,15 @@ namespace Sports_Management_System.Pages.Dashboards.AssociationManager.MatchList
         }
 
         [BindProperty]
-        public AllUpComingMatch Match {get; set; }
+        public UpComingMatch Match {get; set; }
 
 
-        public async Task<IActionResult> OnGet()
+        public IActionResult? OnGet()
         {
-            string Username = HttpContext.Session.GetString("Username");
-            if (Username == null)
+            string path = AssociationManager.IndexModel.getRedirectionPath(HttpContext);
+            if (path != null)
             {
-                return Redirect("../../../../Auth/Login");
-            }
-            string Role = HttpContext.Session.GetString("Role");
-            if (Role != "AssociationManager")
-            {
-                return Redirect("../../../../Auth/UnAuthorized");
+                return Redirect(path);
             }
             return null;
         }
@@ -37,7 +32,14 @@ namespace Sports_Management_System.Pages.Dashboards.AssociationManager.MatchList
             if (!ModelState.IsValid)
             {
                 return Page();
-
+            }
+            if(Match.StartTime < DateTime.Now || Match.StartTime >= Match.EndTime)
+            {
+                return Page();
+            }
+            if(! _db.isClubExisting(Match.HostClub!) || ! _db.isClubExisting(Match.GuestClub!))
+            {
+                return Page();
             }
             await _db.Database.ExecuteSqlAsync($"exec addNewMatch {Match.HostClub}, {Match.GuestClub}, {Match.StartTime}, {Match.EndTime}");
             return RedirectToPage("Index");

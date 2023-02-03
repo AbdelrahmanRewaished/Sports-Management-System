@@ -15,18 +15,14 @@ namespace Sports_Management_System.Pages.Dashboards.SystemAdmin.StadiumsList
 
         [BindProperty]
         public Stadium Stadium { get; set; }
-        public async Task<IActionResult> OnGet(int id)
+        public async Task<IActionResult?> OnGet(int id)
         {
-            string Username = HttpContext.Session.GetString("Username");
-            if (Username == null)
+            string path = SystemAdmin.IndexModel.getRedirectionPath(HttpContext);
+            if (path != null)
             {
-                return Redirect("../../../../Auth/Login");
+                return Redirect(path);
             }
-            string Role = HttpContext.Session.GetString("Role");
-            if (Role != "SystemAdmin")
-            {
-                return Redirect("../../Auth/UnAuthorized");
-            }
+
             Stadium = await _db.Stadia.FindAsync(id);
             return null;
         }

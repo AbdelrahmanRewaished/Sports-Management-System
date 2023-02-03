@@ -11,53 +11,22 @@
         <h2 class="text-info">Upcoming Matches</h2>
     </div>
     <br />
-    <div class="col-12 border p-3 mt-3">
-        <form method="post">
-            @if (Model.Matches.Count() > 0)
-            {
-                <table class="table table-striped border">
-                    <tr class="table table-secondary">
-                        <th>
-                            <label asp-for="Matches.FirstOrDefault().HostClub"></label>
-                        </th>
-                        <th>
-                            <label asp-for="Matches.FirstOrDefault().GuestClub"></label>
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(m => m.Matches.FirstOrDefault().StartTime)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(m => m.Matches.FirstOrDefault().EndTime)
-                        </th>
-
-                    </tr>
-                    @foreach (var item in Model.Matches)
-                    {
-                        <tr>
-                            <td>
-                                @Html.DisplayFor(m => item.HostClub)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(m => item.GuestClub)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(m => item.StartTime)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(m => item.EndTime)
-                            </td>
-                        </tr>
-                    }
-                </table>
-            }
-            else
-            {
-                <h4>No Upcoming Matches Available.</h4>
-            }
-        </form>
+    <br />
+    <br />
+    <div class="col-12 border p-3">
+        <table id="MatchesTable" class="table table-striped table-bordered" style="width:100%">
+            <thead>
+                <tr>
+                    <th>Host Club</th>
+                    <th>Guest Club</th>
+                    <th>Start Time</th>
+                    <th>End Time</th>
+                </tr>
+            </thead>
+        </table>
     </div>
 </div>
 
 @section Scripts{
-    <script src="~/js/bookList.js"></script>
+    <script src="~/js/associationManager/upComingMatches.js"></script>
 }

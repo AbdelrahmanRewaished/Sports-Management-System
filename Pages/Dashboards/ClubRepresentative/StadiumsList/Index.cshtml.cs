@@ -9,11 +9,10 @@ namespace Sports_Management_System.Pages.Dashboards.ClubRepresentative.StadiumsL
     {
         private readonly ChampionsLeagueDbContext _db;
 
-        public List<string> Names, Locations;
-        public List<int> Capacities;
-        public string Club { get; set; }
-        public string hostClub {get; set;}
-        public string guestClub { get; set; }
+        public List<AvailableStadium> AvailableStadiums;
+        public string clubName { get; set; }
+        public string HostClub {get; set;}
+        public string GuestClub { get; set; }
         public DateTime StartTime { get; set; }
         public string Username { get; set; }
 
@@ -22,42 +21,38 @@ namespace Sports_Management_System.Pages.Dashboards.ClubRepresentative.StadiumsL
             _db = db;
         }
 
-        public IActionResult OnGet(string HostClub, string GuestClub, DateTime startTime)
+        public async Task<IActionResult?> OnGet(string HostClub, string GuestClub, DateTime StartTime)
         {
+            string path = ClubRepresentative.IndexModel.getRedirectionPath(HttpContext);
+            if (path != null)
+            {
+                return Redirect(path);
+            }
             Username = HttpContext.Session.GetString("Username")!;
-            if (Username == null)
-            {
-                return Redirect("../../../Auth/Login");
-            }
-            string Role = HttpContext.Session.GetString("Role")!;
-            if (Role != "ClubRepresentative")
-            {
-                return Redirect("../../../Auth/UnAuthorized");
-            }
-            hostClub = HostClub;
-            guestClub = GuestClub;
-            StartTime = startTime;
-            Club = _db.Clubs.Find(_db.getCurrentClubRepresentative(Username).ClubId)!.Name!;
-            Names = _db.Database.SqlQuery<string>($"SELECT Name FROM dbo.viewAvailableStadiumsOn({HostClub},{GuestClub},{startTime})").ToList();
-            Locations = _db.Database.SqlQuery<string>($"SELECT Location FROM dbo.viewAvailableStadiumsOn({HostClub},{GuestClub},{startTime})").ToList();
-            Capacities = _db.Database.SqlQuery<int>($"SELECT Capacity FROM dbo.viewAvailableStadiumsOn({HostClub},{GuestClub},{startTime})").ToList();
-            HttpContext.Session.SetString("Match_StartTime", startTime.ToString());
+            this.HostClub = HostClub;
+            this.GuestClub = GuestClub;
+            this.StartTime = StartTime;
+            AvailableStadiums = await _db.ViewAvailableStadiumsOn(HostClub, GuestClub, StartTime).ToListAsync();
+            HttpContext.Session.SetString("MatchStartTime", StartTime.ToString());
+
             return null;
         }
        
         public async Task<IActionResult> OnPost(string Stadium)
         {
             Username = HttpContext.Session.GetString("Username")!;
-            Club = _db.Clubs.Find(_db.getCurrentClubRepresentative(Username).ClubId)!.Name!;
-            string StartTime = HttpContext.Session.GetString("Match_StartTime")!;
-            await _db.Database.ExecuteSqlAsync($"exec AddHostRequest {Club}, {Stadium}, {StartTime}");
-            HttpContext.Session.Remove("Match_StartTime");
+            Club club = await _db.Clubs.FindAsync((await _db.getCurrentClubRepresentative(Username)).ClubId);
+            clubName = club!.Name!;
+            string MatchStartTime = HttpContext.Session.GetString("MatchStartTime")!;
+            await _db.Database.ExecuteSqlAsync($"exec AddHostRequest {clubName}, {Stadium}, {MatchStartTime}");
+
+            HttpContext.Session.Remove("MatchStartTime");
             return Redirect("ClubInfo");
         }
 
-        public string getHostRequestStatus(string Stadium)
+        public async Task<bool> isRequestRejectedAsync(string Stadium)
         {
-            return _db.getHostRequestStatus(Username, hostClub, guestClub, StartTime, Stadium);
+            return (bool)await _db.isRequestRejected(Username, HostClub, GuestClub, StartTime, Stadium);
         }
     }
 }

@@ -6,25 +6,12 @@ namespace Sports_Management_System.Pages.Dashboards.AssociationManager.MatchList
 {
     public class ClubsNeverMatchedModel : PageModel
     {
-        private readonly ChampionsLeagueDbContext _db;
-        public List<ClubsNeverMatched> ClubsNeverMatched;
-        public ClubsNeverMatchedModel(ChampionsLeagueDbContext db)
+        public IActionResult OnGet()
         {
-            _db = db;
-            ClubsNeverMatched = _db.ClubsNeverMatcheds.ToList();
-        }
-
-        public async Task<IActionResult> OnGet()
-        {
-            string Username = HttpContext.Session.GetString("Username");
-            if (Username == null)
+            string path = AssociationManager.IndexModel.getRedirectionPath(HttpContext);
+            if (path != null)
             {
-                return Redirect("../../../../Auth/Login");
-            }
-            string Role = HttpContext.Session.GetString("Role");
-            if (Role != "AssociationManager")
-            {
-                return Redirect("../../../../Auth/UnAuthorized");
+                return Redirect(path);
             }
             return null;
         }

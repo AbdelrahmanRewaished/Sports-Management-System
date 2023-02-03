@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
+using Microsoft.IdentityModel.Tokens;
+using System.Xml.Linq;
+
 namespace Sports_Management_System.Models;
 
 public partial class ChampionsLeagueDbContext : DbContext
@@ -14,26 +17,7 @@ public partial class ChampionsLeagueDbContext : DbContext
         : base(options)
     {
     }
-
-    public virtual DbSet<AllAssocManager> AllAssocManagers { get; set; }
-
-    public virtual DbSet<AllClub> AllClubs { get; set; }
-
-    public virtual DbSet<AllClubRepresentative> AllClubRepresentatives { get; set; }
-
-    public virtual DbSet<AllFan> AllFans { get; set; }
-
-    public virtual DbSet<AllMatch> AllMatches { get; set; }
-
-    public virtual DbSet<AllRequest> AllRequests { get; set; }
-
-    public virtual DbSet<AllStadium> AllStadiums { get; set; }
-
-    public virtual DbSet<AllStadiumManager> AllStadiumManagers { get; set; }
-
-    public virtual DbSet<AllTicket> AllTickets { get; set; }
-
-    public virtual DbSet<AllUpComingMatch> AllUpComingMatches { get; set; }
+    public virtual DbSet<MatchView> AllMatches { get; set; }
 
     public virtual DbSet<Club> Clubs { get; set; }
 
@@ -41,15 +25,11 @@ public partial class ChampionsLeagueDbContext : DbContext
 
     public virtual DbSet<ClubsNeverMatched> ClubsNeverMatcheds { get; set; }
 
-    public virtual DbSet<ClubsWithNoMatch> ClubsWithNoMatches { get; set; }
-
     public virtual DbSet<Fan> Fans { get; set; }
 
     public virtual DbSet<HostRequest> HostRequests { get; set; }
 
     public virtual DbSet<Match> Matches { get; set; }
-
-    public virtual DbSet<MatchesPerTeam> MatchesPerTeams { get; set; }
 
     public virtual DbSet<SportsAssociationManager> SportsAssociationManagers { get; set; }
 
@@ -71,209 +51,26 @@ public partial class ChampionsLeagueDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<AllAssocManager>(entity =>
-        {
-            entity
-                .HasNoKey()
-                .ToView("allAssocManagers");
-
-            entity.Property(e => e.Name)
-                .HasMaxLength(20)
-                .IsUnicode(false)
-                .HasColumnName("name");
-            entity.Property(e => e.Password)
-                .HasMaxLength(20)
-                .IsUnicode(false)
-                .HasColumnName("password");
-            entity.Property(e => e.Username)
-                .HasMaxLength(20)
-                .IsUnicode(false)
-                .HasColumnName("username");
-        });
-
-        modelBuilder.Entity<AllClub>(entity =>
-        {
-            entity
-                .HasNoKey()
-                .ToView("allClubs");
-
-            entity.Property(e => e.Location)
-                .HasMaxLength(20)
-                .IsUnicode(false)
-                .HasColumnName("location");
-            entity.Property(e => e.Name)
-                .HasMaxLength(20)
-                .IsUnicode(false)
-                .HasColumnName("name");
-        });
-
-        modelBuilder.Entity<AllClubRepresentative>(entity =>
-        {
-            entity
-                .HasNoKey()
-                .ToView("allClubRepresentatives");
-
-            entity.Property(e => e.ClubName)
-                .HasMaxLength(20)
-                .IsUnicode(false)
-                .HasColumnName("club_name");
-            entity.Property(e => e.Name)
-                .HasMaxLength(20)
-                .IsUnicode(false)
-                .HasColumnName("name");
-            entity.Property(e => e.Password)
-                .HasMaxLength(20)
-                .IsUnicode(false)
-                .HasColumnName("password");
-            entity.Property(e => e.Username)
-                .HasMaxLength(20)
-                .IsUnicode(false)
-                .HasColumnName("username");
-        });
-
-        modelBuilder.Entity<AllFan>(entity =>
-        {
-            entity
-                .HasNoKey()
-                .ToView("allFans");
-
-            entity.Property(e => e.BirthDate)
-                .HasColumnType("date")
-                .HasColumnName("birth_date");
-            entity.Property(e => e.Name)
-                .HasMaxLength(20)
-                .IsUnicode(false)
-                .HasColumnName("name");
-            entity.Property(e => e.NationalId).HasColumnName("national_ID");
-            entity.Property(e => e.Password)
-                .HasMaxLength(20)
-                .IsUnicode(false)
-                .HasColumnName("password");
-            entity.Property(e => e.Status).HasColumnName("status");
-            entity.Property(e => e.Username)
-                .HasMaxLength(20)
-                .IsUnicode(false)
-                .HasColumnName("username");
-        });
-
-        modelBuilder.Entity<AllMatch>(entity =>
+        modelBuilder.Entity<MatchView>(entity =>
         {
             entity
                 .HasNoKey()
                 .ToView("allMatches");
 
             entity.Property(e => e.GuestClub)
-                .HasMaxLength(20)
+                .HasMaxLength(30)
                 .IsUnicode(false)
                 .HasColumnName("guest_club");
             entity.Property(e => e.HostClub)
-                .HasMaxLength(20)
+                .HasMaxLength(30)
                 .IsUnicode(false)
                 .HasColumnName("host_club");
             entity.Property(e => e.StartTime)
                 .HasColumnType("datetime")
                 .HasColumnName("start_time");
-        });
-
-        modelBuilder.Entity<AllRequest>(entity =>
-        {
-            entity
-                .HasNoKey()
-                .ToView("allRequests");
-
-            entity.Property(e => e.ClubRepresentative)
-                .HasMaxLength(20)
-                .IsUnicode(false)
-                .HasColumnName("club_representative");
-            entity.Property(e => e.RequestStatus)
-                .HasMaxLength(20)
-                .IsUnicode(false)
-                .HasColumnName("request_status");
-            entity.Property(e => e.StadiumManager)
-                .HasMaxLength(20)
-                .IsUnicode(false)
-                .HasColumnName("stadium_manager");
-        });
-
-        modelBuilder.Entity<AllStadium>(entity =>
-        {
-            entity
-                .HasNoKey()
-                .ToView("allStadiums");
-
-            entity.Property(e => e.Capacity).HasColumnName("capacity");
-            entity.Property(e => e.Location)
-                .HasMaxLength(20)
-                .IsUnicode(false)
-                .HasColumnName("location");
-            entity.Property(e => e.Name)
-                .HasMaxLength(20)
-                .IsUnicode(false)
-                .HasColumnName("name");
-            entity.Property(e => e.Status).HasColumnName("status");
-        });
-
-        modelBuilder.Entity<AllStadiumManager>(entity =>
-        {
-            entity
-                .HasNoKey()
-                .ToView("allStadiumManagers");
-
-            entity.Property(e => e.Name)
-                .HasMaxLength(20)
-                .IsUnicode(false)
-                .HasColumnName("name");
-            entity.Property(e => e.Password)
-                .HasMaxLength(20)
-                .IsUnicode(false)
-                .HasColumnName("password");
-            entity.Property(e => e.StadiumName)
-                .HasMaxLength(20)
-                .IsUnicode(false)
-                .HasColumnName("stadium_name");
-            entity.Property(e => e.Username)
-                .HasMaxLength(20)
-                .IsUnicode(false)
-                .HasColumnName("username");
-        });
-
-        modelBuilder.Entity<AllTicket>(entity =>
-        {
-            entity
-                .HasNoKey()
-                .ToView("allTickets");
-
-            entity.Property(e => e.GuestClub)
-                .HasMaxLength(20)
-                .IsUnicode(false)
-                .HasColumnName("guest_club");
-            entity.Property(e => e.HostClub)
-                .HasMaxLength(20)
-                .IsUnicode(false)
-                .HasColumnName("host_club");
-            entity.Property(e => e.Name)
-                .HasMaxLength(20)
-                .IsUnicode(false)
-                .HasColumnName("name");
-            entity.Property(e => e.StartTime)
-                .HasColumnType("datetime")
-                .HasColumnName("start_time");
-        });
-
-        modelBuilder.Entity<AllUpComingMatch>(entity =>
-        {
-            entity
-                .HasNoKey()
-                .ToView("AllUpComingMatches");
-
-            entity.Property(e => e.EndTime).HasColumnType("datetime");
-            entity.Property(e => e.GuestClub)
-                .HasMaxLength(20)
-                .IsUnicode(false);
-            entity.Property(e => e.HostClub)
-                .HasMaxLength(20)
-                .IsUnicode(false);
-            entity.Property(e => e.StartTime).HasColumnType("datetime");
+            entity.Property(e => e.EndTime)
+                .HasColumnName("datetime")
+                .HasColumnName("end_time");
         });
 
         modelBuilder.Entity<Club>(entity =>
@@ -286,11 +83,11 @@ public partial class ChampionsLeagueDbContext : DbContext
 
             entity.Property(e => e.ClubId).HasColumnName("club_ID");
             entity.Property(e => e.Location)
-                .HasMaxLength(20)
+                .HasMaxLength(30)
                 .IsUnicode(false)
                 .HasColumnName("location");
             entity.Property(e => e.Name)
-                .HasMaxLength(20)
+                .HasMaxLength(30)
                 .IsUnicode(false)
                 .HasColumnName("name");
         });
@@ -304,11 +101,11 @@ public partial class ChampionsLeagueDbContext : DbContext
             entity.Property(e => e.Id).HasColumnName("ID");
             entity.Property(e => e.ClubId).HasColumnName("club_ID");
             entity.Property(e => e.Name)
-                .HasMaxLength(20)
+                .HasMaxLength(30)
                 .IsUnicode(false)
                 .HasColumnName("name");
             entity.Property(e => e.Username)
-                .HasMaxLength(20)
+                .HasMaxLength(30)
                 .IsUnicode(false)
                 .HasColumnName("username");
 
@@ -330,51 +127,40 @@ public partial class ChampionsLeagueDbContext : DbContext
                 .ToView("clubsNeverMatched");
 
             entity.Property(e => e.Club1Name)
-                .HasMaxLength(20)
+                .HasMaxLength(30)
                 .IsUnicode(false)
                 .HasColumnName("club1_name");
             entity.Property(e => e.Club2Name)
-                .HasMaxLength(20)
+                .HasMaxLength(30)
                 .IsUnicode(false)
                 .HasColumnName("club2_name");
         });
 
-        modelBuilder.Entity<ClubsWithNoMatch>(entity =>
-        {
-            entity
-                .HasNoKey()
-                .ToView("clubsWithNoMatches");
-
-            entity.Property(e => e.Name)
-                .HasMaxLength(20)
-                .IsUnicode(false)
-                .HasColumnName("name");
-        });
-
         modelBuilder.Entity<Fan>(entity =>
         {
-            entity.HasKey(e => e.NationalId).HasName("PK__Fan__956FEDD420BB685E");
+            entity.HasKey(e => e.NationalId).HasName("PK__Fan__956FEDD430BB685E");
 
             entity.ToTable("Fan");
 
             entity.Property(e => e.NationalId)
                 .ValueGeneratedNever()
+                .HasMaxLength(20)
                 .HasColumnName("national_ID");
             entity.Property(e => e.Address)
-                .HasMaxLength(20)
+                .HasMaxLength(30)
                 .IsUnicode(false)
                 .HasColumnName("address");
             entity.Property(e => e.BirthDate)
                 .HasColumnType("date")
                 .HasColumnName("birth_date");
             entity.Property(e => e.Name)
-                .HasMaxLength(20)
+                .HasMaxLength(30)
                 .IsUnicode(false)
                 .HasColumnName("name");
-            entity.Property(e => e.PhoneNo).HasColumnName("phone_no");
+            entity.Property(e => e.PhoneNo).HasMaxLength(20).HasColumnName("phone_no");
             entity.Property(e => e.Status).HasColumnName("status");
             entity.Property(e => e.Username)
-                .HasMaxLength(20)
+                .HasMaxLength(30)
                 .IsUnicode(false)
                 .HasColumnName("username");
 
@@ -410,7 +196,7 @@ public partial class ChampionsLeagueDbContext : DbContext
             entity.Property(e => e.MatchId).HasColumnName("match_ID");
             entity.Property(e => e.RepresentativeId).HasColumnName("representative_ID");
             entity.Property(e => e.Status)
-                .HasMaxLength(20)
+                .HasMaxLength(30)
                 .IsUnicode(false)
                 .HasColumnName("status");
 
@@ -460,18 +246,31 @@ public partial class ChampionsLeagueDbContext : DbContext
                 .HasConstraintName("FK__Match__stadium_I__656C112C");
         });
 
-        modelBuilder.Entity<MatchesPerTeam>(entity =>
-        {
-            entity
-                .HasNoKey()
-                .ToView("matchesPerTeam");
+        modelBuilder.Entity<AlreadyPlayedMatch>()
+            .HasNoKey()
+            .ToView("AlreadyPlayedMatches");
 
-            entity.Property(e => e.ClubName)
-                .HasMaxLength(20)
-                .IsUnicode(false)
-                .HasColumnName("club_name");
-            entity.Property(e => e.NoOfMatchesPlayed).HasColumnName("no_of_matches_played");
-        });
+        modelBuilder.Entity<UpComingMatch>()
+            .HasNoKey()
+            .ToView("AllUpComingMatches");
+
+        modelBuilder.Entity<SentRequest>()
+            .HasNoKey();
+
+        modelBuilder.Entity<AvailableMatch>()
+            .HasNoKey();
+
+        modelBuilder.Entity<AvailableStadium>()
+            .HasNoKey();
+
+        modelBuilder.Entity<PurchasedTicket>()
+            .HasNoKey();
+
+        modelBuilder.Entity<PendingRequest>()
+            .HasNoKey();
+
+        modelBuilder.Entity<UpComingMatchesOfClub>()
+            .HasNoKey();
 
         modelBuilder.Entity<SportsAssociationManager>(entity =>
         {
@@ -481,11 +280,11 @@ public partial class ChampionsLeagueDbContext : DbContext
 
             entity.Property(e => e.Id).HasColumnName("ID");
             entity.Property(e => e.Name)
-                .HasMaxLength(20)
+                .HasMaxLength(30)
                 .IsUnicode(false)
                 .HasColumnName("name");
             entity.Property(e => e.Username)
-                .HasMaxLength(20)
+                .HasMaxLength(30)
                 .IsUnicode(false)
                 .HasColumnName("username");
 
@@ -506,11 +305,11 @@ public partial class ChampionsLeagueDbContext : DbContext
             entity.Property(e => e.Id).HasColumnName("ID");
             entity.Property(e => e.Capacity).HasColumnName("capacity");
             entity.Property(e => e.Location)
-                .HasMaxLength(20)
+                .HasMaxLength(30)
                 .IsUnicode(false)
                 .HasColumnName("location");
             entity.Property(e => e.Name)
-                .HasMaxLength(20)
+                .HasMaxLength(30)
                 .IsUnicode(false)
                 .HasColumnName("name");
             entity.Property(e => e.Status).HasColumnName("status");
@@ -524,12 +323,12 @@ public partial class ChampionsLeagueDbContext : DbContext
 
             entity.Property(e => e.Id).HasColumnName("ID");
             entity.Property(e => e.Name)
-                .HasMaxLength(20)
+                .HasMaxLength(30)
                 .IsUnicode(false)
                 .HasColumnName("name");
             entity.Property(e => e.StadiumId).HasColumnName("stadium_ID");
             entity.Property(e => e.Username)
-                .HasMaxLength(20)
+                .HasMaxLength(30)
                 .IsUnicode(false)
                 .HasColumnName("username");
 
@@ -552,11 +351,11 @@ public partial class ChampionsLeagueDbContext : DbContext
 
             entity.Property(e => e.Id).HasColumnName("ID");
             entity.Property(e => e.Name)
-                .HasMaxLength(20)
+                .HasMaxLength(30)
                 .IsUnicode(false)
                 .HasColumnName("name");
             entity.Property(e => e.Username)
-                .HasMaxLength(20)
+                .HasMaxLength(30)
                 .IsUnicode(false)
                 .HasColumnName("username");
 
@@ -573,11 +372,11 @@ public partial class ChampionsLeagueDbContext : DbContext
             entity.ToTable("System_User2");
 
             entity.Property(e => e.Username)
-                .HasMaxLength(20)
+                .HasMaxLength(30)
                 .IsUnicode(false)
                 .HasColumnName("username");
             entity.Property(e => e.Password)
-                .HasMaxLength(20)
+                .HasMaxLength(30)
                 .IsUnicode(false)
                 .HasColumnName("password");
         });
@@ -598,6 +397,30 @@ public partial class ChampionsLeagueDbContext : DbContext
                 .HasConstraintName("FK__Ticket__match_ID__6E01572D");
         });
 
+        modelBuilder.HasDbFunction(typeof(ChampionsLeagueDbContext)
+           .GetMethod(nameof(GetAllUpComingMatchesOfClub), new[] { typeof(int) }))
+           .HasName("getAllUpComingMatchesOfClub");
+
+        modelBuilder.HasDbFunction(typeof(ChampionsLeagueDbContext)
+            .GetMethod(nameof(GetAllHostRequestsSentBy), new[] { typeof(int) }))
+            .HasName("getAllHostRequestsSentBy");
+
+        modelBuilder.HasDbFunction(typeof(ChampionsLeagueDbContext)
+           .GetMethod(nameof(ViewAvailableStadiumsOn), new[] { typeof(string), typeof(string), typeof(DateTime) }))
+           .HasName("viewAvailableStadiumsOn");
+
+        modelBuilder.HasDbFunction(typeof(ChampionsLeagueDbContext)
+           .GetMethod(nameof(GetAvailableMatches)))
+           .HasName("availableMatchesToAttend");
+
+        modelBuilder.HasDbFunction(typeof(ChampionsLeagueDbContext)
+            .GetMethod(nameof(ViewPurchasedTickets), new[] {typeof(string)}))
+            .HasName("purchasedTicketsPerMatchFor");
+
+        modelBuilder.HasDbFunction(typeof(ChampionsLeagueDbContext)
+           .GetMethod(nameof(GetPendingRequests), new[] { typeof(string) }))
+           .HasName("allPendingRequests");
+
         OnModelCreatingPartial(modelBuilder);
     }
 
@@ -608,88 +431,136 @@ public partial class ChampionsLeagueDbContext : DbContext
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 
-    public ClubRepresentative getCurrentClubRepresentative(string username)
-    {
-        return ClubRepresentatives
-                                    .Where(n => n.Username == username)
-                                    .OrderBy(n => n.Username)
-                                    .LastOrDefault();
-    }
 
-    public StadiumManager getCurrentStadiumManager(string username)
+    public IQueryable<UpComingMatchesOfClub> GetAllUpComingMatchesOfClub(int clubId)
+    => FromExpression(() => GetAllUpComingMatchesOfClub(clubId));
+
+    public IQueryable<SentRequest> GetAllHostRequestsSentBy(int hostId)
+        => FromExpression(() => GetAllHostRequestsSentBy(hostId));
+
+    public IQueryable<AvailableStadium> ViewAvailableStadiumsOn(string hostClub, string guestClub, DateTime startTime)
+        => FromExpression(() => ViewAvailableStadiumsOn(hostClub, guestClub, startTime));
+
+    public IQueryable<AvailableMatch> GetAvailableMatches()
+        => FromExpression(() => GetAvailableMatches());
+
+    public IQueryable<PurchasedTicket> ViewPurchasedTickets(string nationalId)
+        => FromExpression(() => ViewPurchasedTickets(nationalId));
+
+    public IQueryable<PendingRequest> GetPendingRequests(string username)
+        => FromExpression(() => GetPendingRequests(username));
+
+    public async Task<ClubRepresentative> getCurrentClubRepresentative(string username)
     {
-        return StadiumManagers
-                            .Where(n => n.Username == username)
-                            .OrderBy(n => n.Username)
-                            .Last();
+        return await ClubRepresentatives.FirstOrDefaultAsync(n => n.Username == username);
     }
 
     public Fan getCurrentFan(string username)
     {
         return Fans
                 .Where(n => n.Username == username)
-                .OrderBy(n => n.Username)
-                .Last();
+                .ToList()
+                .ElementAt(0);
+    }
+
+    public async Task<StadiumManager> getCurrentStadiumManager(string username)
+    {
+        return await StadiumManagers.FirstOrDefaultAsync(u => u.Username == username);
+    }
+
+    public bool isClubExisting(string clubName)
+    {
+        return ! Clubs.Where(n => n.Name == clubName).IsNullOrEmpty();
     }
 
     private int getClubId(string name)
     {
-        return Clubs.Where(n => n.Name == name).OrderBy(n => n.ClubId)
-            .LastOrDefault().ClubId;
+        return Clubs
+            .Where(n => n.Name == name)
+            .ToList()
+            .ElementAt(0).ClubId;
     }
 
-    private int getMatchId(string hostClub, string guestClub, DateTime startTime)
+    public async Task<int> getMatchIdAsync(string hostClub, string guestClub, DateTime startTime)
     {
         int hostId = getClubId(hostClub);
         int guestId = getClubId(guestClub);
-        return Matches.Where(n => n.HostClubId == hostId)
-            .Where(n => n.GuestClubId == guestId)
-            .Where(n => n.StartTime == startTime)
-            .OrderBy(n => n.MatchId)
-            .LastOrDefault().MatchId;
+        return (await Matches.FirstOrDefaultAsync(n => 
+        n.HostClubId == hostId &&
+        n.GuestClubId == guestId &&
+        n.StartTime == startTime)).MatchId;
     }
-    private int getStadiumId(string name)
+    private async Task<int> getStadiumId(string name)
     {
-        return Stadia.Where(n => n.Name == name).OrderBy(n => n.Id).LastOrDefault().Id;
+        return (await Stadia.FirstOrDefaultAsync(n => n.Name == name)).Id;
     }
 
-    private int getStadiumManagerId(string stadiumName)
+    private async Task<StadiumManager> getStadiumManager(string stadiumName)
     {
-        int stadiumId = getStadiumId(stadiumName);
-        return StadiumManagers.Where(n => n.StadiumId == stadiumId)
-            .OrderBy(n => n.Id).LastOrDefault().Id;
+        int stadiumId = await getStadiumId(stadiumName);
+        return await StadiumManagers.FirstOrDefaultAsync(n => n.StadiumId == stadiumId);
     }
-
-    public string getHostRequestStatus(string username, string hostClub, string guestClub, DateTime startTime, string stadium)
+    public async Task<SystemUser> getStadiumManagerAsUser(string stadiumName)
     {
-        ClubRepresentative clubRepresentative = getCurrentClubRepresentative(username);
-
-        int matchId = getMatchId(hostClub, guestClub, startTime);
-
-        int stadiumManagerId = getStadiumManagerId(stadium);
-
-        HostRequest hostRequest = HostRequests.Where(n => n.ManagerId == stadiumManagerId)
-                                               .Where(n => n.MatchId == matchId)
-                                               .Where(n => n.RepresentativeId == clubRepresentative.Id)
-                                               .OrderBy(n => n.Id)
-                                               .FirstOrDefault();
-        if (hostRequest == null)
-        {
-            return null;
-        }
-        return hostRequest.Status;
+        return await (SystemUsers.FindAsync((await getStadiumManager(stadiumName)).Username!))!;
     }
 
-    public bool isMatchHostable(string repUsername, string hostClub,
+    public async Task<SystemUser> getClubRepresentativeAsUser(int clubId)
+    {
+        return await SystemUsers.FindAsync(ClubRepresentatives.FirstOrDefault(u => u.ClubId == clubId)!.Username!)!;
+    }
+    public async Task<bool?> isRequestRejected(string username, string hostClub, string guestClub, DateTime startTime, string stadium)
+    {
+        ClubRepresentative clubRepresentative = await getCurrentClubRepresentative(username);
+
+        int matchId = await getMatchIdAsync(hostClub, guestClub, startTime);
+
+        int stadiumManagerId = (await getStadiumManager(stadium)).Id;
+
+        var Request = await HostRequests.FirstOrDefaultAsync(n =>
+        n.ManagerId == stadiumManagerId &&
+        n.MatchId == matchId &&
+        n.Status == "rejected");
+                                              
+        return Request != null;
+    }
+
+    public async Task<bool> isMatchHostableAsync(string repUsername, string hostClub,
         string guestClub, DateTime startTime)
     {
-        int matchId = getMatchId(hostClub, guestClub, startTime);
-        ClubRepresentative clubRepresentative = getCurrentClubRepresentative(repUsername);
+        int matchId = await getMatchIdAsync(hostClub, guestClub, startTime);
+        ClubRepresentative clubRepresentative = await getCurrentClubRepresentative(repUsername);
 
-        HostRequest hostRequest = HostRequests.Where(n => n.MatchId == matchId)
-            .Where(n => n.RepresentativeId == clubRepresentative.Id)
-            .OrderBy(n => n.Id)
-            .LastOrDefault();
-        return hostRequest == null || hostRequest.Status == "rejected";
+        var Requests = HostRequests.Where(n => n.MatchId == matchId)
+            .Where(n => n.RepresentativeId == clubRepresentative.Id);
+        if(Requests.IsNullOrEmpty()) {
+            return true;
+        }
+        return Requests.Where(n => n.Status == "unhandled" || n.Status == "accepted").IsNullOrEmpty();
+    }
+
+    public bool isFan(string username)
+    {
+        var fanList = Fans
+                .Where(n => n.Username == username);
+        return !fanList.IsNullOrEmpty();
+    }
+    public bool isAssociationManager(string username)
+    {
+        var assocManagerList = SportsAssociationManagers
+                .Where(n => n.Username == username);
+        return !assocManagerList.IsNullOrEmpty();
+    }
+    public bool isStadiumManager(string username)
+    {
+        var stadiumManagerList = StadiumManagers
+                .Where(n => n.Username == username);
+        return !stadiumManagerList.IsNullOrEmpty();
+    }
+    public bool isClubRepresentative(string username)
+    {
+        var clubRepresentativeList = ClubRepresentatives
+                 .Where(n => n.Username == username);
+        return !clubRepresentativeList.IsNullOrEmpty();
     }
 }

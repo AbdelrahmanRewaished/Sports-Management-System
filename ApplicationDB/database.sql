@@ -1,38 +1,40 @@
 ﻿--CREATE DATABASE Champions_league_Db;
 
-
 go
 create procedure createAllTables 
 AS
-create table System_User2 ( username varchar(20), password varchar(20) , primary key (username))
+create table System_User2 ( username varchar(30), password varchar(30) , primary key (username))
 
-create table Fan (national_ID int, name varchar(20), birth_date DATE, address varchar(20), 
-phone_no int, status bit, username varchar(20), 
+create table Fan (national_ID varchar(20), name varchar(30), birth_date DATE, address varchar(30), 
+phone_no varchar(20), status bit, username varchar(30), 
 primary key (national_id), 
 foreign key(username) references System_User2(username) on update cascade on delete cascade  )
 
-create table Stadium (ID int identity, name varchar(20) unique, location varchar(20), capacity int,
+create table Stadium (ID int identity, name varchar(30) unique, location varchar(30), capacity int,
 status bit , primary key (ID) )
 
-create table Stadium_Manager(ID int identity , name varchar(20), stadium_ID int, username varchar(20),
+create table Stadium_Manager(ID int identity , name varchar(30), stadium_ID int, username varchar(30),
 primary key (ID) , foreign key (stadium_ID) references Stadium (ID) on update cascade on delete cascade ,
 foreign key (username) references System_User2(username) on update cascade on delete cascade )
 
-create table Club (club_ID int identity, name varchar(20) unique, location varchar(20),primary key (club_ID))
+create table Club (club_ID int identity, name varchar(30) unique, location varchar(30),primary key (club_ID))
 
-create table Club_Representative(ID int identity, name varchar(20), club_ID int, username varchar(20)
+create table Club_Representative(ID int identity, name varchar(30), club_ID int, username varchar(30)
 , primary key (ID) ,foreign key (username) references System_User2 (username) on update cascade on delete cascade, foreign key(club_ID) references Club(club_ID) on update cascade on delete cascade)
 
-create table Sports_association_manager(ID int identity, name varchar(20), username varchar(20) ,primary key(ID) , foreign key(username) references System_User2(username) on update cascade on delete cascade)
+create table Sports_association_manager(ID int identity, name varchar(30), username varchar(30) ,primary key(ID) , foreign key(username) references System_User2(username) on update cascade on delete cascade)
 
-create table System_Admin(ID int identity, name varchar(20), username varchar(20)
+create table System_Admin(ID int identity, name varchar(30), username varchar(30)
 , primary key (ID) ,foreign key (username) references System_User2 (username) on update cascade on delete cascade)
 
 create table Match(match_ID int identity , start_time datetime, end_time datetime , host_club_ID int, guest_club_ID int, 
-stadium_ID int , primary key (match_ID) , foreign key (host_club_ID) references Club(club_ID) on update cascade on delete cascade ,
-foreign key (stadium_ID) references Stadium (ID) on update cascade on delete cascade , foreign key (guest_club_ID) references Club(club_ID) on delete NO ACTION ON UPDATE NO ACTION)
+stadium_ID int,
+primary key (match_ID) , foreign key (host_club_ID) references Club(club_ID) on update cascade on delete cascade ,
+foreign key (stadium_ID) references Stadium (ID) on update cascade on delete cascade , foreign key (guest_club_ID) references Club(club_ID) on delete NO ACTION ON UPDATE NO ACTION,
+check(start_time >= CURRENT_TIMESTAMP and start_time < end_time)
+);
 
-create table Host_Request (ID int identity,  representative_ID int, manager_ID int, match_ID int, status varchar(20) 
+create table Host_Request (ID int identity,  representative_ID int, manager_ID int, match_ID int, status varchar(30) 
 ,primary key (ID) , foreign key (representative_ID) references club_Representative (ID) on update no action on delete no action ,
 foreign key (manager_ID) references Stadium_Manager (ID) on update no action on delete no action, foreign key (match_ID) references Match(match_ID) on update cascade on delete cascade)
 
@@ -40,7 +42,7 @@ foreign key (manager_ID) references Stadium_Manager (ID) on update no action on 
 create table Ticket (ID int identity , status bit, match_ID int, primary key (ID) ,
 foreign key (match_ID)references Match(match_ID) on update cascade on delete cascade)
 
-create table Ticket_Buying_Transactions (fan_national_ID int, ticket_ID int , primary key(fan_national_ID, ticket_ID)
+create table Ticket_Buying_Transactions (fan_national_ID varchar(20), ticket_ID int , primary key(fan_national_ID, ticket_ID)
 ,foreign key (fan_national_ID )references Fan(national_ID) on update cascade on delete cascade, foreign key (ticket_ID) references ticket (ID) on update cascade on delete cascade)
 
 go
@@ -60,6 +62,7 @@ drop table Sports_association_manager
 drop table Stadium
 drop table System_User2
 go
+
 
 create procedure clearAllTables 
 as
@@ -110,7 +113,7 @@ go
 
 create view allMatches 
 AS
-select c.name as host_club , c2.name as guest_club, m.start_time 
+select c.name as host_club , c2.name as guest_club, m.start_time, m.end_time
 from Match m , Club c ,Club c2 
 where m.host_club_ID = c.club_ID and 
 m.guest_club_ID = c2.club_ID 
@@ -151,14 +154,14 @@ go
 
 
 create procedure addAssociationManager
-@name varchar(20),@username varchar(20) , @password varchar(20)
+@name varchar(30),@username varchar(30) , @password varchar(30)
 as 
 insert into System_User2 values (@username ,  @password) 
 insert into Sports_association_manager values (@name , @username)
 go 
 
 create procedure addNewMatch 
-@host_club_name varchar(20) , @guest_club_name varchar(20),@start_time datetime ,@end_time datetime 
+@host_club_name varchar(30) , @guest_club_name varchar(30),@start_time datetime ,@end_time datetime 
 as
 declare @idh int
 select @idh = club_ID from Club where name =@host_club_name
@@ -172,7 +175,7 @@ insert into match values (@start_time, @end_time, @idh, @idg, null)
 go
 
 
-create function [getClubId](@name varchar(20))
+create function [getClubId](@name varchar(30))
 returns int 
 as 
 begin
@@ -184,7 +187,7 @@ return @id
 end
 go
 
-create procedure deleteMatch @hostclub varchar(20) , @guestclub varchar(20) 
+create procedure deleteMatch @hostclub varchar(30) , @guestclub varchar(30) 
 as 
 delete from match where match.host_club_id = dbo.getClubId(@hostclub) and match.guest_club_ID = dbo.getClubId(@guestclub)
 
@@ -199,19 +202,19 @@ union
 go
 
 
-create proc deleteMatchesOnStadium @sname varchar(20) 
+create proc deleteMatchesOnStadium @sname varchar(30) 
 as
 declare @id int 
 select @id = id from Stadium where @sname = name 
 delete from Match where Match.stadium_Id = @id and Match.start_time > CURRENT_TIMESTAMP;
 go
 
-create proc addClub @name varchar(20) , @location varchar(20) 
+create proc addClub @name varchar(30) , @location varchar(30) 
 as 
 insert into Club values (@name, @location);
 go
 
-create function [getMatchId] (@host_club_name varchar(20), @guest_club_name varchar(20) , @start_time datetime )
+create function [getMatchId] (@host_club_name varchar(30), @guest_club_name varchar(30) , @start_time datetime )
 returns int 
 begin 
 declare @matchId int, @hostId int, @guestId int
@@ -227,7 +230,7 @@ end;
 go
 
 
-create proc addTicket @host_club varchar(20) , @guest_club varchar(20) , @start_time datetime 
+create proc addTicket @host_club varchar(30) , @guest_club varchar(30) , @start_time datetime 
 as
 declare @matchId int 
 exec @matchId = dbo.getMatchId @host_club ,@guest_club, @start_time
@@ -235,34 +238,34 @@ insert into Ticket values (1, @matchId);
 go
 
 
-create proc deleteClub @name varchar(20)
+create proc deleteClub @name varchar(30)
 as 
 delete from club where name =  @name ;
 go
 
-create proc  addStadium @name varchar(20) , @location varchar(20) , @capacity int 
+create proc  addStadium @name varchar(30) , @location varchar(30) , @capacity int 
 as 
 insert into Stadium values (@name, @location ,@capacity , 1);
 go
 
 
-create proc deleteStadium @name varchar(20)
+create proc deleteStadium @name varchar(30)
 as 
 delete from Stadium where name = @name ;
 go
 
-create proc blockFan @id varchar(20)
+create proc blockFan @id varchar(30)
 as 
 update Fan set status= 0 where national_ID = @id ;
 go
 
-create proc unblockFan @id varchar(20)
+create proc unblockFan @id varchar(30)
 as 
 update Fan set status= 1 where national_ID=@id ;
 go
 
 create proc addRepresentative
-@name varchar(20), @clubname varchar(20) , @username varchar(20), @password varchar(20)
+@name varchar(30), @clubname varchar(30) , @username varchar(30), @password varchar(30)
 as
 declare @id int 
 exec @id = dbo.getClubId @clubname 
@@ -271,8 +274,8 @@ insert into Club_Representative values (@name, @id, @username);
 go
 
 create function viewAvailableStadiumsOn
-(@HostClub varchar(20), @GuestClub varchar(20),@StartTime datetime)
-returns @T table (Name varchar(20) , Location varchar(20) , Capacity int)
+(@HostClub varchar(30), @GuestClub varchar(30),@StartTime datetime)
+returns @T table (Name varchar(30) , Location varchar(30) , Capacity int)
 as
 begin
 declare @matchId int, @EndTime datetime
@@ -283,12 +286,13 @@ select s.name, s.location, s.capacity
 from Stadium s, Stadium_Manager sm
 where sm.stadium_ID = s.ID and s.status = 1 
 except
-(select s1.name, s1.location, s1.capacity from Stadium s1, Match m
+(select s1.name, s1.location, s1.capacity from Stadium s1, Match m, Host_Request hr, Stadium_Manager sm
 where 
 (s1.ID = m.stadium_ID and
 (@StartTime between m.start_time and m.end_time
 or 
-@EndTime between m.start_time and m.end_time)
+@EndTime between m.start_time and m.end_time
+)
 and 
 m.match_ID <> @matchId)
 )
@@ -296,10 +300,11 @@ return
 end;
 go
 
+
 create function getAllHostRequestsSentBy
 (@repId int)
-returns @T table(HostClub varchar(20), GuestClub varchar(20),
-StartTime datetime, Stadium varchar(20), Status varchar(20))
+returns @T table(HostClub varchar(30), GuestClub varchar(30),
+StartTime datetime, Stadium varchar(30), Status varchar(30))
 as
 begin
 insert into @T
@@ -315,7 +320,7 @@ return
 end
 
 go
-CREATE FUNCTION [getStadiumID] (@stadium_name VARCHAR(20))
+CREATE FUNCTION [getStadiumID] (@stadium_name VARCHAR(30))
 RETURNS INT 
 BEGIN 
 DECLARE @stadium_id INT 
@@ -323,7 +328,7 @@ select @stadium_id = ID from Stadium where name = @stadium_name
 return @stadium_id;
 END
 go
-create function [getStadiumManagerId](@stadium_name varchar(20))
+create function [getStadiumManagerId](@stadium_name varchar(30))
 returns int 
 begin 
 declare @stadium_id int 
@@ -334,7 +339,7 @@ return @manager_id
 end;
 go
 
-create function [getRepresentativeId] (@club_name varchar(20))
+create function [getRepresentativeId] (@club_name varchar(30))
 returns int 
 begin 
 declare @club_id int
@@ -346,7 +351,7 @@ end;
 
 go
 
-create proc addHostRequest @club_name varchar(20) ,@stadium_name varchar(20) , @start_time datetime
+create proc addHostRequest @club_name varchar(30) ,@stadium_name varchar(30) , @start_time datetime
 as
 declare @representative_id int , @manager_id int ,@match_id int, @club_id int
 exec @representative_id = dbo.getRepresentativeId @club_name 
@@ -358,8 +363,8 @@ insert into Host_Request values(@representative_id, @manager_id, @match_id, 'unh
 go
 
 
-create function [allUnassignedMatches](@club_name varchar(20))
-returns @T table (guest_club varchar(20), start_time datetime)
+create function [allUnassignedMatches](@club_name varchar(30))
+returns @T table (guest_club varchar(30), start_time datetime)
 as 
 begin 
 declare @id int
@@ -375,22 +380,20 @@ return
 end;
 go
 
-
-create function [allPendingRequests] (@username varchar(20))
+create function [allPendingRequests] (@username varchar(30))
 returns @T table(
-club_rep_name varchar(20), RepresentedClub varchar(20), HostClub varchar(20),GuestClub varchar(20) ,StartTime datetime, EndTime datetime, Status varchar(20))
+RepresentativeName varchar(30), HostClub varchar(30),GuestClub varchar(30) ,StartTime datetime, EndTime datetime)
 as 
 begin 
 declare @stadium_manager_id int
 select @stadium_manager_id = id from Stadium_Manager where username = @username
 insert into @T 
-select cr.name as representative_name, c.name as RepresentedClub, c1.name as host_club, c2.name as guest_club ,
-m.start_time as startTime, m.end_time as endTime, hr.status
-from Club_Representative cr , Club c, Club c1, Club c2 , Match m , Host_Request hr
+select cr.name as representative_name, c1.name as host_club, c2.name as guest_club ,
+m.start_time as startTime, m.end_time as endTime
+from Club_Representative cr , Club c1, Club c2 , Match m , Host_Request hr
 where
 hr.manager_ID = @stadium_manager_id and 
 hr.representative_ID = cr.ID and
-cr.club_ID = c.club_ID and 
 hr.match_ID = m.match_ID and
 c1.club_ID = m.host_club_ID and
 c2.club_ID = m.guest_club_ID and 
@@ -400,10 +403,10 @@ end
 go
 
 CREATE PROCEDURE addStadiumManager
-@manager_name VARCHAR(20),
-@stadium_name VARCHAR(20),
-@username VARCHAR(20),
-@password VARCHAR(20)
+@manager_name VARCHAR(30),
+@stadium_name VARCHAR(30),
+@username VARCHAR(30),
+@password VARCHAR(30)
 AS
 INSERT INTO System_User2 VALUES(@username, @password);
 DECLARE @stadium_id INT
@@ -412,12 +415,12 @@ INSERT INTO Stadium_Manager VALUES(@manager_name, @stadium_id, @username)
 GO
 
 create proc acceptRequest
-@username varchar(20),
-@hosting_club_name varchar(20),
-@guest_club_name varchar(20),
-@match_start_time varchar(20)
+@username varchar(30),
+@hosting_club_name varchar(30),
+@guest_club_name varchar(30),
+@match_start_time varchar(30)
 as
-declare @matchId int, @managerId int, @hostRequestId int, @representedClub varchar(20)
+declare @matchId int, @managerId int, @hostRequestId int, @representedClub varchar(30)
 exec @matchId = dbo.getMatchId @hosting_club_name, @guest_club_name, @match_start_time
 declare @stadiumId int
 select @managerId = sm.ID from Stadium_Manager sm where sm.username = @username
@@ -437,10 +440,10 @@ END
 go
 
 create proc rejectRequest
-@username varchar(20),
-@hosting_club_name varchar(20),
-@guest_club_name varchar(20),
-@match_start_time varchar(20)
+@username varchar(30),
+@hosting_club_name varchar(30),
+@guest_club_name varchar(30),
+@match_start_time varchar(30)
 as
 declare @matchId int, @managerId int
 exec @matchId = dbo.getMatchId @hosting_club_name, @guest_club_name, @match_start_time
@@ -449,8 +452,8 @@ update Host_Request set status = 'rejected' where Host_Request.match_ID = @match
 go
 
 create proc addFan 
-@fan_name varchar(20), @username varchar(20), @password varchar(20),
-@national_id int, @birthdate date, @address varchar(20), @phone int
+@fan_name varchar(30), @username varchar(30), @password varchar(30),
+@national_id varchar(20), @birthdate date, @address varchar(30), @phone varchar(20)
 as
 insert into System_User2 values(@username, @password)
 insert into Fan values(@national_id, @fan_name, @birthdate, @address, @phone, 1, @username) 
@@ -458,8 +461,8 @@ go
 
 
 create function [upcomingMatchesOfClub] 
-(@club_name varchar(20))
-returns @T table(club_name varchar(20), opponent_name varchar(20), match_start_time datetime, stadium varchar(20))
+(@club_name varchar(30))
+returns @T table(club_name varchar(30), opponent_name varchar(30), match_start_time datetime, stadium varchar(30))
 as 
 begin
 declare @clubId int
@@ -484,7 +487,7 @@ go
 
 
 create function [availableMatchesToAttend]()
-returns @T table(HostClub varchar(20), GuestClub varchar(20), StartTime datetime, Stadium varchar(20), Location varchar(20))
+returns @T table(HostClub varchar(30), GuestClub varchar(30), StartTime datetime, Stadium varchar(30), Location varchar(30))
 as 
 begin
 insert into @T
@@ -507,7 +510,7 @@ end
 go
 
 create proc purchaseTicket
-@national_id int, @hosting_club_name varchar(20), @guest_club_name varchar(20), @match_start_time datetime
+@national_id varchar(20), @hosting_club_name varchar(30), @guest_club_name varchar(30), @match_start_time datetime
 as
 declare @matchId int, @ticketId int
 exec @matchId = dbo.getMatchId @hosting_club_name, @guest_club_name, @match_start_time
@@ -517,7 +520,7 @@ update Ticket set Ticket.status = 0 where Ticket.ID = @ticketId
 go
 
 create proc updateMatchHost
-@host_name varchar(20), @guest_name varchar(20), @match_start_time datetime
+@host_name varchar(30), @guest_name varchar(30), @match_start_time datetime
 as
 declare @matchId int, @host_id int, @guest_id int
 exec @matchId = dbo.getMatchId @host_name, @guest_name, @match_start_time
@@ -556,8 +559,8 @@ where m.stadium_ID is not NULL)
 go
 
 create function [clubsNeverPlayed]
-(@club_name varchar(20))
-returns @T table(club_name varchar(20))
+(@club_name varchar(30))
+returns @T table(club_name varchar(30))
 as
 begin
 insert into @T 
@@ -584,7 +587,7 @@ go
 
 create function [matchWithHighestAttendance]
 ()
-returns @T table(hosting_club_name varchar(20), guest_club_name varchar(20))
+returns @T table(hosting_club_name varchar(30), guest_club_name varchar(30))
 as
 begin
 declare @matches_tickets_sold table(match_id int, tickets_sold int)
@@ -602,7 +605,7 @@ go
 
 create function[matchesRankedByAttendance]
 ()
-returns @T table(hosting_club_name varchar(20), guest_club_name varchar(20))
+returns @T table(hosting_club_name varchar(30), guest_club_name varchar(30))
 as
 begin
 declare @matches_tickets_sold table(match_id int, tickets_sold int)
@@ -617,12 +620,12 @@ end
 go
 
 create function [requestsFromClub]
-(@stadium_name varchar(20),
-@club_name varchar(20))
-returns @T table(hosting_club varchar(20), guest_club varchar(20))
+(@stadium_name varchar(30),
+@club_name varchar(30))
+returns @T table(hosting_club varchar(30), guest_club varchar(30))
 as
 begin
-declare @stadium_manager_id int, @representative_id int, @club_id int, @manager_username varchar(20)
+declare @stadium_manager_id int, @representative_id int, @club_id int, @manager_username varchar(30)
 
 exec @stadium_manager_id = dbo.getStadiumManagerId @stadium_name
 exec @club_id = dbo.getClubId @club_name
@@ -641,7 +644,7 @@ end;
 go
 
 create function [AllUpComingMatchesFunc] ()
-returns @T table(HostClub varchar(20),GuestClub varchar(20),StartTime datetime , EndTime datetime)
+returns @T table(HostClub varchar(30),GuestClub varchar(30),StartTime datetime , EndTime datetime)
 as 
 begin
 
@@ -657,15 +660,14 @@ create view AllUpComingMatches as
 select * from dbo.AllUpComingMatchesFunc()
 go
 
-
-create proc updateMatch @Id int, @HostClub varchar(20), @GuestClub varchar(20), @StartTime DateTime, @EndTime DateTime
+create proc updateMatch @OldMatchId int, @HostClub varchar(30), @GuestClub varchar(30), @StartTime DateTime, @EndTime DateTime
 as
 declare @hostId int, @guestId int
 exec @hostId = dbo.getClubId @HostClub
 exec @guestId = dbo.getClubId @GuestClub
 update Match set host_club_ID = @hostId, guest_club_ID = @guestId,
 start_time = @StartTime, end_time = @EndTime 
-where match_ID = @Id;
+where match_ID = @OldMatchId;
 go
 
 create view AlreadyPlayedMatches
@@ -676,24 +678,38 @@ m.end_time <= CURRENT_TIMESTAMP and
 m.stadium_ID is not null
 go
 
+create function IsMatchHostable(@HostClub varchar(30), @GuestClub varchar(30), @StartTime DateTime)
+returns BIT
+as
+begin
+declare @count int, @res bit 
+select @count = count(*) from Host_Request hr where hr.match_ID = dbo.getMatchId(@HostClub, @GuestClub, @StartTime)
+and (hr.status='unhandled' or hr.status='accepted');
+if @count = 0
+    select @res = 1;
+else
+    select @res = 0;
+return @res;
+end
+
+go
 create function getAllUpComingMatchesOfClub
 (@ClubId int)
-returns @T table(HostClub varchar(20), GuestClub varchar(20), StartTime datetime, EndTime datetime)
+returns @T table(HostClub varchar(30), GuestClub varchar(30), StartTime datetime, EndTime datetime, IsHostable BIT)
 as
 begin
 insert into @T
-select al.HostClub, al.GuestClub, al.StartTime, al.EndTime from AllUpComingMatches al
+select al.HostClub, al.GuestClub, al.StartTime, al.EndTime, dbo.IsMatchHostable(al.HostClub, al.GuestClub, al.StartTime) from AllUpComingMatches al
 inner join Club c
-on c.name = al.HostClub or c.name = al.GuestClub
-where c.club_ID = @ClubId  
+on c.name = al.HostClub
+where c.club_ID = @ClubId
 return
 end
 go
 
-
-create function purchasedTicketsPerMatchFor(@nationalId int)
-returns @T table(HostClub varchar(20), GuestClub varchar(20), StartTime DateTime,
-Stadium varchar(20), Location varchar(20), Tickets int)
+create function purchasedTicketsPerMatchFor(@nationalId varchar(20))
+returns @T table(HostClub varchar(30), GuestClub varchar(30), StartTime DateTime,
+Stadium varchar(30), Location varchar(30), Tickets int)
 as
 begin 
 insert into @T

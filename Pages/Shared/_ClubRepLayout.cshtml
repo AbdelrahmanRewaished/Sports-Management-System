@@ -1,46 +1,60 @@
-﻿<!DOCTYPE html>
-<html lang="en">
-<head>
-    <title>Sports Management System</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-</head>
-<body>
-
-    <nav class="navbar navbar-inverse">
-        <div class="container-fluid">
-            <div class="navbar-header">
-                <a class="navbar-brand">Sports Management System</a>
-            </div>
-            <ul class="nav navbar-nav">
-                <li class="active"><a href="../../../Dashboards/ClubRepresentative">Home</a></li>
-                <li class="dropdown">
-                    <a class="dropdown-toggle" data-toggle="dropdown">View<span class="caret"></span></a>
-                    <ul class="dropdown-menu">
-                        <li><a href="../../../Dashboards/ClubRepresentative/ClubInfo">Represented Club Info</a></li>
-                        <li><a href="../../../Dashboards/ClubRepresentative/ClubInfo/SentRequests">Sent Requests</a></li>
-                    </ul>
-                </li>
-            </ul>
-            <ul class="nav navbar-nav navbar-right">
-                <li><a href="../../../Auth/Login"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
-            </ul>
+﻿@{
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+<nav>
+    <div class="logo-name">
+        <div class="logo-image">
+            <!--<img src="images/logo.png" alt="">-->
         </div>
-    </nav>
 
-    <br />
-    <div class="container">
-        <main role="main">
-            @RenderBody()
-        </main>
+        <span class="logo_name">Club Representative Dashboard</span>
     </div>
 
+    <div class="menu-items">
+        <ul class="nav-links">
+            <li>
+                <a href="~/Dashboards/ClubRepresentative">
+                    <i style="" class="uil uil-estate"></i>
+                    <span class="link-name">Home</span>
+                </a>
+            </li>
+            <li>
+                <a href="~/Dashboards/ClubRepresentative/ClubInfo">
+                    @*<i style="margin-right: 10px;"><img src="~/lib/images/club.png"></i>*@
+                    <span class="link-name">Club Info</span>
+                </a>
+            </li>
+            <li>
+                <a href="~/Dashboards/ClubRepresentative/ClubInfo/SentRequests">
+                    @*<i style="margin-right: 10px; margin-left:-5px;"><img src="~/lib/images/fan.png"></i>*@
+                    <span class="link-name">Sent Requests</span>
+                </a>
+            </li>
+        </ul>
 
-    @await RenderSectionAsync("Scripts", required: false)
-</body>
-</html>
-
-
+        <ul class="logout-mode">
+            <li>
+                <a href="~/Auth/Login">
+                    <i class="uil uil-signout"></i>
+                    <span class="link-name">Logout</span>
+                </a>
+            </li>
+        </ul>
+        <ul></ul>
+    </div>
+</nav>
+<section class="dashboard">
+    <div class="top">
+        <i class="uil uil-bars sidebar-toggle"></i>
+    </div>
+    <br />
+    <br />
+    @RenderBody()
+</section>
+@section Scripts{
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+        <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+        <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    @RenderSection("Scripts", required: false)
+}

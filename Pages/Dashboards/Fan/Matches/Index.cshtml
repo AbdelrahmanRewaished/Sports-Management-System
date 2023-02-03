@@ -8,69 +8,24 @@
         <h2 class="text-info">Upcoming Matches</h2>
     </div>
     <br />
-    <div class="col-12 border p-3 mt-3">
-        <form method="post">
-            @if (Model.HostClubs.Count() > 0)
-            {
-                <table class="table table-striped border">
-                    <tr class="table table-secondary">
-                        <th>
-                            <label>Host Club</label>
-                        </th>
-                        <th>
-                            <label>Guest Club</label>
-                        </th>
-                        <th>
-                            <label>Start Time</label>
-                        </th>
-                        <th>
-                            <label>Stadium Name</label>
-                        </th>
-                        <th>
-                            <label>Location</label>
-                        </th>
-                    </tr>
-                    @for (int i = 0; i < Model.HostClubs.Count; i++)
-                    {
-                        var HostClub = Model.HostClubs.ElementAt(i);
-                        var GuestClub = Model.GuestClubs.ElementAt(i);
-                        var StartTime = Model.StartTimes.ElementAt(i);
-                        var Stadium = Model.Stadiums.ElementAt(i);
-                        var Location = Model.Stadiums.ElementAt(i);
-                        <tr>
-                            <td>
-                                @Html.DisplayFor(m => HostClub)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(m => GuestClub)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(m => StartTime)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(m => Stadium)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(m => Location)
-                            </td>
-                            <td>
-                                <button asp-route-HostClub=@HostClub asp-route-GuestClub=@GuestClub
-                                asp-route-StartTime=@StartTime
-                                onclick="return confirm('Are you Sure you want to purchase a Ticket for this Match?')" class="btn btn-success btn-secondary">Purchase Ticket</button>
-                            </td>
-                        </tr>
-                    }
-                </table>
-            }
-            else
-            {
-                <br />
-                <h4>No Available Matches.</h4>
-            }
-        </form>
+    <br />
+    <br />
+    <div class="col-12 border p-3">
+        <table id="MatchesTable" class="table table-striped table-bordered" style="width:100%">
+            <thead>
+                <tr>
+                    <th>Host Club</th>
+                    <th>Guest Club</th>
+                    <th>Start Time</th>
+                    <th>Stadium</th>
+                    <th>Location</th>
+                     <th></th>   
+                </tr>
+            </thead>
+        </table>
     </div>
 </div>
 
 @section Scripts{
-    <script src="~/js/bookList.js"></script>
+    <script src="~/js/fan/availableMatches.js"></script>
 }

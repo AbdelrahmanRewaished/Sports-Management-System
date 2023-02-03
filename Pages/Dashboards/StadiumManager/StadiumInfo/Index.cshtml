@@ -40,95 +40,26 @@
         </form>
     </div>
 </div>
-
 <br />
-
 <div class="container row p-0 m-0">
     <div class="col-9">
         <h2 class="text-info">Pending Requests</h2>
     </div>
-
-    <div class="col-12 border p-3 mt-3">
-        <form method="post">
-            @if (Model.RepresentativeNames.Count() > 0)
-            {
-                <table class="table table-striped border">
-                    <tr class="table table-secondary">
-                        <th>
-                            <label value="RepresentativeName">Representative Name</label>
-                        </th>
-                        <th>
-                            <label value="RepresentedClub">Represented Club</label>
-                        </th>
-                        <th>
-                            <label value="HostClub">Match Host Club</label>
-                        </th>
-                        <th>
-                            <label value="GuestClub">Match Guest Club</label>
-                        </th>
-                        <th>
-                            <label value="StartTime">Match Start Time</label>
-                        </th>
-                        <th>
-                            <label value="End Time">Match End Time</label>
-                        </th>
-                        <th>
-                            <label value="Status">Request Status</label>
-                        </th>
-                    </tr>
-                    @for (int i = 0; i < Model.HostNames.Count; i++)
-                    {
-                        var RepName = Model.RepresentativeNames.ElementAt(i);
-                        var RepresentedClub = Model.RepresentedClubs.ElementAt(i);
-                        var HostClub = Model.HostNames.ElementAt(i);
-                        var GuestClub = Model.GuestNames.ElementAt(i);
-                        var StartTime = Model.StartTimes.ElementAt(i);
-                        var EndTime = Model.EndTimes.ElementAt(i);
-                        var Status = Model.Statuses.ElementAt(i);
-                        <tr>
-                            <td>
-                                @Html.DisplayFor(m => RepName)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(m => RepresentedClub)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(m => HostClub)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(m => GuestClub)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(m => StartTime)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(m => EndTime)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(m => Status)
-                            </td>
-                            <td>
-                                <button asp-page-handler="Accept" asp-route-HostClub=@HostClub 
-                                asp-route-GuestClub=@GuestClub asp-route-StartTime=@StartTime
-                                onclick="return confirm('Are you Sure you want to Accept this Request ?')" class="btn btn-success btn-secondary">Accept</button>
-                            </td>
-                            <td>
-                                <button asp-page-handler="Reject" asp-route-HostClub=@HostClub
-                                asp-route-GuestClub=@GuestClub asp-route-StartTime=@StartTime
-                                onclick="return confirm('Are you Sure you want to Reject this Request ?')" class="btn btn-danger btn-secondary">Reject</button>
-                            </td>
-                        </tr>
-                    }
-                </table>
-            }
-            else
-            {
-                <h4>No Pending Requests.</h4>
-            }
-        </form>
+    <div class="col-12 border p-3">
+        <table id="RequestsTable" class="table table-striped table-bordered" style="width:100%">
+            <thead>
+                <tr>
+                    <th>Host Club</th>
+                    <th>Guest Club</th>
+                    <th>Start Time</th>
+                    <th>End Time</th>
+                    <th></th>
+                </tr>
+            </thead>
+        </table>
     </div>
 </div>
 
 @section Scripts{
-    <script src="~/js/bookList.js"></script>
+    <script src="~/js/stadiumManager/pendingRequests.js"></script>
 }

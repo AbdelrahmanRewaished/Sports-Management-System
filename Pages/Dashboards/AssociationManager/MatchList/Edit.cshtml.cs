@@ -15,37 +15,41 @@ namespace Sports_Management_System.Pages.Dashboards.AssociationManager.MatchList
         }
 
         [BindProperty]
-        public Match Match { get; set; }
-        public string HostClub { get; set; }
-        public string GuestClub { get; set; }
+        public MatchView Match { get; set; }
+        public int PreviousMatchId { get; set; }
 
-        public async Task<IActionResult> OnGet( int Id, string hostClub, string guestClub)
+        public async Task<IActionResult?> OnGetAsync(string HostClub, string GuestClub, DateTime StartTime)
         {
-            string Username = HttpContext.Session.GetString("Username");
-            if (Username == null)
+            string path = AssociationManager.IndexModel.getRedirectionPath(HttpContext);
+            if (path != null)
             {
-                return Redirect("../../../../Auth/Login");
+                return Redirect(path);
             }
-            string Role = HttpContext.Session.GetString("Role");
-            if (Role != "AssociationManager")
-            {
-                return Redirect("../../../../Auth/UnAuthorized");
-            }  
-            Match = await  _db.Matches.FindAsync(Id);
-            HostClub = hostClub;
-            GuestClub = guestClub;
+            Match = await _db.Set<MatchView>().FirstOrDefaultAsync(
+                u => u.HostClub! == HostClub &&
+                u.GuestClub! == GuestClub &&
+                u.StartTime! == StartTime
+            );
+            PreviousMatchId = await _db.getMatchIdAsync(HostClub, GuestClub, StartTime);
             return null;
         }
 
         public async Task<IActionResult> OnPost()
         {
-            string hostClub = Request.Form["hostClub"];
-            string guestClub = Request.Form["guestClub"];
-            if (!ModelState.IsValid)
+            PreviousMatchId = Int32.Parse(Request.Form["id"]!);
+            if(! ModelState.IsValid)
             {
                 return Page();
             }
-            await _db.Database.ExecuteSqlAsync($"exec updateMatch {Match.MatchId}, {hostClub}, {guestClub}, {Match.StartTime}, {Match.EndTime}");
+            if (Match.StartTime < DateTime.Now || Match.StartTime >= Match.EndTime)
+            {
+                return Page();
+            }
+            if (!_db.isClubExisting(Match!.HostClub!) || !_db.isClubExisting(Match!.GuestClub!))
+            {
+                return Page();
+            }
+            await _db.Database.ExecuteSqlAsync($"exec updateMatch {PreviousMatchId}, {Match.HostClub}, {Match.GuestClub}, {Match.StartTime}, {Match.EndTime}");
             return RedirectToPage("Index");
         }
 

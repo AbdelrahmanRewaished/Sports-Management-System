@@ -11,7 +11,7 @@
     <br />
     <div class="col-12 border p-3 mt-3">
         <form method="post">
-            @if (Model.Names.Count() > 0)
+            @if (Model.AvailableStadiums.Count() > 0)
             {
                 <table class="table table-striped border">
                     <tr class="table table-secondary">
@@ -25,37 +25,26 @@
                             <label value="Capacity">Capacity</label>
                         </th>
                     </tr>
-                    @for (int i = 0; i < Model.Names.Count; i++)
+                    @foreach (var availableStadium in Model.AvailableStadiums)
                     {
-                        var Name = Model.Names.ElementAt(i);
-                        var Location = Model.Locations.ElementAt(i);
-                        var Capacity = Model.Capacities.ElementAt(i);
                         <tr>
                             <td>
-                                @Html.DisplayFor(m => Name)
+                                @Html.DisplayFor(m => availableStadium.Name)
                             </td>
                             <td>
-                                @Html.DisplayFor(m => Location)
+                                @Html.DisplayFor(m => availableStadium.Location)
                             </td>
                             <td>
-                                @Html.DisplayFor(m => Capacity)
+                                @Html.DisplayFor(m => availableStadium.Capacity)
                             </td>
                             <td>
-                                @if(Model.getHostRequestStatus(Name) == null)
+                                @if (! await Model.isRequestRejectedAsync(availableStadium.Name!))
                                 {
-                                    <button asp-route-Stadium=@Name onclick="return confirm('Are you Sure you want to send this Request ?')" class="btn btn-danger btn-secondary">Send Request</button>
-                                }
-                                else if(Model.getHostRequestStatus(Name) == "unhandled")
-                                {
-                                    <button class="btn btn-info btn-secondary" disabled>Pending..</button>
-                                }
-                                else if(Model.getHostRequestStatus(Name) == "rejected")
-                                {
-                                    <button class="btn btn-danger btn-secondary" disabled>Rejected</button>
+                                    <button asp-route-Stadium=@availableStadium.Name onclick="SendRequest()" class="btn btn-danger">Send Request</button>
                                 }
                                 else
                                 {
-                                    <button class="btn btn-success btn-secondary" disabled>Accepted</button>
+                                    <button class="btn btn-danger btn-secondary" disabled>Rejected</button>
                                 }
                             </td>
                         </tr>
@@ -69,7 +58,3 @@
         </form>
     </div>
 </div>
-
-@section Scripts{
-    <script src="~/js/bookList.js"></script>
-}

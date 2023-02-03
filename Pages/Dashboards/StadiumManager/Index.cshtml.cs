@@ -7,26 +7,20 @@ namespace Sports_Management_System.Pages.Dashboards.StadiumManager
 {
     public class IndexModel : PageModel
     {
-        private readonly ChampionsLeagueDbContext _db;
         public string Username { get; set; }
-        public IndexModel(ChampionsLeagueDbContext db)
+        
+        public IActionResult? OnGet()
         {
-            _db = db;
-        }
-
-        public async Task<IActionResult> OnGet()
-        {
-            string Username = HttpContext.Session.GetString("Username")!;
-            if (Username == null)
+            string path = getRedirectionPath(HttpContext);
+            if (path != null)
             {
-                return Redirect("../../Auth/Login");
-            }
-            string Role = HttpContext.Session.GetString("Role")!;
-            if (Role != "StadiumManager")
-            {
-                return Redirect("../../Auth/UnAuthorized");
+                return Redirect(path);
             }
             return null;
+        }
+        public static string getRedirectionPath(HttpContext httpContext)
+        {
+            return Auth.Login.Auth.getRedirectionPath(httpContext, "StadiumManager");
         }
     }
 }
