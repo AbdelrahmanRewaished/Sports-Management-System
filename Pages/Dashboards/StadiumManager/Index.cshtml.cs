@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
@@ -5,22 +6,19 @@ using Sports_Management_System.Models;
 
 namespace Sports_Management_System.Pages.Dashboards.StadiumManager
 {
-    public class IndexModel : PageModel
+	[Authorize(Roles = "StadiumManager")]
+	public class IndexModel : PageModel
     {
-        public string Username { get; set; }
-        
-        public IActionResult? OnGet()
+        private readonly ChampionsLeagueDbContext _db;
+        public IndexModel(ChampionsLeagueDbContext db)
         {
-            string path = getRedirectionPath(HttpContext);
-            if (path != null)
-            {
-                return Redirect(path);
-            }
-            return null;
+            _db = db;
         }
-        public static string getRedirectionPath(HttpContext httpContext)
+        public string PendingRequestsCount { get; set; }
+        public async Task OnGetAsync()
         {
-            return Auth.Login.Auth.getRedirectionPath(httpContext, "StadiumManager");
+            string Username = Auth.Auth.GetCurrentUserName(User);
+            PendingRequestsCount = NumberFormatter.getFormattedNumber(await _db.GetTotalPendingRequests(Username));
         }
     }
 }

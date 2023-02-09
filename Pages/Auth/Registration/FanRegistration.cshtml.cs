@@ -39,56 +39,52 @@ namespace Sports_Management_System.Pages.Auth
 
         [BindProperty]
         public FanRegWrapper registeringFan { get; set; }
-        private IActionResult LogUserIn(string username, string role)
+        private IActionResult LogUserIn()
         {
-            Login.Auth.setUserSession(HttpContext, username, role);
-            string destination = Login.Auth.getLoggedUserDestination(role);
+            Auth.SetUserClaims(HttpContext, registeringFan.Username, Auth.FanRole);
+            string destination = Auth.GetLoggingUserDestination(Auth.FanRole);
             return Redirect(destination);
         }
 
-        private bool isRegisterUnderAge(DateTime birthdate)
+        private bool isRegisterUnderAge()
         {
             int currentYear = DateTime.Now.Year;
-            int registerBirthYear = birthdate.Year;
+            int registerBirthYear = registeringFan.Birthdate.Year;
             return currentYear - registerBirthYear < 16;
         }
 
+        private async Task<string> GetErrorMessage()
+        {
+			if (!ModelState.IsValid)
+			{
+				return "Fill All Fields Correctly";
+			}
+			string errorMessage = Auth.GetPasswordErrorMessage(registeringFan.Password, registeringFan.ConfirmPassword);
+			if (errorMessage != "")
+			{
+                return errorMessage;
+			}
+			if (isRegisterUnderAge())
+			{
+				return "A Fan must be atleast 16 years of age";
+			}
+			if (await Auth.IsUserExisting(_db, registeringFan.Username))
+			{
+				return "Already registered";
+			}
+            return "";
+		}
+
         public async Task<IActionResult> OnPost()
         {
-            if (!ModelState.IsValid) 
+            errorMessage = await GetErrorMessage();
+            if(errorMessage != "")
             {
-                errorMessage = "Fill All Fields Correctly";
                 return Page();
             }
-			if (registeringFan.Password.Length < 6)
-			{
-				errorMessage = "Password must be longer than 5 characters";
-				return Page();
-			}
-			if (registeringFan.Password.Length > 20)
-			{
-				errorMessage = "Password must be shorter than 20 characters";
-				return Page();
-			}
-			if (!registeringFan.Password.Equals(registeringFan.ConfirmPassword))
-            {
-				errorMessage = "Passwords must match";
-				return Page();
-			}
-			if(isRegisterUnderAge(registeringFan.Birthdate)) 
-            {
-                errorMessage = "A Fan must be atleast 16 years of age";
-                return Page();
-            }
-
-			SystemUser user = await _db.SystemUsers.FindAsync(registeringFan.Username);
-            if (user != null)
-            {
-                errorMessage = "Already registered";
-                return Page();
-            }
-            await _db.Database.ExecuteSqlAsync($"exec addFan {registeringFan.Name}, {registeringFan.Username} ,{registeringFan.Password}, {registeringFan.NationalId}, {registeringFan.Birthdate}, {registeringFan.Address}, {registeringFan.Phone}");
-            return LogUserIn(registeringFan.Username, "Fan");
+			string hashedPassword = BCrypt.Net.BCrypt.HashPassword(registeringFan.Password);
+			await _db.Database.ExecuteSqlAsync($"exec addFan {registeringFan.Name}, {registeringFan.Username} ,{hashedPassword}, {registeringFan.NationalId}, {registeringFan.Birthdate}, {registeringFan.Address}, {registeringFan.Phone}");
+			return LogUserIn();
         }
     }
 }

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
@@ -5,7 +6,8 @@ using Sports_Management_System.Models;
 
 namespace Sports_Management_System.Pages.Dashboards.AssociationManager.MatchList
 {
-    public class CreateModel : PageModel
+	[Authorize(Roles = "AssociationManager")]
+	public class CreateModel : PageModel
     {
         private readonly ChampionsLeagueDbContext _db;
         public CreateModel(ChampionsLeagueDbContext db)
@@ -15,17 +17,6 @@ namespace Sports_Management_System.Pages.Dashboards.AssociationManager.MatchList
 
         [BindProperty]
         public UpComingMatch Match {get; set; }
-
-
-        public IActionResult? OnGet()
-        {
-            string path = AssociationManager.IndexModel.getRedirectionPath(HttpContext);
-            if (path != null)
-            {
-                return Redirect(path);
-            }
-            return null;
-        }
 
         public async Task<IActionResult> OnPost()
         {
@@ -37,7 +28,7 @@ namespace Sports_Management_System.Pages.Dashboards.AssociationManager.MatchList
             {
                 return Page();
             }
-            if(! _db.isClubExisting(Match.HostClub!) || ! _db.isClubExisting(Match.GuestClub!))
+            if(! _db.IsClubExisting(Match.HostClub!) || ! _db.IsClubExisting(Match.GuestClub!))
             {
                 return Page();
             }

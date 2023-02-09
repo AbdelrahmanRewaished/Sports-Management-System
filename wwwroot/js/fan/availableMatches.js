@@ -27,7 +27,7 @@ $(document).ready(function () {
             }
         ],
         "language": {
-            "emptyTable": "No Data Found"
+            "emptyTable": "No Upcoming Matches Yet"
         },
         "width": "100%"
     });

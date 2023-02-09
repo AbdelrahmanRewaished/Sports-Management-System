@@ -1,4 +1,6 @@
-﻿namespace Sports_Management_System.Models;
+﻿using Microsoft.AspNetCore.Identity;
+
+namespace Sports_Management_System.Models;
 
 public partial class Fan
 {

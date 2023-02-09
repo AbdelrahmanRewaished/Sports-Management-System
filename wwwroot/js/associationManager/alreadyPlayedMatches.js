@@ -12,7 +12,7 @@
             { "data": "endTime", "width": "20%" }
         ],
         "language": {
-            "emptyTable": "No Data Found"
+            "emptyTable": "No Matches already-played Found"
         },
         "width": "100%"
     });

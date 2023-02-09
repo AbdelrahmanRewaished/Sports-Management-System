@@ -1,10 +1,12 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Sports_Management_System.Models;
 
 namespace Sports_Management_System.Pages.Dashboards.SystemAdmin.StadiumsList
 {
-    public class EditModel : PageModel
+	[Authorize(Roles = "SystemAdmin")]
+	public class EditModel : PageModel
     {
         private readonly ChampionsLeagueDbContext _db;
 
@@ -15,16 +17,9 @@ namespace Sports_Management_System.Pages.Dashboards.SystemAdmin.StadiumsList
 
         [BindProperty]
         public Stadium Stadium { get; set; }
-        public async Task<IActionResult?> OnGet(int id)
+        public async Task OnGet(int id)
         {
-            string path = SystemAdmin.IndexModel.getRedirectionPath(HttpContext);
-            if (path != null)
-            {
-                return Redirect(path);
-            }
-
             Stadium = await _db.Stadia.FindAsync(id);
-            return null;
         }
 
         public async Task<IActionResult> OnPost()

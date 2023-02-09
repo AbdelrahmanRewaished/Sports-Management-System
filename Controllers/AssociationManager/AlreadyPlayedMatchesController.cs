@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Sports_Management_System.Models;
 
 namespace Sports_Management_System.Controllers.AssociationManager
 {
-    [Route("api/already-played-matches")]
+	[Authorize(Roles = "AssociationManager")]
+	[Route("api/already-played-matches")]
     [ApiController]
     public class AlreadyPlayedMatchesController : Controller
     {

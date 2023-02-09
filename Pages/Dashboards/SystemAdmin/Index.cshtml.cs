@@ -1,22 +1,26 @@
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Sports_Management_System.Models;
 
 namespace Sports_Management_System.Pages.Dashboards.SystemAdmin
 {
+    [Authorize(Roles = "SystemAdmin")]
     public class IndexModel : PageModel
     {
-        public IActionResult? OnGet()
+        private readonly ChampionsLeagueDbContext _db;
+        public IndexModel(ChampionsLeagueDbContext db)
         {
-            string path = getRedirectionPath(HttpContext);
-            if (path != null)
-            {
-                return Redirect(path);
-            }
-            return null;
+            _db = db;
         }
-        public static string getRedirectionPath(HttpContext httpContext)
+        public string ClubsCount { get; set; }
+        public string StadiumsCount { get; set; }
+        public string FansCount { get; set; }
+        public async Task OnGetAsync()
         {
-            return Auth.Login.Auth.getRedirectionPath(httpContext, "SystemAdmin");
+            ClubsCount = NumberFormatter.getFormattedNumber(await _db.GetClubsCount());
+            FansCount = NumberFormatter.getFormattedNumber(await _db.GetFansCount());
+            StadiumsCount = NumberFormatter.getFormattedNumber(await _db.GetStadiumsCount());
         }
+       
     }
 }

@@ -23,7 +23,7 @@ $(document).ready(function () {
             }
         ],
         "language": {
-            "emptyTable": "No Data Found"
+            "emptyTable": "No Fans Found"
         },
         "width": "100%"
     });

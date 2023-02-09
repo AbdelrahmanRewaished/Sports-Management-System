@@ -19,7 +19,7 @@ $(document).ready(function () {
                         </a>
                         &nbsp;
                         <a class='btn btn-danger text-white' style='cursor:pointer; width:70px;'
-                            onclick=Delete('/api/clubs?clubId='+${data})>
+                            onclick="Delete('/api/clubs?clubId='+${data})">
                             Delete
                         </a>
                         </div>`;
@@ -28,7 +28,7 @@ $(document).ready(function () {
             }
         ],
         "language": {
-            "emptyTable": "No Data Found"
+            "emptyTable": "No Clubs Found"
         },
         "width": "100%"
     });

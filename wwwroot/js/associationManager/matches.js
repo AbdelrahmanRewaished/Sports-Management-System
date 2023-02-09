@@ -30,7 +30,7 @@ $(document).ready(function () {
             }
         ],
         "language": {
-            "emptyTable": "No Data Found"
+            "emptyTable": "No Matches Found"
         },
         "width": "100%"
     });

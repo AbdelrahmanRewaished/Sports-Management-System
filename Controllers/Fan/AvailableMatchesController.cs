@@ -1,10 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Sports_Management_System.Models;
+using Sports_Management_System.Pages.Auth;
 
 namespace Sports_Management_System.Controllers.Fan
 {
-    [Route("api/available-matches")]
+    [Authorize(Roles = "Fan")]
+	[Route("api/available-matches")]
     [ApiController]
     public class AvailableMatchesController : Controller
     {
@@ -23,8 +26,8 @@ namespace Sports_Management_System.Controllers.Fan
         [HttpPost]
         public async Task<IActionResult> PurchaseTicket(string hostClub, string guestClub, DateTime startTime)
         {
-            string Username = HttpContext.Session.GetString("Username")!;
-            Models.Fan fan = _db.getCurrentFan(Username);
+            string Username = Auth.GetCurrentUserName(User);
+            Models.Fan fan = await _db.GetCurrentFan(Username);
             await _db.Database.ExecuteSqlAsync($"exec purchaseTicket {fan.NationalId}, {hostClub}, {guestClub}, {startTime}");
             return Json(new { success = true, message = "Ticket is Purchased Successfully" });
         }

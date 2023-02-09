@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Sports_Management_System.Models;
 
 namespace Sports_Management_System.Controllers.AssociationManager
 {
-    [Route("api/upcoming-matches")]
+	[Authorize(Roles = "AssociationManager")]
+	[Route("api/upcoming-matches")]
     [ApiController]
     public class UpcomingMatchesController : Controller
     {

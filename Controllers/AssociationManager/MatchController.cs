@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Sports_Management_System.Models;
 
 namespace Sports_Management_System.Controllers.AssociationManager
 {
-    [Route("api/matches")]
+	[Authorize(Roles = "AssociationManager")]
+	[Route("api/matches")]
     [ApiController]
     public class MatchController : Controller
     {
@@ -22,7 +24,7 @@ namespace Sports_Management_System.Controllers.AssociationManager
         [HttpDelete]
         public async Task<IActionResult> Delete(string HostClub, string GuestClub, DateTime StartTime)
         {
-            var match = await _db.Matches.FindAsync(_db.getMatchIdAsync(HostClub, GuestClub, StartTime));
+            var match = await _db.Matches.FindAsync(await _db.GetMatchIdAsync(HostClub, GuestClub, StartTime));
             if (match == null)
             {
                 return Json(new { success = false, message = "Error while Deleting" });

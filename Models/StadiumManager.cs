@@ -1,9 +1,10 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Identity;
+using System;
 using System.Collections.Generic;
 
 namespace Sports_Management_System.Models;
 
-public partial class StadiumManager
+public partial class StadiumManager 
 {
     public int Id { get; set; }
 

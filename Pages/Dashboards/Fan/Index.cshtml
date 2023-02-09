@@ -12,9 +12,9 @@
 
         <div class="boxes">
             <div class="box box1">
-                <i style="margin-right: 5px;"><img src="~/lib/images/club.png"></i>
+                <i style="margin-right: 5px;"><img src="~/lib/images/club.png"> x <img src="~/lib/images/club.png"></i>
                 <span class="text">Upcoming Matches</span>
-                <span class="number">50,120</span>
+                <span class="number">@Model.AvailableMatchesCount</span>
             </div>
             <div class="box box2">
                 <i style="margin-right: 5px;"><img src="~/lib/images/stadium.png"></i>
@@ -24,7 +24,7 @@
             <div class="box box3">
                 <i style="margin-right: 5px;"><img src="~/lib/images/stadium.png"></i>
                 <span class="text">Totally Purchased Tickets</span>
-                <span class="number">20,120</span>
+                <span class="number">@Model.TotalPurchasedTickets</span>
             </div>
         </div>
     </div>

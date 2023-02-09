@@ -32,43 +32,41 @@ namespace Sports_Management_System.Pages.Auth
         }
         [BindProperty]
         public AssocManagerRegWrapper registeringAssocManager { get; set; }
-        private IActionResult LogUserIn(string username, string role)
+        private IActionResult LogUserIn(string username)
         {
-            Login.Auth.setUserSession(HttpContext, username, role);
-            string destination = Login.Auth.getLoggedUserDestination(role);
+            Auth.SetUserClaims(HttpContext, username, Auth.AssociationManagerRole);
+            string destination = Auth.GetLoggingUserDestination(Auth.AssociationManagerRole);
             return Redirect(destination);
         }
 
+        private async Task<string> GetErrorMessage()
+        {
+			if (!ModelState.IsValid)
+			{
+				return "Fill All Fields Correctly";
+			}
+			string errorMessage = Auth.GetPasswordErrorMessage(registeringAssocManager.Password, registeringAssocManager.ConfirmPassword);
+			if (errorMessage != "")
+			{
+                return errorMessage;
+			}
+			if (await Auth.IsUserExisting(_db, registeringAssocManager.Username))
+			{
+				return "Already registered";
+			}
+            return "";
+		}
+
         public async Task<IActionResult> OnPost()
         {
-            if(! ModelState.IsValid)
+            errorMessage = await GetErrorMessage();
+            if(errorMessage != "")
             {
-                errorMessage = "Fill All Fields Correctly";
                 return Page();
             }
-			if (registeringAssocManager.Password.Length < 6)
-			{
-				errorMessage = "Password must be longer than 5 characters";
-				return Page();
-			}
-			if (registeringAssocManager.Password.Length > 20)
-			{
-				errorMessage = "Password must be shorter than 20 characters";
-				return Page();
-			}
-			if (!registeringAssocManager.Password.Equals(registeringAssocManager.ConfirmPassword))
-			{
-				errorMessage = "Passwords must match";
-				return Page();
-			}
-			SystemUser user = await _db.SystemUsers.FindAsync(registeringAssocManager.Username);
-            if(user != null)
-            {
-                errorMessage = "Already registered";
-                return Page();
-            }
-            await _db.Database.ExecuteSqlAsync($"exec addAssociationManager {registeringAssocManager.Name}, {registeringAssocManager.Username}, {registeringAssocManager.Password}");
-            return LogUserIn(registeringAssocManager.Username, "AssociationManager");
+            string hashedPassword = BCrypt.Net.BCrypt.HashPassword(registeringAssocManager.Password);
+			await _db.Database.ExecuteSqlAsync($"exec addAssociationManager {registeringAssocManager.Name}, {registeringAssocManager.Username}, {hashedPassword}");
+			return LogUserIn(registeringAssocManager.Username);
         }
     }
 }

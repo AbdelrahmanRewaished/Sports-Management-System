@@ -15,66 +15,63 @@ namespace Sports_Management_System.Pages.Auth
             _db = db;
         }
 
-       
         [BindProperty]
         public StadManager_ClubRepWrapper registeringStadiumManager { get; set; }
-        private IActionResult LogUserIn(string username, string role)
+        private IActionResult LogUserIn()
         {
-            Login.Auth.setUserSession(HttpContext, username, role);
-            string destination = Login.Auth.getLoggedUserDestination(role);
+            Auth.SetUserClaims(HttpContext, registeringStadiumManager.Username, Auth.StadiumManagerRole);
+            string destination = Auth.GetLoggingUserDestination(Auth.StadiumManagerRole);
             return Redirect(destination);
         }
 
-        public async Task<IActionResult> OnPost()
+        private async Task<bool> IsStadiumExisting()
         {
-            if (! ModelState.IsValid)
+			var stadium = await _db.Stadia.FirstOrDefaultAsync(n => n.Name == registeringStadiumManager.Entity);
+            return stadium != null;
+		}
+
+        private async Task<bool> StadiumHasAlreadyAManager()
+        {
+            return await _db.GetStadiumManager(registeringStadiumManager.Entity) != null;
+        }
+
+        private async Task<string> GetErrorMessage()
+        {
+			if (!ModelState.IsValid)
+			{
+				return "Fill All Fields Correctly";
+			}
+			string errorMessage = Auth.GetPasswordErrorMessage(registeringStadiumManager.Password, registeringStadiumManager.ConfirmPassword);
+			if (errorMessage != "")
+			{
+                return errorMessage;
+			}
+			if (await Auth.IsUserExisting(_db, registeringStadiumManager.Username))
+			{
+				return "Already registered";
+			}
+			if (! await IsStadiumExisting())
+			{
+				return "Stadium doesn't exist";
+			}
+
+			if (await StadiumHasAlreadyAManager())
+			{
+				return "A Stadium Manager already exists ";
+			}
+            return "";
+		}
+
+		public async Task<IActionResult> OnPost()
+        {
+            errorMessage = await GetErrorMessage();
+            if(errorMessage != "")
             {
-                errorMessage = "Fill All Fields Correctly";
                 return Page();
             }
-			if (registeringStadiumManager.Password.Length < 6)
-			{
-				errorMessage = "Password must be longer than 5 characters";
-				return Page();
-			}
-			if (registeringStadiumManager.Password.Length > 20)
-			{
-				errorMessage = "Password must be shorter than 20 characters";
-				return Page();
-			}
-			if (!registeringStadiumManager.Password.Equals(registeringStadiumManager.ConfirmPassword))
-			{
-				errorMessage = "Passwords must match";
-				return Page();
-			}
-
-			SystemUser user = await _db.SystemUsers.FindAsync(registeringStadiumManager.Username);
-            if (user != null)
-            {
-                errorMessage = "Already registered";
-                return Page( );
-            }
-            var stadiums = _db.Stadia
-                .Where(n => n.Name == registeringStadiumManager.Entity)
-                .ToList();
-
-            if(stadiums.Count == 0)
-            {
-                errorMessage = "Stadium doesn't exist";
-                return Page();
-            }
-            var stadiumManagers = _db.Database
-                .SqlQuery<string>($"SELECT * FROM AllStadiumManagers WHERE stadium_name = {registeringStadiumManager.Entity}")
-                .ToList();
-
-            if (stadiumManagers.Count != 0)
-            {
-                errorMessage = "A Stadium Manager already exists ";
-                return Page();
-            }
-
-            await _db.Database.ExecuteSqlAsync($"exec addStadiumManager {registeringStadiumManager.Name}, {registeringStadiumManager.Entity} ,{registeringStadiumManager.Username}, {registeringStadiumManager.Password}");
-            return LogUserIn(registeringStadiumManager.Username, "StadiumManager");
+            string hashedPassword = BCrypt.Net.BCrypt.HashPassword(registeringStadiumManager.Password);
+            await _db.Database.ExecuteSqlAsync($"exec addStadiumManager {registeringStadiumManager.Name}, {registeringStadiumManager.Entity} ,{registeringStadiumManager.Username}, {hashedPassword}");
+            return LogUserIn();
         }
     }
     

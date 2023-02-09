@@ -32,7 +32,7 @@ $(document).ready(function () {
             }
         ],
         "language": {
-            "emptyTable": "No Data Found"
+            "emptyTable": "No Pending Requests Found"
         },
         "width": "100%"
     });

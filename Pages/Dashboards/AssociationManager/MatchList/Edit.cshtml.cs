@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
@@ -5,7 +6,8 @@ using Sports_Management_System.Models;
 
 namespace Sports_Management_System.Pages.Dashboards.AssociationManager.MatchList
 {
-    public class EditModel : PageModel
+	[Authorize(Roles = "AssociationManager")]
+	public class EditModel : PageModel
     {
         private readonly ChampionsLeagueDbContext _db;
 
@@ -18,20 +20,14 @@ namespace Sports_Management_System.Pages.Dashboards.AssociationManager.MatchList
         public MatchView Match { get; set; }
         public int PreviousMatchId { get; set; }
 
-        public async Task<IActionResult?> OnGetAsync(string HostClub, string GuestClub, DateTime StartTime)
+        public async Task OnGetAsync(string HostClub, string GuestClub, DateTime StartTime)
         {
-            string path = AssociationManager.IndexModel.getRedirectionPath(HttpContext);
-            if (path != null)
-            {
-                return Redirect(path);
-            }
             Match = await _db.Set<MatchView>().FirstOrDefaultAsync(
                 u => u.HostClub! == HostClub &&
                 u.GuestClub! == GuestClub &&
                 u.StartTime! == StartTime
             );
-            PreviousMatchId = await _db.getMatchIdAsync(HostClub, GuestClub, StartTime);
-            return null;
+            PreviousMatchId = await _db.GetMatchIdAsync(HostClub, GuestClub, StartTime);
         }
 
         public async Task<IActionResult> OnPost()
@@ -45,7 +41,7 @@ namespace Sports_Management_System.Pages.Dashboards.AssociationManager.MatchList
             {
                 return Page();
             }
-            if (!_db.isClubExisting(Match!.HostClub!) || !_db.isClubExisting(Match!.GuestClub!))
+            if (!_db.IsClubExisting(Match!.HostClub!) || !_db.IsClubExisting(Match!.GuestClub!))
             {
                 return Page();
             }

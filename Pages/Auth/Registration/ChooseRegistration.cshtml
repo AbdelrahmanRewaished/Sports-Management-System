@@ -3,40 +3,58 @@
 @{
 }
 <br />
-<br />
-<br />
-<html>
+<!DOCTYPE html>
+<html lang="en">
+
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="icon" type="image/png" sizes="32x32" href="./images/favicon-32x32.png">
+
+    <title>Frontend Mentor | Four card feature section</title>
     <link rel="stylesheet" href="~/css/choose-reg.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,200;0,400;0,600;1,200;1,400;1,600&display=swap"
+          rel="stylesheet">
 </head>
+
 <body>
-    
+    <div class="header">
+        <h1></h1>
+        <h1>Register As</h1>
+    </div>
+    <div class="row1-container">
+        <a class="box box-down cyan" href="SportsAssManReg">
+            <h2>Sports Association Manager</h2>
+            <p>The Creator and Organizor of the System Matches</p>
+            <img src="~/lib/images/assoc_manager.png" alt="">
+        </a>
 
-    <!-- Hover #2 -->
-    <div class="box-2">
-        <div class="btn btn-two">
-            <span><a asp-page="StadiumManagerReg" class="text-decoration-none fw-bolder text-white">Register As Stadium Manager</a></span>
-        </div>
-    </div>
+        <a class="box red" href="ClubRepReg">
+            <h2>Club Representative</h2>
+            <p>The One Resposible for Managing and Sending Host Requests for his Club's Matches</p>
+            <img src="~/lib/images/club_rep.png" alt="">
+        </a>
 
-    <div class="box-1">
-        <div class="btn btn-four">
-            <span><a asp-page="SportsAssManReg" class="text-decoration-none fw-bolder text-white">Register As Association Manager</a></span>
-        </div>
+        <a class="box box-down blue" href="FanRegistration">
+            <h2>Fan</h2>
+            <p>Where You can Enjoy and Book Tickets for your favorite Matches</p>
+            <img src="~/lib/images/tickets.png" alt="">
+        </a>
     </div>
-
-    <!-- Hover #3 -->
-    <div class="box-3">
-        <div class="btn btn-two">
-            <span><a asp-page="ClubRepReg" class="text-decoration-none fw-bolder text-white">Register As Club Representative</a></span>
-        </div>
+    <div class="row2-container">
+        <a class="box orange" href="StadiumManagerReg">
+            <h2>Stadium Manager</h2>
+            <p>The One Responsible for Recieving and Managing Host Requests to His Stadium</p>
+            <img src="~/lib/images/stadium_man.png" alt="">
+        </a>
     </div>
-    <div class="box-4">
-        <div class="btn btn-four">
-            <span><a asp-page="FanRegistration" class="text-decoration-none fw-bolder text-white">Register As Fan</a></span>
-        </div>
-    </div>
+    @*<footer>
+        <p class="attribution">
+            Challenge by <a href="https://www.frontendmentor.io?ref=challenge" target="_blank">Frontend Mentor</a>.
+            Coded by <a href="#">Jared Parsons</a>.
+        </p>
+    </footer>*@
 </body>
+
 </html>
-
-

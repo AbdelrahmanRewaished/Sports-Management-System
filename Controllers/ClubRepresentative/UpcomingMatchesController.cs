@@ -1,10 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Sports_Management_System.Models;
+using Sports_Management_System.Pages.Auth;
 
 namespace Sports_Management_System.Controllers.ClubRepresentative
 {
-    [Route("api/club-upcoming-matches")]
+    [Authorize(Roles = "ClubRepresentative")]
+	[Route("api/club-upcoming-matches")]
     [ApiController]
     public class UpcomingMatchesController : Controller
     {
@@ -18,9 +21,8 @@ namespace Sports_Management_System.Controllers.ClubRepresentative
         [HttpGet]
         public async Task<IActionResult> GetMatches()
         {
-            Username = HttpContext.Session.GetString("Username")!;
-            Club club = await _db.Clubs.FindAsync((await _db.getCurrentClubRepresentative(Username)!).ClubId);
-
+            Username = Auth.GetCurrentUserName(User);
+			Club club = await _db.Clubs.FindAsync((await _db.GetCurrentClubRepresentative(Username)!).ClubId);
             return Json(new { data = await _db.GetAllUpComingMatchesOfClub(club!.ClubId).ToListAsync()});
         }
     }

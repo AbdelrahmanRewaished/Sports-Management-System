@@ -1,21 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Tokens;
-using System.Xml.Linq;
+using Sports_Management_System.Pages.Auth;
+using System.Configuration;
 
 namespace Sports_Management_System.Models;
 
 public partial class ChampionsLeagueDbContext : DbContext
 {
-    public ChampionsLeagueDbContext()
+    private readonly IConfiguration _configuration;
+    public ChampionsLeagueDbContext(IConfiguration configuration)
     {
+        _configuration = configuration;
     }
 
-    public ChampionsLeagueDbContext(DbContextOptions<ChampionsLeagueDbContext> options)
+    public ChampionsLeagueDbContext(DbContextOptions<ChampionsLeagueDbContext> options, IConfiguration configuration)
         : base(options)
     {
+        _configuration = configuration;
     }
     public virtual DbSet<MatchView> AllMatches { get; set; }
 
@@ -44,11 +46,11 @@ public partial class ChampionsLeagueDbContext : DbContext
     public virtual DbSet<Ticket> Tickets { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#pragma warning disable CS1030 // #warning: 'To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.'
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Server=DESKTOP-LCOEQBE\\SQLEXPRESS;Database=Champions_league_Db;Trusted_Connection=True;Encrypt=False");
-#pragma warning restore CS1030 // #warning: 'To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.'
-
+    {
+        var connectionString = _configuration.GetConnectionString("DefaultConnection");
+        optionsBuilder.UseSqlServer(connectionString);
+    }
+      
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<MatchView>(entity =>
@@ -71,6 +73,22 @@ public partial class ChampionsLeagueDbContext : DbContext
             entity.Property(e => e.EndTime)
                 .HasColumnName("datetime")
                 .HasColumnName("end_time");
+        });
+
+        modelBuilder.Entity<SystemUser>(entity =>
+        {
+            entity.HasKey(e => e.Username).HasName("PK__System_U__F3DBC57378AE01A7");
+
+            entity.ToTable("System_User2");
+
+            entity.Property(e => e.Username)
+                .HasMaxLength(60)
+                .IsUnicode(false)
+                .HasColumnName("username");
+            entity.Property(e => e.Password)
+                .HasMaxLength(30)
+                .IsUnicode(false)
+                .HasColumnName("password");
         });
 
         modelBuilder.Entity<Club>(entity =>
@@ -365,21 +383,6 @@ public partial class ChampionsLeagueDbContext : DbContext
                 .HasConstraintName("FK__System_Ad__usern__619B8048");
         });
 
-        modelBuilder.Entity<SystemUser>(entity =>
-        {
-            entity.HasKey(e => e.Username).HasName("PK__System_U__F3DBC57378AE01A7");
-
-            entity.ToTable("System_User2");
-
-            entity.Property(e => e.Username)
-                .HasMaxLength(30)
-                .IsUnicode(false)
-                .HasColumnName("username");
-            entity.Property(e => e.Password)
-                .HasMaxLength(30)
-                .IsUnicode(false)
-                .HasColumnName("password");
-        });
 
         modelBuilder.Entity<Ticket>(entity =>
         {
@@ -422,6 +425,7 @@ public partial class ChampionsLeagueDbContext : DbContext
            .HasName("allPendingRequests");
 
         OnModelCreatingPartial(modelBuilder);
+        base.OnModelCreating(modelBuilder);
     }
 
     internal Stadium? Find(int? stadiumId)
@@ -450,72 +454,139 @@ public partial class ChampionsLeagueDbContext : DbContext
     public IQueryable<PendingRequest> GetPendingRequests(string username)
         => FromExpression(() => GetPendingRequests(username));
 
-    public async Task<ClubRepresentative> getCurrentClubRepresentative(string username)
+    public async Task<int> GetClubsCount()
+    {
+        return await Clubs.CountAsync();
+    }
+
+    public async Task<int> GetStadiumsCount()
+    {
+        return await Stadia.CountAsync();
+    }
+
+    public async Task<int> GetFansCount()
+    {
+        return await Fans.CountAsync();
+    }
+    public async Task<int> GetCreatedMatchesCount() 
+    {
+        return await Matches.CountAsync();
+    }
+    public async Task<int> GetAlreadyPlayedMatchesCount()
+    {
+        return await Set<AlreadyPlayedMatch>().CountAsync();
+    }
+
+    public async Task<int> GetUpcomingMatchesCount() 
+    {
+        return await Set<UpComingMatch>().CountAsync();
+    }
+
+    public async Task<int> GetMatchesPendingHostingCount(string username) 
+    {
+        int representativeId = (await GetCurrentClubRepresentative(username)!).Id;
+        return HostRequests
+            .Where(n => n.RepresentativeId == representativeId && n.Status == "unhandled").Count();
+    }
+
+    public async Task<int> GetTotallyHostedMatches(string username)
+    {
+        int representativeId = (await GetCurrentClubRepresentative(username)!).Id;
+        return HostRequests
+            .Where(n => n.RepresentativeId == representativeId && n.Status == "accepted").Count();
+    }
+    public async Task<int> GetTotalPendingRequests(string username)
+    {
+        return await GetPendingRequests(username).CountAsync();
+    }
+
+    public async Task<int> GetTotalAvailableMatches()
+    {
+        return await GetAvailableMatches().CountAsync();
+    }
+
+    public async Task<int> GetTotallyBoughtTickets(string username)
+    {
+        string nationalId = (await GetCurrentFan(username)).NationalId;
+        return await ViewPurchasedTickets(nationalId).CountAsync();
+    }
+
+    public async Task<ClubRepresentative> GetCurrentClubRepresentative(string username)
     {
         return await ClubRepresentatives.FirstOrDefaultAsync(n => n.Username == username);
     }
 
-    public Fan getCurrentFan(string username)
+    public async Task<Fan> GetCurrentFan(string username)
     {
-        return Fans
-                .Where(n => n.Username == username)
-                .ToList()
-                .ElementAt(0);
+        return await Fans.FirstOrDefaultAsync(u => u.Username == username);
     }
 
-    public async Task<StadiumManager> getCurrentStadiumManager(string username)
+    public async Task<StadiumManager> GetCurrentStadiumManager(string username)
     {
         return await StadiumManagers.FirstOrDefaultAsync(u => u.Username == username);
     }
 
-    public bool isClubExisting(string clubName)
+    public bool IsClubExisting(string clubName)
     {
         return ! Clubs.Where(n => n.Name == clubName).IsNullOrEmpty();
     }
 
-    private int getClubId(string name)
+    public async Task<int> GetClubId(string name)
     {
-        return Clubs
-            .Where(n => n.Name == name)
-            .ToList()
-            .ElementAt(0).ClubId;
+        return (await Clubs.FirstOrDefaultAsync(u => u.Name == name)).ClubId;
     }
 
-    public async Task<int> getMatchIdAsync(string hostClub, string guestClub, DateTime startTime)
+    public async Task<int> GetMatchIdAsync(string hostClub, string guestClub, DateTime startTime)
     {
-        int hostId = getClubId(hostClub);
-        int guestId = getClubId(guestClub);
+        int hostId = await GetClubId(hostClub);
+        int guestId = await GetClubId(guestClub);
         return (await Matches.FirstOrDefaultAsync(n => 
         n.HostClubId == hostId &&
         n.GuestClubId == guestId &&
         n.StartTime == startTime)).MatchId;
     }
-    private async Task<int> getStadiumId(string name)
+    private async Task<int> GetStadiumId(string name)
     {
         return (await Stadia.FirstOrDefaultAsync(n => n.Name == name)).Id;
     }
 
-    private async Task<StadiumManager> getStadiumManager(string stadiumName)
+    public async Task<StadiumManager> GetStadiumManager(string stadiumName)
     {
-        int stadiumId = await getStadiumId(stadiumName);
+        int stadiumId = await GetStadiumId(stadiumName);
         return await StadiumManagers.FirstOrDefaultAsync(n => n.StadiumId == stadiumId);
     }
-    public async Task<SystemUser> getStadiumManagerAsUser(string stadiumName)
+
+    public async Task<ClubRepresentative> GetClubRepresentative(string clubName)
     {
-        return await (SystemUsers.FindAsync((await getStadiumManager(stadiumName)).Username!))!;
+        int clubId = await GetClubId(clubName);
+        return await ClubRepresentatives.FirstOrDefaultAsync(n => n.ClubId == clubId);
+    }
+    public async Task<SystemUser?> GetStadiumManagerAsUser(string stadiumName)
+    {
+        var StadiumManager = await GetStadiumManager(stadiumName);
+        if(StadiumManager == null)
+        {
+            return null;
+        }
+        return await (SystemUsers.FindAsync(StadiumManager.Username!))!;
     }
 
-    public async Task<SystemUser> getClubRepresentativeAsUser(int clubId)
+    public async Task<SystemUser?> GetClubRepresentativeAsUser(int clubId)
     {
-        return await SystemUsers.FindAsync(ClubRepresentatives.FirstOrDefault(u => u.ClubId == clubId)!.Username!)!;
+        var ClubRepresentative = ClubRepresentatives.FirstOrDefault(u => u.ClubId == clubId)!;
+        if(ClubRepresentative == null)
+        {
+            return null;
+        }
+        return await SystemUsers.FindAsync(ClubRepresentative.Username!)!;
     }
-    public async Task<bool?> isRequestRejected(string username, string hostClub, string guestClub, DateTime startTime, string stadium)
+    public async Task<bool?> IsRequestRejected(string username, string hostClub, string guestClub, DateTime startTime, string stadium)
     {
-        ClubRepresentative clubRepresentative = await getCurrentClubRepresentative(username);
+        ClubRepresentative clubRepresentative = await GetCurrentClubRepresentative(username);
 
-        int matchId = await getMatchIdAsync(hostClub, guestClub, startTime);
+        int matchId = await GetMatchIdAsync(hostClub, guestClub, startTime);
 
-        int stadiumManagerId = (await getStadiumManager(stadium)).Id;
+        int stadiumManagerId = (await GetStadiumManager(stadium)).Id;
 
         var Request = await HostRequests.FirstOrDefaultAsync(n =>
         n.ManagerId == stadiumManagerId &&
@@ -525,11 +596,11 @@ public partial class ChampionsLeagueDbContext : DbContext
         return Request != null;
     }
 
-    public async Task<bool> isMatchHostableAsync(string repUsername, string hostClub,
+    public async Task<bool> IsMatchHostableAsync(string repUsername, string hostClub,
         string guestClub, DateTime startTime)
     {
-        int matchId = await getMatchIdAsync(hostClub, guestClub, startTime);
-        ClubRepresentative clubRepresentative = await getCurrentClubRepresentative(repUsername);
+        int matchId = await GetMatchIdAsync(hostClub, guestClub, startTime);
+        ClubRepresentative clubRepresentative = await GetCurrentClubRepresentative(repUsername);
 
         var Requests = HostRequests.Where(n => n.MatchId == matchId)
             .Where(n => n.RepresentativeId == clubRepresentative.Id);
@@ -539,28 +610,24 @@ public partial class ChampionsLeagueDbContext : DbContext
         return Requests.Where(n => n.Status == "unhandled" || n.Status == "accepted").IsNullOrEmpty();
     }
 
-    public bool isFan(string username)
+    public async Task<bool> IsAssociationManager(string username)
     {
-        var fanList = Fans
-                .Where(n => n.Username == username);
-        return !fanList.IsNullOrEmpty();
+        var assocManager = await SportsAssociationManagers.FirstOrDefaultAsync(u => u.Username == username);
+        return assocManager != null;
     }
-    public bool isAssociationManager(string username)
+    public async Task<bool> IsStadiumManager(string username)
     {
-        var assocManagerList = SportsAssociationManagers
-                .Where(n => n.Username == username);
-        return !assocManagerList.IsNullOrEmpty();
+        var stadiumManager = await StadiumManagers.FirstOrDefaultAsync(u => u.Username == username);
+        return stadiumManager != null;
     }
-    public bool isStadiumManager(string username)
+    public async Task<bool> IsClubRepresentative(string username)
     {
-        var stadiumManagerList = StadiumManagers
-                .Where(n => n.Username == username);
-        return !stadiumManagerList.IsNullOrEmpty();
+        var clubRepresentative = await ClubRepresentatives.FirstOrDefaultAsync(u => u.Username == username);
+        return clubRepresentative != null;
     }
-    public bool isClubRepresentative(string username)
+    public async Task<bool> IsAdmin(string username)
     {
-        var clubRepresentativeList = ClubRepresentatives
-                 .Where(n => n.Username == username);
-        return !clubRepresentativeList.IsNullOrEmpty();
+        var admin = await SystemAdmins.FirstOrDefaultAsync(u => u.Username == username);
+        return admin != null;
     }
 }

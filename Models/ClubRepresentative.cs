@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Identity;
+using System;
 using System.Collections.Generic;
 
 namespace Sports_Management_System.Models;
@@ -6,7 +7,6 @@ namespace Sports_Management_System.Models;
 public partial class ClubRepresentative
 {
     public int Id { get; set; }
-
     public string? Name { get; set; }
 
     public int? ClubId { get; set; }

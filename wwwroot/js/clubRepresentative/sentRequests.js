@@ -24,7 +24,7 @@ $(document).ready(function () {
             }
         ],
         "language": {
-            "emptyTable": "No Data Found"
+            "emptyTable": "No Sent Requests Found"
         },
         "width": "100%"
     });

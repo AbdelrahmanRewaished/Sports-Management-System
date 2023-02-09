@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
@@ -8,16 +9,8 @@ using System.Data;
 
 namespace Sports_Management_System.Pages.Dashboards.AssociationManager.MatchList
 {
-    public class AllUpComingMatchesViewModel : PageModel
+	[Authorize(Roles = "AssociationManager")]
+	public class AllUpComingMatchesViewModel : PageModel
     {
-        public IActionResult? OnGet()
-        {
-            string path = AssociationManager.IndexModel.getRedirectionPath(HttpContext);
-            if (path != null)
-            {
-                return Redirect(path);
-            }
-            return null;
-        }
     }
 }

@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Sports_Management_System.Models;
 
 namespace Sports_Management_System.Controllers.SystemAdmin
 {
-    [Route("api/fans")]
+	[Authorize(Roles = "SystemAdmin")]
+	[Route("api/fans")]
     [ApiController]
     public class FanController : Controller
     {

@@ -26,7 +26,7 @@ $(document).ready(function () {
             }
         ],
         "language": {
-            "emptyTable": "No Data Found"
+            "emptyTable": "No Available Stadiums Found"
         },
         "width": "100%"
     });

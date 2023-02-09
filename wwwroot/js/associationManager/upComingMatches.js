@@ -12,7 +12,7 @@
             { "data": "endTime", "width": "20%" }
         ],
         "language": {
-            "emptyTable": "No Data Found"
+            "emptyTable": "No Upcoming Matches Found"
         },
         "width": "100%"
     });

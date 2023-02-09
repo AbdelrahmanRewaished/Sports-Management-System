@@ -1,11 +1,15 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Sports_Management_System.Models;
+using Sports_Management_System.Pages.Auth;
+using System.Security.Claims;
 
 namespace Sports_Management_System.Pages.Dashboards.StadiumManager.StadiumInfo
 {
-    public class IndexModel : PageModel
+    [Authorize(Roles = "StadiumManager")]
+	public class IndexModel : PageModel
     {
         private readonly ChampionsLeagueDbContext _db;
         public Stadium Stadium;
@@ -13,17 +17,10 @@ namespace Sports_Management_System.Pages.Dashboards.StadiumManager.StadiumInfo
         {
             _db = db; 
         }
-        public async Task<IActionResult?> OnGet()
+        public async Task OnGet()
         {
-            string path = StadiumManager.IndexModel.getRedirectionPath(HttpContext);
-            if (path != null)
-            {
-                return Redirect(path);
-            }
-
-            string Username = HttpContext.Session.GetString("Username")!;
-            Stadium = await _db.Stadia.FindAsync((await _db.getCurrentStadiumManager(Username)!).StadiumId);
-            return null;
+            string Username = Auth.Auth.GetCurrentUserName(User);
+			Stadium = await _db.Stadia.FindAsync((await _db.GetCurrentStadiumManager(Username)!).StadiumId);
         }
     }
 }

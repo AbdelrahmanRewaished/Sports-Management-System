@@ -10,7 +10,7 @@
             { "data": "club2Name", "width": "20%" }
         ],
         "language": {
-            "emptyTable": "No Data Found"
+            "emptyTable": "Every Club is Matched Until Now"
         },
         "width": "100%"
     });

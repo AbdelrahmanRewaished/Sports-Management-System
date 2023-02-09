@@ -1,3 +1,8 @@
+
+.main {
+    background-image: url(../lib/images/bg-03.jpg);
+    padding: 150px 0;
+}
 /* @extend display-flex; */
 display-flex, .display-flex, .display-flex-center, .signup-content, .signin-content, .social-login, .socials {
   display: flex;

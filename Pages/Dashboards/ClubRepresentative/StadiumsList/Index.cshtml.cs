@@ -1,11 +1,17 @@
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Sports_Management_System.Models;
+using Sports_Management_System.Pages.Auth;
+using System.Data;
+using System.Security.Claims;
 
 namespace Sports_Management_System.Pages.Dashboards.ClubRepresentative.StadiumsList
 {
-    public class IndexModel : PageModel
+    [Authorize(Roles = "ClubRepresentative")]
+	public class IndexModel : PageModel
     {
         private readonly ChampionsLeagueDbContext _db;
 
@@ -21,27 +27,20 @@ namespace Sports_Management_System.Pages.Dashboards.ClubRepresentative.StadiumsL
             _db = db;
         }
 
-        public async Task<IActionResult?> OnGet(string HostClub, string GuestClub, DateTime StartTime)
+        public async Task OnGet(string HostClub, string GuestClub, DateTime StartTime)
         {
-            string path = ClubRepresentative.IndexModel.getRedirectionPath(HttpContext);
-            if (path != null)
-            {
-                return Redirect(path);
-            }
-            Username = HttpContext.Session.GetString("Username")!;
+            Username = Auth.Auth.GetCurrentUserName(User);
             this.HostClub = HostClub;
             this.GuestClub = GuestClub;
             this.StartTime = StartTime;
             AvailableStadiums = await _db.ViewAvailableStadiumsOn(HostClub, GuestClub, StartTime).ToListAsync();
             HttpContext.Session.SetString("MatchStartTime", StartTime.ToString());
-
-            return null;
         }
        
         public async Task<IActionResult> OnPost(string Stadium)
         {
-            Username = HttpContext.Session.GetString("Username")!;
-            Club club = await _db.Clubs.FindAsync((await _db.getCurrentClubRepresentative(Username)).ClubId);
+            Username = Auth.Auth.GetCurrentUserName(User);
+			Club club = await _db.Clubs.FindAsync((await _db.GetCurrentClubRepresentative(Username)).ClubId);
             clubName = club!.Name!;
             string MatchStartTime = HttpContext.Session.GetString("MatchStartTime")!;
             await _db.Database.ExecuteSqlAsync($"exec AddHostRequest {clubName}, {Stadium}, {MatchStartTime}");
@@ -52,7 +51,7 @@ namespace Sports_Management_System.Pages.Dashboards.ClubRepresentative.StadiumsL
 
         public async Task<bool> isRequestRejectedAsync(string Stadium)
         {
-            return (bool)await _db.isRequestRejected(Username, HostClub, GuestClub, StartTime, Stadium);
+            return (bool)await _db.IsRequestRejected(Username, HostClub, GuestClub, StartTime, Stadium);
         }
     }
 }

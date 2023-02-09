@@ -1,12 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
 using Sports_Management_System.Models;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Sports_Management_System.Pages.Dashboards.ClubRepresentative
 {
-    public class IndexModel : PageModel
+	[Authorize(Roles = "ClubRepresentative")]
+	public class IndexModel : PageModel
     {
         private readonly ChampionsLeagueDbContext _db;
 
@@ -15,19 +15,13 @@ namespace Sports_Management_System.Pages.Dashboards.ClubRepresentative
             _db = db;
         }
 
-        public IActionResult OnGet()
+        public string MatchesPendingHosting { get; set; }
+        public string TotalHostedMatches { get; set; }
+        public async Task OnGetAsync()
         {
-            string path = getRedirectionPath(HttpContext);
-            if (path != null)
-            {
-                return Redirect(path);
-            }
-            return null;
-        }
-
-        public static string getRedirectionPath(HttpContext httpContext)
-        {
-            return Auth.Login.Auth.getRedirectionPath(httpContext, "ClubRepresentative");
+            string Username = Auth.Auth.GetCurrentUserName(User);
+            MatchesPendingHosting = NumberFormatter.getFormattedNumber(await _db.GetMatchesPendingHostingCount(Username));
+            TotalHostedMatches = NumberFormatter.getFormattedNumber(await _db.GetTotallyHostedMatches(Username));
         }
     }
 }

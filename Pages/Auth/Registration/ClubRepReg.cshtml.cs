@@ -8,72 +8,70 @@ namespace Sports_Management_System.Pages.Auth
     public class ClubRepRegModel : PageModel
     {
         private readonly ChampionsLeagueDbContext _db;
-        public string errorMessage = "";
-
+       
         public ClubRepRegModel(ChampionsLeagueDbContext db)
         {
             _db = db;
         }
+		
+		[BindProperty]
+        public StadManager_ClubRepWrapper registeringRepresentative { get; set; }
+        public string errorMessage = "";
 
-        [BindProperty]
-        public StadManager_ClubRepWrapper registeringClubRepresentative { get; set; }
+        private async Task<bool> IsClubExisting()
+        {
+			var club = await _db.Clubs.FirstOrDefaultAsync(u => u.Name == registeringRepresentative.Entity);
+            return club != null;
+		}
+        private async Task<bool> ClubHasAlreadyARepresentative()
+        {
+			var clubRepresentative = await _db.ClubRepresentatives
+			   .FirstOrDefaultAsync(u => u.ClubId == _db.GetClubId(registeringRepresentative.Entity).Result);
+            return clubRepresentative != null;
+		}
+		private IActionResult LogUserIn()
+		{
+			Auth.SetUserClaims(HttpContext, registeringRepresentative.Username, Auth.RepresentativeRole);
+			string destination = Auth.GetLoggingUserDestination(Auth.RepresentativeRole);
+			return Redirect(destination);
+		}
 
-        private IActionResult LogUserIn(string username, string role)
+        private async Task<string> GetErrorMessage()
         {
-            Login.Auth.setUserSession(HttpContext, username, role);
-            string destination = Login.Auth.getLoggedUserDestination(role);
-            return Redirect(destination);
-        }
-        public async Task<IActionResult> OnPost()
-        {
-            if (! ModelState.IsValid) 
-            {
-                errorMessage = "Fill All Fields Correctly";
-                return Page();
-            }
-            if(registeringClubRepresentative.Password.Length < 6)
-            {
-				errorMessage = "Password must be longer than 5 characters";
-				return Page();
-			}
-			if (registeringClubRepresentative.Password.Length > 20)
+			if (!ModelState.IsValid)
 			{
-				errorMessage = "Password must be shorter than 20 characters";
+				return "Fill All Fields Correctly";
+			}
+			string errorMessage = Auth.GetPasswordErrorMessage(registeringRepresentative.Password, registeringRepresentative.ConfirmPassword);
+			if(errorMessage != "")
+			{
+				return errorMessage;
+			}
+			if (await Auth.IsUserExisting(_db, registeringRepresentative.Username))
+			{
+				return "Already registered";
+			}
+			if (! await IsClubExisting())
+			{
+				return "Club doesn't exist";
+			}
+			if (await ClubHasAlreadyARepresentative())
+			{
+				return "A Club Representative  already exists ";
+			}
+			return "";
+		}
+		public async Task<IActionResult> OnPost()
+        {
+			errorMessage = await GetErrorMessage();
+			if(errorMessage != "")
+			{
 				return Page();
 			}
-			if (! registeringClubRepresentative.Password.Equals(registeringClubRepresentative.ConfirmPassword))
-            {
-                errorMessage = "Passwords must match";
-                return Page();
-            }
-            SystemUser user = await _db.SystemUsers.FindAsync(registeringClubRepresentative.Username);
-            if (user != null)
-            {
-                errorMessage = "Already registered";
-                return Page();
-            }
-            var clubs = _db.Clubs
-                .FromSql($"SELECT * FROM Club")
-                .Where(n => n.Name == registeringClubRepresentative.Entity)
-                .ToList();
-
-            if (clubs.Count == 0)
-            {
-                errorMessage = "Club doesn't exist";
-                return Page();
-            }
-            var clubRepresentatives = _db.Database
-                .SqlQuery<string>($"SELECT * FROM AllClubRepresentatives WHERE club_name = {registeringClubRepresentative.Entity}")
-                .ToList();
-
-            if (clubRepresentatives.Count != 0)
-            {
-                errorMessage = "A Club Representative  already exists ";
-                return Page();
-            }
-            await _db.Database.ExecuteSqlAsync($"exec addRepresentative {registeringClubRepresentative.Name}, {registeringClubRepresentative.Entity}, {registeringClubRepresentative.Username}, {registeringClubRepresentative.Password}");
-
-            return LogUserIn(registeringClubRepresentative.Username, "ClubRepresentative");
+            string hashedPassword = BCrypt.Net.BCrypt.HashPassword(registeringRepresentative.Password);
+			await _db.Database.ExecuteSqlAsync($"exec addRepresentative {registeringRepresentative.Name}, {registeringRepresentative.Entity}, {registeringRepresentative.Username}, {hashedPassword}");
+            return LogUserIn();
         }
+      
     }
 }

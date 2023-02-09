@@ -1,11 +1,13 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Sports_Management_System.Models;
 
 namespace Sports_Management_System.Controllers.SystemAdmin
 {
-    [Route("api/stadiums")]
+	[Authorize(Roles = "SystemAdmin")]
+	[Route("api/stadiums")]
     [ApiController]
     public class StadiumController : Controller
     {
@@ -28,7 +30,11 @@ namespace Sports_Management_System.Controllers.SystemAdmin
             {
                 return Json(new { success = false, message = "Error while Deleting" });
             }
-            _db.SystemUsers.Remove(_db.getStadiumManagerAsUser(stadiumFromDb.Name!).Result);
+            var StadiumManager = await _db.GetStadiumManagerAsUser(stadiumFromDb.Name!);
+            if(StadiumManager != null)
+            {
+                _db.SystemUsers.Remove(StadiumManager);
+            }
             _db.Stadia.Remove(stadiumFromDb);
             await _db.SaveChangesAsync();
             return Json(new { success = true, message = "Delete is Successful" });
