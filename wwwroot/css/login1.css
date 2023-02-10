@@ -1,7 +1,3 @@
-
-
-
-
 /*//////////////////////////////////////////////////////////////////
 [ FONT ]*/
 
@@ -209,93 +205,6 @@ iframe {
   color: #555555;
   line-height: 1.2;
   text-align: center;
-}
-
-/*------------------------------------------------------------------
-[ Button sign in with ]*/
-.btn-face,
-.btn-google {
-  font-family: Montserrat-SemiBold;
-  font-size: 18px;
-  line-height: 1.2;
-
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -moz-box;
-  display: -ms-flexbox;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 15px;
-  width: calc((100% - 20px) / 2);
-  height: 70px;
-  border-radius: 10px;
-  box-shadow: 0 1px 5px 0px rgba(0, 0, 0, 0.2);
-  -moz-box-shadow: 0 1px 5px 0px rgba(0, 0, 0, 0.2);
-  -webkit-box-shadow: 0 1px 5px 0px rgba(0, 0, 0, 0.2);
-  -o-box-shadow: 0 1px 5px 0px rgba(0, 0, 0, 0.2);
-  -ms-box-shadow: 0 1px 5px 0px rgba(0, 0, 0, 0.2);
-  -webkit-transition: all 0.4s;
-  -o-transition: all 0.4s;
-  -moz-transition: all 0.4s;
-  transition: all 0.4s;
-  position: relative;
-  z-index: 1;
-}
-
-.btn-google::before,
-.btn-face::before {
-  content: "";
-  display: block;
-  position: absolute;
-  z-index: -1;
-  width: 100%;
-  height: 100%;
-  border-radius: 10px;
-  top: 0;
-  left: 0;
-  background: #a64bf4;
-  background: -webkit-linear-gradient(45deg, #00dbde, #fc00ff);
-  background: -o-linear-gradient(45deg, #00dbde, #fc00ff);
-  background: -moz-linear-gradient(45deg, #00dbde, #fc00ff);
-  background: linear-gradient(45deg, #00dbde, #fc00ff);
-  opacity: 0;
-  -webkit-transition: all 0.4s;
-  -o-transition: all 0.4s;
-  -moz-transition: all 0.4s;
-  transition: all 0.4s;
-}
-
-.btn-face {
-  color: #fff;
-  background-color: #3b5998;
-}
-
-.btn-face i {
-  font-size: 30px;
-  margin-right: 17px;
-  padding-bottom: 3px;
-}
-
-.btn-google {
-  color: #555555;
-  background-color: #fff;
-}
-
-.btn-google img {
-  width: 30px;
-  margin-right: 15px;
-  padding-bottom: 3px;
-}
-
-.btn-face:hover:before,
-.btn-google:hover:before {
-  opacity: 1;
-}
-
-.btn-face:hover,
-.btn-google:hover {
-  color: #fff;
 }
 
 
