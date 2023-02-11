@@ -91,78 +91,58 @@ tar -xvf dotnet-sdk-7.0.1-linux-x64.tar.gz
 sudo mv dotnet /usr/share/
 export PATH=$PATH:/usr/share/dotnet
 ```
-2- Here's an installation guide and script to install Microsoft SQL Server 2019 on Windows, macOS, and Linux:
+2- <b>Install Microsoft SQL Server:</b>
 
-Windows:
+- Windows:
 
-Download the Microsoft SQL Server 2019 installation media from the Microsoft website.
+Installation guide line from <a href="https://www.guru99.com/download-install-sql-server.html">here</a>
 
-Double-click the setup file to launch the installation wizard.
 
-Select the option to "install a new stand-alone installation."
+- MacOS:
 
-Enter your product key and click "Next."
+Installation guideline from <a href="https://builtin.com/software-engineering-perspectives/sql-server-management-studio-mac">here</a>
 
-Accept the license terms and click "Next."
+- Linux: 
 
-Select the components you want to install and click "Next."
+Installation guideline from <a href="https://learn.microsoft.com/en-us/sql/linux/sql-server-linux-setup?view=sql-server-ver16">here</a>
 
-Choose the default instance or specify a named instance, and then click "Next."
-
-Select the authentication mode and configure the necessary security settings, and then click "Next."
-
-Choose the location for the data and log files, and then click "Next."
-
-Review the summary of your installation settings and click "Install."
-
-Wait for the installation to complete, and then click "Close."
-
-macOS and Linux:
-
-Download the Microsoft SQL Server 2019 installation package for macOS or Linux from the Microsoft website.
-
-Extract the package to a directory of your choice.
-
-Open a terminal window and navigate to the extracted directory.
-
-Run the following command to install Microsoft SQL Server 2019: 
-```bash
-./setup
-```
-Follow the on-screen prompts to complete the installation process.
-
-To configure the database server connection and get the connection string for Microsoft SQL Server 2019, follow these steps:
-
-Open SQL Server Management Studio (SSMS) from the Windows Start menu or from the Microsoft SQL Server program group.
-
-Connect to your SQL Server instance by entering the server name and authentication information in the Connect to Server dialog box.
-
-Once connected, expand the Databases folder in the Object Explorer and right-click on the database you want to connect to.
-
-Choose Properties from the context menu, and then select the Connections page.
-
-Enable the Allow remote connections to this server option and then click OK.
-
-Restart the SQL Server service for the changes to take effect.
-
+3- <b>Get the Database connection String:</b>
 To get the connection string, right-click on the database in the Object Explorer and choose Properties.
-
 Select the Connections page and copy the string under the Connection string: field.
-
 The connection string will contain the server name, database name, and other connection parameters necessary to connect to the database from a client application. Here's an example of a typical connection string for Microsoft SQL Server 2019:
 ```bash
 Data Source=myServerName;Initial Catalog=myDataBase;Integrated Security=True;
 ```
+<b>Enter the following commands in the powershell/bash</b>:
 
-
-
-
-3- <b>Clone the Repository</b> 
+4- <b>Clone the Repository</b> 
 ```bash
 git clone https://github.com/AbdelrahmanRewaished/Sports-Management-System
+cd Sports-Management-System
 ```
 
-4- Restore the packages: Open a command prompt or terminal window, navigate to the root folder of the application, and run the following command to restore the packages:
+5- <b>Install All required Dependencies</b>
+```bash
+dotnet restore
+```
+6- <b>Add the Connection string as a User Secret</b>
+```bash
+dotnet user-secrets init
+dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Your-Connection-String" 
+```
+To check if it has been stored successfully 
+```bash
+dotnet user-secrets list
+```
+7- <b>Build and Run the application</b>
+```bash
+dotnet build
+dotnet run
+```
+The port number will be available to you, open the browser and paste the url and start the application
+
+
+- Restore the packages: Open a command prompt or terminal window, navigate to the root folder of the application, and run the following command to restore the packages:
 
 dotnet add package BCrypt.NET-Core --version 1.6.0
 dotnet add package Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation
