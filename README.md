@@ -58,7 +58,7 @@ The application function is to manage a sports platform serving 5 types of users
 ### Frontend
 <a href="https://www.w3.org/html/" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/html5/html5-original-wordmark.svg" alt="html5" width="70" height="70"/> </a><a href="https://www.w3schools.com/css/" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/css3/css3-original-wordmark.svg" alt="css3" width="70" height="70"/> </a><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/javascript/javascript-original.svg" alt="javascript" width="60" height="60"/> </a>
 
-### Design
+### APIs
 
 - <a href="https://datatables.net/reference/api/">DataTables.Net</a>  (To Add Searching, Sorting and Pagination Functionality to The tables.)
 
@@ -70,7 +70,7 @@ The application function is to manage a sports platform serving 5 types of users
 - The Application was mainly built using ASP.NET Core Razor Pages and .NET Core Web API [version 7.0]
 - The implementation was based on "Database First Approach" startegy.
 The database components including Entities, Views, Stored Procedures and Functions was the first step of the implementation, built using Microsoft SQL Server and included the Different elements of the system. <br>
-Secondly, reverse engineering was applied to transform all the components into C# Classes by the Microsoft Entity Framework Core, which consequently formed the DatabaseContext which controlls all the classes representing the Entities.
+Secondly, reverse engineering was applied to transform all the components into C# Classes by the Microsoft Entity Framework Core, that consequently formed the DatabaseContext which controlls all the classes representing the Entities.
 
 - System/Database Main Entities:
 
@@ -88,9 +88,10 @@ Secondly, reverse engineering was applied to transform all the components into C
 <br>
 
 - Security
+
 Security is Added to the System to handle the following :<br>
 1- The Application Authentication and Authorization based on Users Roles which implemented by <b>Security Claims</b> in .NET Core <br>
-2- Password Hashing to protect Users passwords by <b>BCript Library</b>.
+2- Password Hashing to by <b>BCript Library</b>.
 
 
 
