@@ -66,6 +66,13 @@ The application function is to manage a sports platform serving 5 types of users
 
 - <a href="https://github.com/CodeSeven/toastr">Toastr</a>
 
+## Screenshots
+
+<details>
+  <summary>Login Page</summary>
+  <p dir="auto">
+  </p>
+</details>
 
 ## Installation 
 
