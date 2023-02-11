@@ -66,6 +66,47 @@ The application function is to manage a sports platform serving 5 types of users
 
 - <a href="https://github.com/CodeSeven/toastr">Toastr</a>
 
+
+## Installation 
+
+1- <b>Install the .NET Core SDK 7.0</b>: Before you can run the application, you need to have the .NET Core SDK 7.0 installed on your machine. 
+To Download it in:
+
+- Windows:
+```bash
+Invoke-WebRequest -Uri https://dotnet.microsoft.com/download/dotnet-core/7.0.1/dotnet-sdk-7.0.1-win-x64.exe -OutFile dotnet-sdk-7.0.1-win-x64.exe
+.\dotnet-sdk-7.0.1-win-x64.exe
+```
+
+- MacOS:
+```bash
+curl -L https://dotnet.microsoft.com/download/dotnet-core/7.0.1/dotnet-sdk-7.0.1-osx-x64.pkg -o dotnet-sdk-7.0.1-osx-x64.pkg
+sudo installer -pkg dotnet-sdk-7.0.1-osx-x64.pkg -target /
+```
+
+- Linux:
+```bash
+wget https://dotnet.microsoft.com/download/dotnet-core/7.0.1/dotnet-sdk-7.0.1-linux-x64.tar.gz
+tar -xvf dotnet-sdk-7.0.1-linux-x64.tar.gz
+sudo mv dotnet /usr/share/
+export PATH=$PATH:/usr/share/dotnet
+```
+
+2- <b>Clone the Repository</b> 
+```bash
+git clone https://github.com/AbdelrahmanRewaished/Sports-Management-System
+```
+
+3- Restore the packages: Open a command prompt or terminal window, navigate to the root folder of the application, and run the following command to restore the packages:
+
+dotnet add package BCrypt.NET-Core --version 1.6.0
+dotnet add package Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation
+dotnet add package Microsoft.EntityFrameworkCore --version 7.0.1
+dotnet add package Microsoft.Extensions.Configuration.UserSecrets --version 7.0.0
+dotnet add package System.Data.SqlClient --version 4.8.5
+
+
+
 ## Implementation 🔨
 - The Application was mainly built using ASP.NET Core Razor Pages and .NET Core Web API [version 7.0]
 - The implementation was based on "Database First Approach" startegy.
