@@ -115,7 +115,7 @@ And Including Sports Entities: Clubs, Stadiums, Matches, Hosting Requests, Ticke
 
 Watch The Project Demo from <a href="https://www.youtube.com/watch?v=w2UlzwHBkOw">here</a>
 
-## Installations & Usage
+## Installations & Usage 📥
 
 ### Installations:
 
