@@ -3,7 +3,8 @@
 
 
 An implementation of a full-stack web application.
-The application function is to manage a sports platform serving 5 types of users: Admins, Sports Association Managers, Club Representatives, Stadium Managers and Fans.
+The application function is to manage a sports platform serving 5 types of users: Admins, Sports Association Managers, Club Representatives, Stadium Managers and Fans
+And Including Sports Entities: Clubs, Stadiums, Matches, Hosting Requests, Tickets.
 
 ## Features ✨
 <b> The System Serves 5 types of Users (Admins, Sports Association Managers, Stadium Managers, Club Representatives, Fans) </b>
@@ -211,22 +212,22 @@ dotnet add package System.Data.SqlClient --version 4.8.5
 The database components including Entities, Views, Stored Procedures and Functions was the first step of the implementation, built using Microsoft SQL Server and included the Different elements of the system. <br>
 Secondly, reverse engineering was applied to transform all the components into C# Classes by the Microsoft Entity Framework Core, that consequently formed the DatabaseContext which controlls all the classes representing the Entities.
 
-- System/Database Main Entities:
+- <b>System/Database Main Entities:</b>
 
 1) <b>System Users</b> <br>
-  a- <b>System Admins</b> <br>
-  b- <b>Sports Association Managers</b> <br>
-  c- <b>Stadium Managers</b> <br>
-  d- <b>Club Representatives</b> <br>
-  e- <b>Fans</b> <br>
-2) <b>Clubs</b> <br>
-3) <b>Stadiums</b> <br>
-4) <b>Matches</b> <br>
+  a- System Admins <br>
+  b- Sports Association Managers <br>
+  c- Stadium Managers <br>
+  d- Club Representatives<br>
+  e- Fans<br>
+2) <b>Clubs</b><br>
+3) <b>Stadiums</b><br>
+4) <b>Matches</b><br>
 5) <b>Hosting Requests</b> <br>
 6) <b>Tickets</b> <br>
 <br>
 
-- Security:
+- <b>Security:</b>
 
 Security is Added to the system to handle the following :<br>
 1- The Application Authentication and Authorization based on Users Roles which implemented by <b>Security Claims</b> in .NET Core <br>
