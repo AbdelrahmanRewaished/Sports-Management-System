@@ -70,9 +70,7 @@ The application function is to manage a sports platform serving 5 types of users
 
 <details>
   <summary>Login Page</summary>
-  <p dir="auto">
-    ![My Remote Image](https://www.dropbox.com/s/vyxt7o9n7mhml06/2023-02-11%2023-24-53-15.png?dl=0)
-  </p>
+    ![image](https://user-images.githubusercontent.com/116602823/218286132-989a95a5-e5ad-4311-8d4f-6c8d6be83688.png)
 </details>
 
 ## Installation 
