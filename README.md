@@ -247,13 +247,17 @@ Security is Added to the system to handle the following :<br>
 
 ## Acknowledgments
 
-- Raw Templates taken From <a href="https://colorlib.com/">Colorlib</a> 
+- Raw Form Templates taken From <a href="https://colorlib.com/">Colorlib</a> 
 
 ## Authors 
 
-<a href="https://github.com/AbdelrahmanRewaished">Abdelrahman Rewaished</a>
+<a href="https://github.com/AbdelrahmanRewaished">@Abdelrahman Rewaished</a>
 
-<a href="https://github.com/omaarrwaell.com">Omar Wael</a>
+<a href="https://github.com/omaarrwaell">@Omar Wael</a>
+
+## Feedback
+
+If you have any feedback do not hesitate to contact me on abdelrahman.saleh@student.guc.edu.eg
 
 
 
