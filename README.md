@@ -70,9 +70,51 @@ The application function is to manage a sports platform serving 5 types of users
 
 <details>
   <summary>Login Page</summary>
-    ![image](https://user-images.githubusercontent.com/116602823/218286132-989a95a5-e5ad-4311-8d4f-6c8d6be83688.png)
+    <br>
+    <img src="https://user-images.githubusercontent.com/116602823/218286132-989a95a5-e5ad-4311-8d4f-6c8d6be83688.png">
 </details>
 
+<details>
+  <summary>Registration Options Page</summary>
+    <br>
+    <img src="https://user-images.githubusercontent.com/116602823/218286393-4293dade-44d2-4e3a-bb80-96749459ea40.png">
+</details>
+
+<details>
+  <summary>A Registration Page</summary>
+    <br>
+    <img src="https://user-images.githubusercontent.com/116602823/218286467-2b1124b9-99d3-4457-bbfd-d895b6fd94cc.png">
+</details>
+
+<details>
+  <summary>Admin Dashboard</summary>
+    <br>
+    <img src="https://user-images.githubusercontent.com/116602823/218286498-74964839-bc41-47c4-befa-50e27dd23cb9.png">
+</details>
+
+<details>
+  <summary>Sports Association Manager Dashboard</summary>
+    <br>
+    <img src="https://user-images.githubusercontent.com/116602823/218286511-ef4706cb-4a1b-44a6-907e-d96a40f34c35.png">
+</details>
+
+<details>
+  <summary>Club Representative Dashboard</summary>
+    <br>
+    <img src="https://user-images.githubusercontent.com/116602823/218286534-83c2c95a-7ec0-4e7d-afcc-f02fc85934d7.png">
+</details>
+
+<details>
+  <summary>Stadium Manager Dashboard</summary>
+    <br>
+    <img src="https://user-images.githubusercontent.com/116602823/218286570-5d920346-7284-484e-8713-e44543639d2c.png">
+</details>
+
+<details>
+  <summary>Fan Dashboard</summary>
+    <br>
+    <img src="https://user-images.githubusercontent.com/116602823/218286590-a90b6f89-437b-40f8-b847-21dfe6e61a3d.png">
+</details>
 ## Installation 
 
 1- <b>Install the .NET Core SDK 7.0</b>: Before you can run the application, you need to have the .NET Core SDK 7.0 installed on your machine. 
