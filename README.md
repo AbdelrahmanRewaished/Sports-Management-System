@@ -59,13 +59,6 @@ And Including Sports Entities: Clubs, Stadiums, Matches, Hosting Requests, Ticke
 ### Frontend
 <a href="https://www.w3.org/html/" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/html5/html5-original-wordmark.svg" alt="html5" width="70" height="70"/> </a><a href="https://www.w3schools.com/css/" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/css3/css3-original-wordmark.svg" alt="css3" width="70" height="70"/> </a><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/javascript/javascript-original.svg" alt="javascript" width="60" height="60"/> </a>
 
-### APIs
-
-- <a href="https://datatables.net/reference/api/">DataTables.Net</a>  (To Add Searching, Sorting and Pagination Functionality to The tables.)
-
-- <a href="https://sweetalert2.github.io/">Sweet Alert</a>
-
-- <a href="https://github.com/CodeSeven/toastr">Toastr</a>
 
 ## Screenshots
 
@@ -120,8 +113,11 @@ And Including Sports Entities: Clubs, Stadiums, Matches, Hosting Requests, Ticke
 
 ## Video 
 
+Watch The Project Demo from <a href="https://www.youtube.com/watch?v=w2UlzwHBkOw">here</a>
 
-## Installation 
+## Installations & Usage
+
+### Installations:
 
 1- <b>Install the .NET Core SDK 7.0</b>: Before you can run the application, you need to have the .NET Core SDK 7.0 installed on your machine. 
 To Download it in:
@@ -160,7 +156,9 @@ Installation guideline from <a href="https://builtin.com/software-engineering-pe
 
 Installation guideline from <a href="https://learn.microsoft.com/en-us/sql/linux/sql-server-linux-setup?view=sql-server-ver16">here</a>
 
-3- <b>Get the Database connection String:</b>
+### Usage
+
+1- <b>Get the Database connection String:</b>
 To get the connection string, right-click on the database in the Object Explorer and choose Properties.
 Select the Connections page and copy the string under the Connection string: field.
 The connection string will contain the server name, database name, and other connection parameters necessary to connect to the database from a client application. Here's an example of a typical connection string for Microsoft SQL Server 2019:
@@ -169,17 +167,34 @@ Data Source=myServerName;Initial Catalog=myDataBase;Integrated Security=True;
 ```
 <b>Enter the following commands in the powershell/bash</b>:
 
-4- <b>Clone the Repository</b> 
+2- <b>Clone the Repository</b> 
 ```bash
 git clone https://github.com/AbdelrahmanRewaished/Sports-Management-System
 cd Sports-Management-System
 ```
 
-5- <b>Install All required Dependencies</b>
+3- <b>Run Required SQL Files:</b>
+
+- In Windows PowerShell, you can use the following command to run an SQL file:
+ ```bash
+ sqlcmd -S [server_name] -d [database_name] -U [user_name] -P [password] -i [ApplicationDB/main.sql]
+ sqlcmd -S [server_name] -d [database_name] -U [user_name] -P [password] -i [ApplicationDB/SystemAdmin/main.sql]
+ sqlcmd -S [server_name] -d [database_name] -U [user_name] -P [password] -i [ApplicationDB/AssociationManager/main.sql]
+ sqlcmd -S [server_name] -d [database_name] -U [user_name] -P [password] -i [ApplicationDB/ClubRepresentative/main.sql]
+ sqlcmd -S [server_name] -d [database_name] -U [user_name] -P [password] -i [ApplicationDB/StadiumManager/main.sql]
+ sqlcmd -S [server_name] -d [database_name] -U [user_name] -P [password] -i [ApplicationDB/Fan/main.sql]
+ ```
+ 
+ - In Linux and macOS:
+ 
+ Just like in Windows Powershell but replace "sqlcmd" with "/opt/mssql-tools/bin/sqlcmd"
+ 
+
+4- <b>Install All required Dependencies</b>
 ```bash
 dotnet restore
 ```
-6- <b>Add the Connection string as a User Secret</b>
+5- <b>Add the Connection string as a User Secret</b>
 ```bash
 dotnet user-secrets init
 dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Your-Connection-String" 
@@ -188,23 +203,12 @@ To check if it has been stored successfully
 ```bash
 dotnet user-secrets list
 ```
-7- <b>Build and Run the application</b>
+6- <b>Build and Run the application</b>
 ```bash
 dotnet build
 dotnet run
 ```
 The port number will be available to you, open the browser and paste the url and start the application
-
-
-- Restore the packages: Open a command prompt or terminal window, navigate to the root folder of the application, and run the following command to restore the packages:
-
-dotnet add package BCrypt.NET-Core --version 1.6.0
-dotnet add package Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation
-dotnet add package Microsoft.EntityFrameworkCore --version 7.0.1
-dotnet add package Microsoft.Extensions.Configuration.UserSecrets --version 7.0.0
-dotnet add package System.Data.SqlClient --version 4.8.5
-
-
 
 ## Implementation 🔨
 - The Application was mainly built using ASP.NET Core Razor Pages and .NET Core Web API [version 7.0]
@@ -232,6 +236,29 @@ Secondly, reverse engineering was applied to transform all the components into C
 Security is Added to the system to handle the following :<br>
 1- The Application Authentication and Authorization based on Users Roles which implemented by <b>Security Claims</b> in .NET Core <br>
 2- Password Hashing by <b>BCript Library</b>.
+
+## Stylings
+
+- <a href="https://datatables.net/reference/api/">DataTables.Net</a>  (To Add Searching, Sorting and Pagination Functionality to The tables.)
+
+- <a href="https://sweetalert2.github.io/">Sweet Alert</a>
+
+- <a href="https://github.com/CodeSeven/toastr">Toastr</a>
+
+## Acknowledgments
+
+- Raw Form Templates taken From <a href="https://colorlib.com/">Colorlib</a> 
+
+## Authors 
+
+<a href="https://github.com/AbdelrahmanRewaished">@Abdelrahman Rewaished</a>
+
+<a href="https://github.com/omaarrwaell">@Omar Wael</a>
+
+## Feedback
+
+If you have any feedback do not hesitate to contact me on abdelrahman.saleh@student.guc.edu.eg
+
 
 
 
