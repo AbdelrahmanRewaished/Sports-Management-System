@@ -3,7 +3,8 @@
 
 
 An implementation of a full-stack web application.
-The application function is to manage a sports platform serving 5 types of users: Admins, Sports Association Managers, Club Representatives, Stadium Managers and Fans.
+The application function is to manage a sports platform serving 5 types of users: Admins, Sports Association Managers, Club Representatives, Stadium Managers and Fans
+And Including Sports Entities: Clubs, Stadiums, Matches, Hosting Requests, Tickets.
 
 ## Features ✨
 <b> The System Serves 5 types of Users (Admins, Sports Association Managers, Stadium Managers, Club Representatives, Fans) </b>
@@ -66,6 +67,59 @@ The application function is to manage a sports platform serving 5 types of users
 
 - <a href="https://github.com/CodeSeven/toastr">Toastr</a>
 
+## Screenshots
+
+<details>
+  <summary>Login Page</summary>
+    <br>
+    <img src="https://user-images.githubusercontent.com/116602823/218286132-989a95a5-e5ad-4311-8d4f-6c8d6be83688.png">
+</details>
+
+<details>
+  <summary>Registration Options Page</summary>
+    <br>
+    <img src="https://user-images.githubusercontent.com/116602823/218286393-4293dade-44d2-4e3a-bb80-96749459ea40.png">
+</details>
+
+<details>
+  <summary>A Registration Page</summary>
+    <br>
+    <img src="https://user-images.githubusercontent.com/116602823/218286467-2b1124b9-99d3-4457-bbfd-d895b6fd94cc.png">
+</details>
+
+<details>
+  <summary>Admin Dashboard</summary>
+    <br>
+    <img src="https://user-images.githubusercontent.com/116602823/218286498-74964839-bc41-47c4-befa-50e27dd23cb9.png">
+</details>
+
+<details>
+  <summary>Sports Association Manager Dashboard</summary>
+    <br>
+    <img src="https://user-images.githubusercontent.com/116602823/218286511-ef4706cb-4a1b-44a6-907e-d96a40f34c35.png">
+</details>
+
+<details>
+  <summary>Club Representative Dashboard</summary>
+    <br>
+    <img src="https://user-images.githubusercontent.com/116602823/218286534-83c2c95a-7ec0-4e7d-afcc-f02fc85934d7.png">
+</details>
+
+<details>
+  <summary>Stadium Manager Dashboard</summary>
+    <br>
+    <img src="https://user-images.githubusercontent.com/116602823/218286570-5d920346-7284-484e-8713-e44543639d2c.png">
+</details>
+
+<details>
+  <summary>Fan Dashboard</summary>
+    <br>
+    <img src="https://user-images.githubusercontent.com/116602823/218286590-a90b6f89-437b-40f8-b847-21dfe6e61a3d.png">
+</details>
+
+
+## Video 
+
 
 ## Installation 
 
@@ -91,78 +145,58 @@ tar -xvf dotnet-sdk-7.0.1-linux-x64.tar.gz
 sudo mv dotnet /usr/share/
 export PATH=$PATH:/usr/share/dotnet
 ```
-2- Here's an installation guide and script to install Microsoft SQL Server 2019 on Windows, macOS, and Linux:
+2- <b>Install Microsoft SQL Server:</b>
 
-Windows:
+- Windows:
 
-Download the Microsoft SQL Server 2019 installation media from the Microsoft website.
+Installation guide line from <a href="https://www.guru99.com/download-install-sql-server.html">here</a>
 
-Double-click the setup file to launch the installation wizard.
 
-Select the option to "install a new stand-alone installation."
+- MacOS:
 
-Enter your product key and click "Next."
+Installation guideline from <a href="https://builtin.com/software-engineering-perspectives/sql-server-management-studio-mac">here</a>
 
-Accept the license terms and click "Next."
+- Linux: 
 
-Select the components you want to install and click "Next."
+Installation guideline from <a href="https://learn.microsoft.com/en-us/sql/linux/sql-server-linux-setup?view=sql-server-ver16">here</a>
 
-Choose the default instance or specify a named instance, and then click "Next."
-
-Select the authentication mode and configure the necessary security settings, and then click "Next."
-
-Choose the location for the data and log files, and then click "Next."
-
-Review the summary of your installation settings and click "Install."
-
-Wait for the installation to complete, and then click "Close."
-
-macOS and Linux:
-
-Download the Microsoft SQL Server 2019 installation package for macOS or Linux from the Microsoft website.
-
-Extract the package to a directory of your choice.
-
-Open a terminal window and navigate to the extracted directory.
-
-Run the following command to install Microsoft SQL Server 2019: 
-```bash
-./setup
-```
-Follow the on-screen prompts to complete the installation process.
-
-To configure the database server connection and get the connection string for Microsoft SQL Server 2019, follow these steps:
-
-Open SQL Server Management Studio (SSMS) from the Windows Start menu or from the Microsoft SQL Server program group.
-
-Connect to your SQL Server instance by entering the server name and authentication information in the Connect to Server dialog box.
-
-Once connected, expand the Databases folder in the Object Explorer and right-click on the database you want to connect to.
-
-Choose Properties from the context menu, and then select the Connections page.
-
-Enable the Allow remote connections to this server option and then click OK.
-
-Restart the SQL Server service for the changes to take effect.
-
+3- <b>Get the Database connection String:</b>
 To get the connection string, right-click on the database in the Object Explorer and choose Properties.
-
 Select the Connections page and copy the string under the Connection string: field.
-
 The connection string will contain the server name, database name, and other connection parameters necessary to connect to the database from a client application. Here's an example of a typical connection string for Microsoft SQL Server 2019:
 ```bash
 Data Source=myServerName;Initial Catalog=myDataBase;Integrated Security=True;
 ```
+<b>Enter the following commands in the powershell/bash</b>:
 
-
-
-
-3- <b>Clone the Repository</b> 
+4- <b>Clone the Repository</b> 
 ```bash
 git clone https://github.com/AbdelrahmanRewaished/Sports-Management-System
+cd Sports-Management-System
 ```
 
-4- Restore the packages: Open a command prompt or terminal window, navigate to the root folder of the application, and run the following command to restore the packages:
+5- <b>Install All required Dependencies</b>
+```bash
+dotnet restore
+```
+6- <b>Add the Connection string as a User Secret</b>
+```bash
+dotnet user-secrets init
+dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Your-Connection-String" 
+```
+To check if it has been stored successfully 
+```bash
+dotnet user-secrets list
+```
+7- <b>Build and Run the application</b>
+```bash
+dotnet build
+dotnet run
+```
+The port number will be available to you, open the browser and paste the url and start the application
+
+
+- Restore the packages: Open a command prompt or terminal window, navigate to the root folder of the application, and run the following command to restore the packages:
 
 dotnet add package BCrypt.NET-Core --version 1.6.0
 dotnet add package Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation
@@ -178,26 +212,26 @@ dotnet add package System.Data.SqlClient --version 4.8.5
 The database components including Entities, Views, Stored Procedures and Functions was the first step of the implementation, built using Microsoft SQL Server and included the Different elements of the system. <br>
 Secondly, reverse engineering was applied to transform all the components into C# Classes by the Microsoft Entity Framework Core, that consequently formed the DatabaseContext which controlls all the classes representing the Entities.
 
-- System/Database Main Entities:
+- <b>System/Database Main Entities:</b>
 
 1) <b>System Users</b> <br>
-  a- <b>System Admins</b> <br>
-  b- <b>Sports Association Managers</b> <br>
-  c- <b>Stadium Managers</b> <br>
-  d- <b>Club Representatives</b> <br>
-  e- <b>Fans</b> <br>
-2) <b>Clubs</b> <br>
-3) <b>Stadiums</b> <br>
-4) <b>Matches</b> <br>
+  a- System Admins <br>
+  b- Sports Association Managers <br>
+  c- Stadium Managers <br>
+  d- Club Representatives<br>
+  e- Fans<br>
+2) <b>Clubs</b><br>
+3) <b>Stadiums</b><br>
+4) <b>Matches</b><br>
 5) <b>Hosting Requests</b> <br>
 6) <b>Tickets</b> <br>
 <br>
 
-- Security
+- <b>Security:</b>
 
-Security is Added to the System to handle the following :<br>
+Security is Added to the system to handle the following :<br>
 1- The Application Authentication and Authorization based on Users Roles which implemented by <b>Security Claims</b> in .NET Core <br>
-2- Password Hashing to by <b>BCript Library</b>.
+2- Password Hashing by <b>BCript Library</b>.
 
 
 
