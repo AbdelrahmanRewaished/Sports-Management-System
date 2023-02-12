@@ -17,14 +17,30 @@ namespace Sports_Management_System.Pages.Dashboards.SystemAdmin.StadiumsList
 
         [BindProperty]
         public Stadium Stadium { get; set; }
+        public string ErrorMessage = "";
+
         public async Task OnGet(int id)
         {
             Stadium = await _db.Stadia.FindAsync(id);
         }
 
-        public async Task<IActionResult> OnPost()
+        private async Task<string> GetErrorMessage()
         {
             if (!ModelState.IsValid)
+            {
+                return "Fill All Fields Correctly";
+            }
+            if (await _db.IsStadiumExisting(Stadium.Name!))
+            {
+                return "Stadium Already Exists";
+            }
+            return "";
+        }
+
+        public async Task<IActionResult> OnPost()
+        {
+            ErrorMessage = await GetErrorMessage();
+            if(ErrorMessage != "")
             {
                 return Page();
             }

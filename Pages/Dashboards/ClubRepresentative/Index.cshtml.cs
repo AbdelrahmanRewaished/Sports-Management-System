@@ -9,18 +9,24 @@ namespace Sports_Management_System.Pages.Dashboards.ClubRepresentative
 	public class IndexModel : PageModel
     {
         private readonly ChampionsLeagueDbContext _db;
+        public Club Club;
+
 
         public IndexModel(ChampionsLeagueDbContext db)
         {
             _db = db;
         }
 
-        public string MatchesPendingHosting { get; set; }
+        public string PendingHostingRequests { get; set; }
+        public string UnhostedUpcomingMatches { get; set; }
         public string TotalHostedMatches { get; set; }
         public async Task OnGetAsync()
         {
             string Username = Auth.Auth.GetCurrentUserName(User);
-            MatchesPendingHosting = NumberFormatter.getFormattedNumber(await _db.GetMatchesPendingHostingCount(Username));
+            Club = await _db.Clubs.FindAsync((await _db.GetCurrentClubRepresentative(Username)).ClubId);
+
+            PendingHostingRequests = NumberFormatter.getFormattedNumber(await _db.GetPendingHostRequestsCount(Username));
+            UnhostedUpcomingMatches = NumberFormatter.getFormattedNumber(await _db.GetUnHostedMatchesCount(Username));
             TotalHostedMatches = NumberFormatter.getFormattedNumber(await _db.GetTotallyHostedMatches(Username));
         }
     }

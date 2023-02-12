@@ -9,7 +9,7 @@ namespace Sports_Management_System.Pages.Dashboards.SystemAdmin.ClubsList
 	public class EditModel : PageModel
     {
         private readonly ChampionsLeagueDbContext _db;
-
+        public string ErrorMessage = "";
         public EditModel(ChampionsLeagueDbContext db)
         {
             _db = db;
@@ -21,10 +21,23 @@ namespace Sports_Management_System.Pages.Dashboards.SystemAdmin.ClubsList
         {
             Club = await _db.Clubs.FindAsync(id);
         }
+        private async Task<string> GetErrorMessage()
+        {
+            if (!ModelState.IsValid)
+            {
+                return "Fill All Fields Correctly";
+            }
+            if (await _db.IsClubExistingAsync(Club.Name!))
+            {
+                return "Club Already Exists";
+            }
+            return "";
+        }
 
         public async Task<IActionResult> OnPost()
         {
-            if (!ModelState.IsValid)
+            ErrorMessage = await GetErrorMessage();
+            if(ErrorMessage != "")
             {
                 return Page();
             }

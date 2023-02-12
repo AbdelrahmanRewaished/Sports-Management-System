@@ -19,6 +19,7 @@ namespace Sports_Management_System.Pages.Dashboards.AssociationManager.MatchList
         [BindProperty]
         public MatchView Match { get; set; }
         public int PreviousMatchId { get; set; }
+        public string ErrorMessage = "";
 
         public async Task OnGetAsync(string HostClub, string GuestClub, DateTime StartTime)
         {
@@ -30,18 +31,36 @@ namespace Sports_Management_System.Pages.Dashboards.AssociationManager.MatchList
             PreviousMatchId = await _db.GetMatchIdAsync(HostClub, GuestClub, StartTime);
         }
 
-        public async Task<IActionResult> OnPost()
+        private async Task<string> GetErrorMessage()
         {
-            PreviousMatchId = Int32.Parse(Request.Form["id"]!);
-            if(! ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                return Page();
+                return "Fill All Fields Correctly";
             }
             if (Match.StartTime < DateTime.Now || Match.StartTime >= Match.EndTime)
             {
-                return Page();
+                return "Ending Time Must be later than Starting Time";
             }
-            if (!_db.IsClubExisting(Match!.HostClub!) || !_db.IsClubExisting(Match!.GuestClub!))
+            if (!await _db.IsClubExistingAsync(Match.HostClub!))
+            {
+                return "Host Club Does not exist";
+            }
+            if (!await _db.IsClubExistingAsync(Match.GuestClub!))
+            {
+                return "Guest Club Does not exist";
+            }
+            if (Match.HostClub == Match.GuestClub)
+            {
+                return "Host and Guest Cannot be the same Club";
+            }
+            return "";
+        }
+
+        public async Task<IActionResult> OnPost()
+        {
+            PreviousMatchId = int.Parse(Request.Form["id"]!);
+            ErrorMessage = await GetErrorMessage();
+            if (ErrorMessage != "")
             {
                 return Page();
             }

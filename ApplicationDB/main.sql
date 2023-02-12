@@ -49,7 +49,7 @@ create table Match(match_ID int identity , start_time datetime, end_time datetim
 stadium_ID int,
 primary key (match_ID) , foreign key (host_club_ID) references Club(club_ID) on update cascade on delete cascade ,
 foreign key (stadium_ID) references Stadium (ID) on update cascade on delete cascade , foreign key (guest_club_ID) references Club(club_ID) on delete NO ACTION ON UPDATE NO ACTION,
-check(start_time >= CURRENT_TIMESTAMP and start_time < end_time)
+check(start_time >= CURRENT_TIMESTAMP and start_time < end_time and host_club_ID <> guest_club_ID)
 );
 
 ---------------------------------------------------------------------------------------------------
@@ -192,3 +192,5 @@ go
 insert into System_User2 values('Admin', '$2a$12$8ZJ1ZS07pq02sA3J1eSAWug2m97JRVaGMfYuWeK4xJ.OMciaDVC1q');
 insert into System_Admin values('Admin', 'Admin');
 
+-- To Delete All Entities Data
+--exec clearAllTables

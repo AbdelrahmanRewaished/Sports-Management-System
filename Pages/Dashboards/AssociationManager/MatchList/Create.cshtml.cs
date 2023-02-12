@@ -10,6 +10,7 @@ namespace Sports_Management_System.Pages.Dashboards.AssociationManager.MatchList
 	public class CreateModel : PageModel
     {
         private readonly ChampionsLeagueDbContext _db;
+        public string ErrorMessage = "";
         public CreateModel(ChampionsLeagueDbContext db)
         {
             _db = db;
@@ -18,17 +19,35 @@ namespace Sports_Management_System.Pages.Dashboards.AssociationManager.MatchList
         [BindProperty]
         public UpComingMatch Match {get; set; }
 
-        public async Task<IActionResult> OnPost()
+        private async Task<string> GetErrorMessage()
         {
             if (!ModelState.IsValid)
             {
-                return Page();
+                return "Fill All Fields Correctly";
             }
-            if(Match.StartTime < DateTime.Now || Match.StartTime >= Match.EndTime)
+            if (Match.StartTime < DateTime.Now || Match.StartTime >= Match.EndTime)
             {
-                return Page();
+                 return "Ending Time Must be later than Starting Time";
             }
-            if(! _db.IsClubExisting(Match.HostClub!) || ! _db.IsClubExisting(Match.GuestClub!))
+            if (! await _db.IsClubExistingAsync(Match.HostClub!))
+            {
+                return "Host Club Does not exist";
+            }
+            if (!await _db.IsClubExistingAsync(Match.GuestClub!))
+            {
+                return "Guest Club Does not exist";
+            }
+            if (Match.HostClub == Match.GuestClub)
+            {
+                return "Host and Guest Cannot be the same Club";
+            }
+            return "";
+        }
+
+        public async Task<IActionResult> OnPost()
+        {
+            ErrorMessage = await GetErrorMessage();
+            if(ErrorMessage != "")
             {
                 return Page();
             }

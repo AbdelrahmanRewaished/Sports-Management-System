@@ -24,12 +24,6 @@ namespace Sports_Management_System.Pages.Auth
             return Redirect(destination);
         }
 
-        private async Task<bool> IsStadiumExisting()
-        {
-			var stadium = await _db.Stadia.FirstOrDefaultAsync(n => n.Name == registeringStadiumManager.Entity);
-            return stadium != null;
-		}
-
         private async Task<bool> StadiumHasAlreadyAManager()
         {
             return await _db.GetStadiumManager(registeringStadiumManager.Entity) != null;
@@ -50,7 +44,7 @@ namespace Sports_Management_System.Pages.Auth
 			{
 				return "Already registered";
 			}
-			if (! await IsStadiumExisting())
+			if (! await _db.IsStadiumExisting(registeringStadiumManager.Entity))
 			{
 				return "Stadium doesn't exist";
 			}

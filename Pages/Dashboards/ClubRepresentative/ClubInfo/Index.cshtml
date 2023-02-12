@@ -4,38 +4,7 @@
     Layout = "~/Pages/Shared/_ClubRepLayout.cshtml";
 
 }
-<br />
 
-<div class="container row p-0 m-0">
-    <div class="col-9">
-        <h2 class="text-info">Club Info</h2>
-    </div>
-
-    <div class="col-12 border p-3 mt-3">
-        <form method="post">
-            <table class="table table-striped border">
-                <tr class="table table-secondary">
-                    <th>
-                        <label asp-for="Club.Name">Club Name</label>
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(m => m.Club.Location)
-                    </th>
-
-                </tr>
-               
-                <tr>
-                    <td>
-                        @Html.DisplayFor(m => Model.Club.Name)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(m => Model.Club.Location)
-                    </td>
-                </tr>
-            </table>
-        </form>
-    </div>
-</div>
 <br />
 <div class="container row p-0 m-0">
     <div class="col-9">

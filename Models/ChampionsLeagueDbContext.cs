@@ -1,8 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Sports_Management_System.Pages.Auth;
-using System.Configuration;
 
 namespace Sports_Management_System.Models;
 
@@ -482,11 +479,17 @@ public partial class ChampionsLeagueDbContext : DbContext
         return await Set<UpComingMatch>().CountAsync();
     }
 
-    public async Task<int> GetMatchesPendingHostingCount(string username) 
+    public async Task<int> GetPendingHostRequestsCount(string username) 
     {
         int representativeId = (await GetCurrentClubRepresentative(username)!).Id;
         return HostRequests
             .Where(n => n.RepresentativeId == representativeId && n.Status == "unhandled").Count();
+    }
+
+    public async Task<int> GetUnHostedMatchesCount(string username)
+    {
+        int representedClubId = (int)(await GetCurrentClubRepresentative(username)).ClubId!;
+        return await Matches.Where(n => n.HostClubId == representedClubId && n.StadiumId == null && n.StartTime > DateTime.Now).CountAsync();
     }
 
     public async Task<int> GetTotallyHostedMatches(string username)
@@ -526,39 +529,54 @@ public partial class ChampionsLeagueDbContext : DbContext
         return await StadiumManagers.FirstOrDefaultAsync(u => u.Username == username);
     }
 
-    public bool IsClubExisting(string clubName)
+    public async Task<bool> IsClubExistingAsync(string clubName)
     {
-        return ! Clubs.Where(n => n.Name == clubName).IsNullOrEmpty();
+        return  (await GetClubId(clubName)) != null;
     }
 
-    public async Task<int> GetClubId(string name)
+    public async Task<bool> IsStadiumExisting(string stadiumName)
     {
-        return (await Clubs.FirstOrDefaultAsync(u => u.Name == name)).ClubId;
+        return (await GetStadiumId(stadiumName)) != null;
+    }
+
+    public async Task<int?> GetClubId(string name)
+    {
+        Club club = await Clubs.FirstOrDefaultAsync(u => u.Name == name);
+        if(club == null)
+        {
+            return null;
+        }
+        return club.ClubId;
     }
 
     public async Task<int> GetMatchIdAsync(string hostClub, string guestClub, DateTime startTime)
     {
-        int hostId = await GetClubId(hostClub);
-        int guestId = await GetClubId(guestClub);
+        int hostId = (int)await GetClubId(hostClub);
+        int guestId = (int)await GetClubId(guestClub);
         return (await Matches.FirstOrDefaultAsync(n => 
         n.HostClubId == hostId &&
         n.GuestClubId == guestId &&
         n.StartTime == startTime)).MatchId;
     }
-    private async Task<int> GetStadiumId(string name)
+    private async Task<int?> GetStadiumId(string name)
     {
-        return (await Stadia.FirstOrDefaultAsync(n => n.Name == name)).Id;
+        Stadium stadium = await Stadia.FirstOrDefaultAsync(n => n.Name == name);
+        if(stadium == null)
+        {
+            return null;
+        }
+        return stadium.Id;
     }
 
     public async Task<StadiumManager> GetStadiumManager(string stadiumName)
     {
-        int stadiumId = await GetStadiumId(stadiumName);
+        int stadiumId = (int)await GetStadiumId(stadiumName);
         return await StadiumManagers.FirstOrDefaultAsync(n => n.StadiumId == stadiumId);
     }
 
     public async Task<ClubRepresentative> GetClubRepresentative(string clubName)
     {
-        int clubId = await GetClubId(clubName);
+        int clubId = (int)await GetClubId(clubName);
         return await ClubRepresentatives.FirstOrDefaultAsync(n => n.ClubId == clubId);
     }
     public async Task<SystemUser?> GetStadiumManagerAsUser(string stadiumName)

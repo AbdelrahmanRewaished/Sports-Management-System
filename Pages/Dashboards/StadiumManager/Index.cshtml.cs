@@ -10,6 +10,7 @@ namespace Sports_Management_System.Pages.Dashboards.StadiumManager
 	public class IndexModel : PageModel
     {
         private readonly ChampionsLeagueDbContext _db;
+        public Stadium Stadium;
         public IndexModel(ChampionsLeagueDbContext db)
         {
             _db = db;
@@ -18,6 +19,7 @@ namespace Sports_Management_System.Pages.Dashboards.StadiumManager
         public async Task OnGetAsync()
         {
             string Username = Auth.Auth.GetCurrentUserName(User);
+            Stadium = await _db.Stadia.FindAsync((await _db.GetCurrentStadiumManager(Username)!).StadiumId);
             PendingRequestsCount = NumberFormatter.getFormattedNumber(await _db.GetTotalPendingRequests(Username));
         }
     }

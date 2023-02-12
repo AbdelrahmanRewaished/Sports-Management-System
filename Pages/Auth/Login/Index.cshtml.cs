@@ -16,11 +16,11 @@ namespace Sports_Management_System.Pages.Auth
             _db = db;
         }
        
-        public void OnGet()
+        public async Task OnGet()
         {
             if(User.Identity!.IsAuthenticated)
             {
-                Auth.SignUserOut(HttpContext);
+                await Auth.SignUserOut(HttpContext);
             }
         }
 

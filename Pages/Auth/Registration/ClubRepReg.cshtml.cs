@@ -18,15 +18,12 @@ namespace Sports_Management_System.Pages.Auth
         public StadManager_ClubRepWrapper registeringRepresentative { get; set; }
         public string errorMessage = "";
 
-        private async Task<bool> IsClubExisting()
-        {
-			var club = await _db.Clubs.FirstOrDefaultAsync(u => u.Name == registeringRepresentative.Entity);
-            return club != null;
-		}
         private async Task<bool> ClubHasAlreadyARepresentative()
         {
-			var clubRepresentative = await _db.ClubRepresentatives
-			   .FirstOrDefaultAsync(u => u.ClubId == _db.GetClubId(registeringRepresentative.Entity).Result);
+			int clubId = (int)await _db.GetClubId(registeringRepresentative.Entity);
+
+            var clubRepresentative = await _db.ClubRepresentatives
+			   .FirstOrDefaultAsync(u => u.ClubId == clubId);
             return clubRepresentative != null;
 		}
 		private IActionResult LogUserIn()
@@ -51,7 +48,7 @@ namespace Sports_Management_System.Pages.Auth
 			{
 				return "Already registered";
 			}
-			if (! await IsClubExisting())
+			if (! await _db.IsClubExistingAsync(registeringRepresentative.Entity))
 			{
 				return "Club doesn't exist";
 			}

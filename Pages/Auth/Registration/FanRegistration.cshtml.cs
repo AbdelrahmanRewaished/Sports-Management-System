@@ -27,13 +27,13 @@ namespace Sports_Management_System.Pages.Auth
 
             [DataType(DataType.Password), Compare(nameof(Password))]
             public string ConfirmPassword { get; set; }
-
+            [Required]
             public string NationalId { get; set; }
-
+            [Required]
             public string Phone { get; set; }
-
-            public DateTime Birthdate { get; set; }
-
+            [Required]
+            public DateOnly Birthdate { get; set; }
+            [Required]
             public string Address { get; set; }
         }
 
@@ -46,7 +46,7 @@ namespace Sports_Management_System.Pages.Auth
             return Redirect(destination);
         }
 
-        private bool isRegisterUnderAge()
+        private bool IsRegisterUnderAge()
         {
             int currentYear = DateTime.Now.Year;
             int registerBirthYear = registeringFan.Birthdate.Year;
@@ -64,7 +64,7 @@ namespace Sports_Management_System.Pages.Auth
 			{
                 return errorMessage;
 			}
-			if (isRegisterUnderAge())
+			if (IsRegisterUnderAge())
 			{
 				return "A Fan must be atleast 16 years of age";
 			}
@@ -75,6 +75,11 @@ namespace Sports_Management_System.Pages.Auth
             return "";
 		}
 
+        private string GetSQLDateFormat(DateOnly date)
+        {
+            return date.Year + "-" + date.Month + "-" + date.Day;
+        }
+
         public async Task<IActionResult> OnPost()
         {
             errorMessage = await GetErrorMessage();
@@ -83,7 +88,7 @@ namespace Sports_Management_System.Pages.Auth
                 return Page();
             }
 			string hashedPassword = BCrypt.Net.BCrypt.HashPassword(registeringFan.Password);
-			await _db.Database.ExecuteSqlAsync($"exec addFan {registeringFan.Name}, {registeringFan.Username} ,{hashedPassword}, {registeringFan.NationalId}, {registeringFan.Birthdate}, {registeringFan.Address}, {registeringFan.Phone}");
+			await _db.Database.ExecuteSqlAsync($"exec addFan {registeringFan.Name}, {registeringFan.Username} ,{hashedPassword}, {registeringFan.NationalId}, {GetSQLDateFormat(registeringFan.Birthdate)}, {registeringFan.Address}, {registeringFan.Phone}");
 			return LogUserIn();
         }
     }

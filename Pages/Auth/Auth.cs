@@ -28,9 +28,9 @@ namespace Sports_Management_System.Pages.Auth
             await HttpContext.SignInAsync(COOKIE_AUTH, claimsPrincipal, new AuthenticationProperties { IsPersistent = false });
         }
 
-        public static void SignUserOut(HttpContext httpContext)
+        public static async Task SignUserOut(HttpContext httpContext)
         {
-            httpContext.SignOutAsync(COOKIE_AUTH);
+            await httpContext.SignOutAsync(COOKIE_AUTH);
         }
         public static string GetLoggingUserDestination(string role)
         {

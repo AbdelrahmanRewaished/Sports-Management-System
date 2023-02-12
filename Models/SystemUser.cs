@@ -1,8 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-using System;
-using System.Collections.Generic;
-
-namespace Sports_Management_System.Models;
+﻿namespace Sports_Management_System.Models;
 
 public partial class SystemUser
 {

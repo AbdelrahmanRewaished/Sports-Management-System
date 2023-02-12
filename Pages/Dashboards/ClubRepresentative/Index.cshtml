@@ -3,6 +3,37 @@
 @{
     Layout = "~/Pages/Shared/_ClubRepLayout.cshtml";
 }
+<br />
+<div class="container row p-0 m-0">
+    <div class="col-9">
+        <h2 class="text-info">Club Info</h2>
+    </div>
+
+    <div class="col-12 border p-3 mt-3">
+        <form method="post">
+            <table class="table table-striped border">
+                <tr class="table table-secondary">
+                    <th>
+                        <label asp-for="Club.Name">Club Name</label>
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(m => m.Club.Location)
+                    </th>
+
+                </tr>
+
+                <tr>
+                    <td>
+                        @Html.DisplayFor(m => Model.Club.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(m => Model.Club.Location)
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
+</div>
 <div class="dash-content">
     <div class="overview">
         <div class="title">
@@ -13,8 +44,13 @@
         <div class="boxes">
             <div class="box box1">
                 <i style="margin-right: 5px;"><img src="~/lib/images/club.png"></i>
-                <span class="text">Matches Pending Hosting</span>
-                <span class="number">@Model.MatchesPendingHosting</span>
+                <span class="text">UnHosted Matches</span>
+                <span class="number">@Model.UnhostedUpcomingMatches</span>
+            </div>
+            <div class="box box1">
+                <i style="margin-right: 5px;"><img src="~/lib/images/club.png"></i>
+                <span class="text">Pending Host Requests</span>
+                <span class="number">@Model.PendingHostingRequests</span>
             </div>
             <div class="box box2">
                 <i style="margin-right: 5px;"><img src="~/lib/images/stadium.png"></i>

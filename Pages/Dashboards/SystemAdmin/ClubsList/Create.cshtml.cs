@@ -10,6 +10,7 @@ namespace Sports_Management_System.Pages.Dashboards.SystemAdmin.ClubsList
     public class CreateModel : PageModel
     {
         private readonly ChampionsLeagueDbContext _db;
+        public string ErrorMessage = "";
         public CreateModel(ChampionsLeagueDbContext db)
         {
             _db = db;
@@ -18,12 +19,25 @@ namespace Sports_Management_System.Pages.Dashboards.SystemAdmin.ClubsList
         [BindProperty]
         public Club Club { get; set; }
 
-        public async Task<IActionResult> OnPost()
+        private async Task<string> GetErrorMessage()
         {
             if (!ModelState.IsValid)
             {
-                return Page();
+                return "Fill All Fields Correctly";
+            }
+            if(await _db.IsClubExistingAsync(Club.Name!))
+            {
+                return "Club Already Exists";
+            }
+            return "";
+        }
 
+        public async Task<IActionResult> OnPost()
+        {
+            ErrorMessage = await GetErrorMessage();
+            if(ErrorMessage != "")
+            {
+                return Page();
             }
             await _db.Clubs.AddAsync(Club);
             await _db.SaveChangesAsync();

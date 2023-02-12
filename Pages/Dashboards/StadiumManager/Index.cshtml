@@ -3,6 +3,42 @@
 @{
     Layout = "~/Pages/Shared/_StadiumManagerLayout.cshtml";
 }
+<br />
+<div class="container row p-0 m-0">
+    <div class="col-9">
+        <h2 class="text-info">Stadium Info</h2>
+    </div>
+    <br />
+    <div class="col-12 border p-3 mt-3">
+        <form method="post">
+            <table class="table table-striped border">
+                <tr class="table table-secondary">
+                    <th>
+                        <label asp-for="Stadium.Name">Stadium Name</label>
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(m => m.Stadium.Location)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(m => m.Stadium.Capacity)
+                    </th>
+                </tr>
+
+                <tr>
+                    <td>
+                        @Html.DisplayFor(m => Model.Stadium.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(m => Model.Stadium.Location)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(m => Model.Stadium.Capacity)
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
+</div>
 <div class="dash-content">
     <div class="overview">
         <div class="title">
@@ -11,7 +47,7 @@
         </div>
 
         <div class="boxes">
-            <div class="box box1">
+            <div class="box box2">
                 <i style="margin-right: 5px;"><img src="~/lib/images/club.png"></i>
                 <span class="text">Total Pending Requests</span>
                 <span class="number">@Model.PendingRequestsCount</span>

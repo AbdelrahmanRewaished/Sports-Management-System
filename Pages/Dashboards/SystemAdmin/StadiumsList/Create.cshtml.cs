@@ -11,6 +11,7 @@ namespace Sports_Management_System.Pages.Dashboards.SystemAdmin.StadiumsList
 	public class CreateModel : PageModel
     {
         private readonly ChampionsLeagueDbContext _db;
+        public string ErrorMessage = "";
         public CreateModel(ChampionsLeagueDbContext db)
         {
             _db = db;
@@ -19,12 +20,25 @@ namespace Sports_Management_System.Pages.Dashboards.SystemAdmin.StadiumsList
         [BindProperty]
         public Stadium Stadium { get; set; }
 
-        public async Task<IActionResult> OnPost()
+        private async Task<string> GetErrorMessage()
         {
             if (!ModelState.IsValid)
             {
-                return Page();
+                return "Fill All Fields Correctly";
+            }
+            if(await _db.IsStadiumExisting(Stadium.Name!))
+            {
+                return "Stadium Already Exists";
+            }
+            return "";
+        }
 
+        public async Task<IActionResult> OnPost()
+        {
+            ErrorMessage = await GetErrorMessage();
+            if(ErrorMessage != "")
+            {
+                return Page();
             }
             await _db.Database.ExecuteSqlAsync($"exec addStadium {Stadium.Name}, {Stadium.Location}, {Stadium.Capacity}");
             return RedirectToPage("Index");
