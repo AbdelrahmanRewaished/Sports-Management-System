@@ -115,6 +115,11 @@ The application function is to manage a sports platform serving 5 types of users
     <br>
     <img src="https://user-images.githubusercontent.com/116602823/218286590-a90b6f89-437b-40f8-b847-21dfe6e61a3d.png">
 </details>
+
+
+## Video 
+
+
 ## Installation 
 
 1- <b>Install the .NET Core SDK 7.0</b>: Before you can run the application, you need to have the .NET Core SDK 7.0 installed on your machine. 
@@ -221,11 +226,11 @@ Secondly, reverse engineering was applied to transform all the components into C
 6) <b>Tickets</b> <br>
 <br>
 
-- Security
+- Security:
 
-Security is Added to the System to handle the following :<br>
+Security is Added to the system to handle the following :<br>
 1- The Application Authentication and Authorization based on Users Roles which implemented by <b>Security Claims</b> in .NET Core <br>
-2- Password Hashing to by <b>BCript Library</b>.
+2- Password Hashing by <b>BCript Library</b>.
 
 
 
