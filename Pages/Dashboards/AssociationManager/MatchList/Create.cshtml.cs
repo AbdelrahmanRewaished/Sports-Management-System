@@ -25,9 +25,13 @@ namespace Sports_Management_System.Pages.Dashboards.AssociationManager.MatchList
             {
                 return "Fill All Fields Correctly";
             }
-            if (Match.StartTime < DateTime.Now || Match.StartTime >= Match.EndTime)
+            if(Match.StartTime >= Match.EndTime)
             {
                  return "Ending Time Must be later than Starting Time";
+            }
+            if (Match.StartTime < DateTime.Now)
+            {
+                return "Time of the match must be in the future";
             }
             if (! await _db.IsClubExistingAsync(Match.HostClub!))
             {
