@@ -26,9 +26,9 @@ namespace Sports_Management_System.Pages.Auth
 			   .FirstOrDefaultAsync(u => u.ClubId == clubId);
             return clubRepresentative != null;
 		}
-		private IActionResult LogUserIn()
+		private async Task<IActionResult> LogUserIn()
 		{
-			Auth.SetUserClaims(HttpContext, registeringRepresentative.Username, Auth.RepresentativeRole);
+			await Auth.SetUserClaims(HttpContext, registeringRepresentative.Username, Auth.RepresentativeRole);
 			string destination = Auth.GetLoggingUserDestination(Auth.RepresentativeRole);
 			return Redirect(destination);
 		}
@@ -67,7 +67,7 @@ namespace Sports_Management_System.Pages.Auth
 			}
             string hashedPassword = BCrypt.Net.BCrypt.HashPassword(registeringRepresentative.Password);
 			await _db.Database.ExecuteSqlAsync($"exec addRepresentative {registeringRepresentative.Name}, {registeringRepresentative.Entity}, {registeringRepresentative.Username}, {hashedPassword}");
-            return LogUserIn();
+            return await LogUserIn();
         }
       
     }

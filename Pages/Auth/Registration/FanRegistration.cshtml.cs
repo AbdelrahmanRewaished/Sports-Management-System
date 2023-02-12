@@ -39,9 +39,9 @@ namespace Sports_Management_System.Pages.Auth
 
         [BindProperty]
         public FanRegWrapper registeringFan { get; set; }
-        private IActionResult LogUserIn()
+        private async Task<IActionResult> LogUserIn()
         {
-            Auth.SetUserClaims(HttpContext, registeringFan.Username, Auth.FanRole);
+            await Auth.SetUserClaims(HttpContext, registeringFan.Username, Auth.FanRole);
             string destination = Auth.GetLoggingUserDestination(Auth.FanRole);
             return Redirect(destination);
         }
@@ -72,6 +72,11 @@ namespace Sports_Management_System.Pages.Auth
 			{
 				return "Already registered";
 			}
+            Fan fan = await _db.Fans.FindAsync(registeringFan.NationalId);
+            if(fan != null)
+            {
+                return "This NationalId Belongs to someone else. Insert your correct NationalId !";
+            }
             return "";
 		}
 
@@ -89,7 +94,7 @@ namespace Sports_Management_System.Pages.Auth
             }
 			string hashedPassword = BCrypt.Net.BCrypt.HashPassword(registeringFan.Password);
 			await _db.Database.ExecuteSqlAsync($"exec addFan {registeringFan.Name}, {registeringFan.Username} ,{hashedPassword}, {registeringFan.NationalId}, {GetSQLDateFormat(registeringFan.Birthdate)}, {registeringFan.Address}, {registeringFan.Phone}");
-			return LogUserIn();
+			return await LogUserIn();
         }
     }
 }

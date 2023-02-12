@@ -30,10 +30,6 @@ namespace Sports_Management_System.Pages.Dashboards.SystemAdmin.StadiumsList
             {
                 return "Fill All Fields Correctly";
             }
-            if (! await _db.IsStadiumExisting(Stadium.Name!))
-            {
-                return "Stadium does not Exist";
-            }
             return "";
         }
 

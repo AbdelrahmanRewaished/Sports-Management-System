@@ -27,10 +27,6 @@ namespace Sports_Management_System.Pages.Dashboards.SystemAdmin.ClubsList
             {
                 return "Fill All Fields Correctly";
             }
-            if (! await _db.IsClubExistingAsync(Club.Name!))
-            {
-                return "Club does not Exist";
-            }
             return "";
         }
 

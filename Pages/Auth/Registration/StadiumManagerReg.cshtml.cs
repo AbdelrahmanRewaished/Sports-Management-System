@@ -17,9 +17,9 @@ namespace Sports_Management_System.Pages.Auth
 
         [BindProperty]
         public StadManager_ClubRepWrapper registeringStadiumManager { get; set; }
-        private IActionResult LogUserIn()
+        private async Task<IActionResult> LogUserIn()
         {
-            Auth.SetUserClaims(HttpContext, registeringStadiumManager.Username, Auth.StadiumManagerRole);
+            await Auth.SetUserClaims(HttpContext, registeringStadiumManager.Username, Auth.StadiumManagerRole);
             string destination = Auth.GetLoggingUserDestination(Auth.StadiumManagerRole);
             return Redirect(destination);
         }
@@ -65,7 +65,7 @@ namespace Sports_Management_System.Pages.Auth
             }
             string hashedPassword = BCrypt.Net.BCrypt.HashPassword(registeringStadiumManager.Password);
             await _db.Database.ExecuteSqlAsync($"exec addStadiumManager {registeringStadiumManager.Name}, {registeringStadiumManager.Entity} ,{registeringStadiumManager.Username}, {hashedPassword}");
-            return LogUserIn();
+            return await LogUserIn();
         }
     }
     

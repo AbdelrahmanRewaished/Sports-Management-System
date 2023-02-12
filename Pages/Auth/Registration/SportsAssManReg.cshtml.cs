@@ -32,9 +32,9 @@ namespace Sports_Management_System.Pages.Auth
         }
         [BindProperty]
         public AssocManagerRegWrapper registeringAssocManager { get; set; }
-        private IActionResult LogUserIn(string username)
+        private async Task<IActionResult> LogUserIn()
         {
-            Auth.SetUserClaims(HttpContext, username, Auth.AssociationManagerRole);
+            await Auth.SetUserClaims(HttpContext, registeringAssocManager.Username, Auth.AssociationManagerRole);
             string destination = Auth.GetLoggingUserDestination(Auth.AssociationManagerRole);
             return Redirect(destination);
         }
@@ -66,7 +66,7 @@ namespace Sports_Management_System.Pages.Auth
             }
             string hashedPassword = BCrypt.Net.BCrypt.HashPassword(registeringAssocManager.Password);
 			await _db.Database.ExecuteSqlAsync($"exec addAssociationManager {registeringAssocManager.Name}, {registeringAssocManager.Username}, {hashedPassword}");
-			return LogUserIn(registeringAssocManager.Username);
+			return await LogUserIn();
         }
     }
 }
