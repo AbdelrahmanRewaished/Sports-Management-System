@@ -2,7 +2,7 @@
 
 An implementation of a full-stack web application.
 The application function is to manage a sports platform serving 5 types of users: Admins, Sports Association Managers, Club Representatives, Stadium Managers and Fans
-And Including Sports Entities: Clubs, Stadiums, Matches, Hosting Requests, Tickets.
+and including Entities such as: Clubs, Stadiums, Matches, Hosting Requests and Tickets.
 
 ## Features ✨
 <b> The System Serves 5 types of Users (Admins, Sports Association Managers, Stadium Managers, Club Representatives, Fans) </b>
