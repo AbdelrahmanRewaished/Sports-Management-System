@@ -108,11 +108,13 @@ and including Entities such as: Clubs, Stadiums, Matches, Hosting Requests and T
     <img src="https://user-images.githubusercontent.com/116602823/218286590-a90b6f89-437b-40f8-b847-21dfe6e61a3d.png">
 </details>
 
+<br>
 
 ## Video 
 
-Watch The Project Demo from <a href="https://www.youtube.com/watch?v=w2UlzwHBkOw">here</a>
-
+<b>Watch The Project Demo from <a href="https://www.youtube.com/watch?v=w2UlzwHBkOw">here</a></b>
+<br>
+<br>
 ## Installations & Usage 📥
 
 ### Installations:
