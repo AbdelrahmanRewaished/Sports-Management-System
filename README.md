@@ -112,7 +112,7 @@ and including Entities such as: Clubs, Stadiums, Matches, Hosting Requests and T
 
 ## Video 
 
-<b>Watch The Project Demo from <a href="https://www.youtube.com/watch?v=w2UlzwHBkOw">here</a></b>
+<b>Watch The Project Demo from https://www.youtube.com/watch?v=w2UlzwHBkOw</b>
 <br>
 <br>
 ## Installations & Usage 📥
